@@ -1,0 +1,12 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "name": "jbm-website",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "node scripts/minify-assets.mjs"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.0"
+    }
+}

@@ -1,0 +1,29 @@
+# Uploads from the admin (served at /storage/...). Nothing here may ever run as a script.
+# Kept in git on purpose (see storage/app/public/.gitignore) and checked by deploy.sh.
+
+Options -Indexes -ExecCGI
+
+# No PHP/CGI handler for anything in this folder, whatever the file name says
+# ("shell.php.png" included: Apache's AddHandler matches any extension of a name).
+<IfModule mod_mime.c>
+    RemoveHandler .php .phtml .phar .pht .phps .php3 .php4 .php5 .php7 .php8 .cgi .pl .py .sh .shtml
+    RemoveType .php .phtml .phar .pht .phps .php3 .php4 .php5 .php7 .php8 .shtml
+</IfModule>
+
+# Refuse to serve script-looking names at all.
+<FilesMatch "\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh|shtml|htaccess|htpasswd|env|ini|sql|log|bak)(\.|$)">
+    Require all denied
+</FilesMatch>
+
+# Only plain image files are served from here.
+<FilesMatch "^(?!.*\.(png|jpe?g|webp|ico|gif|avif)$).+$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    # Should an SVG ever end up here, it opens in a locked-down sandbox (no script).
+    <FilesMatch "\.svg$">
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+    </FilesMatch>
+</IfModule>

@@ -1,0 +1,71 @@
+# Dependencies and build leftovers (vendor/ is installed per environment; the upload package ships its own)
+/vendor
+/node_modules
+
+# Secrets and per-machine configuration: only the two *.example templates are tracked
+.env
+.env.*
+!.env.example
+!.env.production.example
+/auth.json
+*.key
+*.pem
+
+# Local databases (the dev admin account and sample data live here)
+/database/*.sqlite
+/database/*.sqlite-journal
+/database/*.sqlite-wal
+/database/*.sqlite-shm
+
+# Runtime files: logs/caches/sessions/views/uploads are ignored by the .gitignore inside each folder
+# (so the folders exist on a fresh clone); the public/storage symlink is created per server
+/storage/*.key
+/storage/pail
+/storage/pest*.json
+/storage/media-library/
+/public/storage
+/public/hot
+
+# Assets published by Filament (vendor:publish / filament:assets); they are created on the server and shipped in the upload package
+/public/css/filament
+/public/js/filament
+/public/fonts/filament
+
+# Test and tooling output
+/.phpunit.cache
+.phpunit.result.cache
+/lighthouse-*.json
+/coverage
+/dist
+
+# Seed images: only the optimised copies are tracked
+/database/seeders/images/_original/
+
+# Editors, OS and assistants
+.DS_Store
+Thumbs.db
+npm-debug.log
+yarn-error.log
+Homestead.json
+Homestead.yaml
+.phpactor.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+/.agents
+/.amp
+/.claude
+/.cursor
+/.factory
+/.grok
+/.junie
+/.kiro
+/.pi
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/boost.json
+/opencode.json
+/opencode.jsonc
