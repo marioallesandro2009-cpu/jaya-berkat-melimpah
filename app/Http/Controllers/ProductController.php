@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Support\FrontendData;
+use App\Support\Links;
 use App\Support\Locales;
 use App\Support\Seo;
 use App\Support\StructuredData;
@@ -11,10 +12,25 @@ use Illuminate\Contracts\View\View;
 
 /**
  * A product's own page: /products/{slug}, /id/produk/{slug}. Only products whose detail page is
- * published (and that are active) have one; the catalogue itself is the home page's #products block.
+ * published (and that are active) have one; the catalogue is the home page's #products block and the /products index.
  */
 class ProductController extends Controller
 {
+    public function index(): View
+    {
+        $data = FrontendData::all();
+        $section = $data['sections']['products'] ?? null;
+        $seo = Seo::page($data, 'products', (string) ($section['title'] ?? __('Products')), $section['body'] ?? null, $data['products'][0]['image'] ?? null);
+
+        Locales::setPagePaths(Links::pagePaths('products'));
+
+        return view('products.index', [
+            ...$data,
+            'seo' => $seo,
+            'jsonLd' => StructuredData::page($data, $seo),
+        ]);
+    }
+
     public function show(string $slug): View
     {
         $product = Product::query()->active()->withDetailPage()->where('slug', $slug)->with('media')->first();

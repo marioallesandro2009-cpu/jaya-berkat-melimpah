@@ -968,3 +968,104 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
 }
 
 .footer-wordmark img { width: 36px; height: 36px; flex: none; }
+
+/* ==========================================================================
+   All products — asymmetric "shoal" on a deep-water backdrop
+   ========================================================================== */
+
+.btn--dark { background: var(--deep-ocean); color: var(--paper); border-color: var(--deep-ocean); }
+.btn--dark::before { background: var(--secondary-ocean); }
+.btn--dark:hover::before { transform: translateX(0); }
+.products-all { display: flex; justify-content: flex-end; padding-top: var(--space-lg); border-top: 1px solid var(--hairline-light); }
+
+.catch-head { padding-bottom: var(--space-lg); }
+.catch { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--deep-ocean) 0%, #0A2630 45%, var(--near-black) 100%); color: var(--paper); padding: var(--space-xl) 0 calc(var(--space-2xl) + 4rem); }
+.catch .wrap { position: relative; z-index: 2; }
+
+/* decoration: purely visual, never intercepts clicks */
+.catch-decor { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.catch-contours { position: absolute; inset: 0; width: 100%; height: 100%; }
+.catch-contours path { fill: none; stroke: rgba(var(--aqua-rgb), 0.1); stroke-width: 1.2; }
+.catch-fish { position: absolute; left: -110px; fill: rgba(var(--aqua-rgb), 0.16); animation: fishSwim 42s linear infinite; }
+.catch-fish .eye { fill: var(--deep-ocean); }
+.catch-fish--a { top: 18%; width: 64px; }
+.catch-fish--b { top: 61%; width: 96px; animation-duration: 64s; animation-delay: -24s; animation-direction: reverse; transform: scaleX(-1); }
+@keyframes fishSwim { from { left: -110px; } to { left: calc(100% + 110px); } }
+.bubble { position: absolute; bottom: -24px; border: 1.5px solid rgba(var(--aqua-rgb), 0.35); border-radius: 50%; animation: bubbleRise 16s ease-in infinite; }
+.bubble:nth-of-type(1) { left: 6%; width: 10px; height: 10px; animation-delay: -2s; }
+.bubble:nth-of-type(2) { left: 14%; width: 18px; height: 18px; animation-delay: -9s; animation-duration: 21s; }
+.bubble:nth-of-type(3) { left: 27%; width: 7px; height: 7px; animation-delay: -5s; }
+.bubble:nth-of-type(4) { left: 38%; width: 14px; height: 14px; animation-delay: -13s; animation-duration: 19s; }
+.bubble:nth-of-type(5) { left: 49%; width: 9px; height: 9px; animation-delay: -7s; }
+.bubble:nth-of-type(6) { left: 58%; width: 22px; height: 22px; animation-delay: -1s; animation-duration: 24s; }
+.bubble:nth-of-type(7) { left: 66%; width: 8px; height: 8px; animation-delay: -11s; }
+.bubble:nth-of-type(8) { left: 74%; width: 13px; height: 13px; animation-delay: -4s; animation-duration: 18s; }
+.bubble:nth-of-type(9) { left: 83%; width: 20px; height: 20px; animation-delay: -15s; animation-duration: 23s; }
+.bubble:nth-of-type(10) { left: 90%; width: 9px; height: 9px; animation-delay: -8s; }
+.bubble:nth-of-type(11) { left: 95%; width: 15px; height: 15px; animation-delay: -3s; animation-duration: 20s; }
+.bubble:nth-of-type(12) { left: 21%; width: 11px; height: 11px; animation-delay: -17s; }
+@keyframes bubbleRise { 0% { transform: translateY(0) translateX(0); opacity: 0; } 12% { opacity: 1; } 50% { transform: translateY(-50vh) translateX(14px); } 100% { transform: translateY(-110vh) translateX(-10px); opacity: 0; } }
+.catch-weed { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; width: 100%; height: clamp(70px, 9vw, 120px); pointer-events: none; }
+.catch-weed path { fill: none; stroke: rgba(var(--aqua-rgb), 0.22); stroke-width: 7; stroke-linecap: round; transform-box: fill-box; transform-origin: bottom center; animation: weedSway 7s ease-in-out infinite; }
+.catch-weed .w2 { stroke: rgba(var(--aqua-rgb), 0.14); animation-duration: 9s; animation-delay: -3s; }
+@keyframes weedSway { 0%, 100% { transform: skewX(-4deg); } 50% { transform: skewX(5deg); } }
+
+/* the shoal: 12 columns, each product placed on its own offset and given its own shape */
+.shoal { list-style: none; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--space-md); row-gap: var(--space-lg); }
+.catch-item { position: relative; display: grid; align-items: end; gap: var(--space-md); }
+.catch-media { display: block; position: relative; overflow: hidden; background: var(--secondary-ocean); }
+.catch-media img { width: 100%; height: 100%; object-fit: cover; }
+.catch-media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(var(--aqua-rgb), 0.25); pointer-events: none; }
+.catch-num { display: block; margin-bottom: var(--space-xs); font-family: var(--font-accent); font-style: italic; font-size: 1.1rem; color: var(--aqua); }
+.catch-name { font-size: clamp(1.9rem, 3.6vw, 3.1rem); letter-spacing: -0.02em; line-height: 1.04; margin-bottom: var(--space-sm); }
+.catch-name a { background-image: linear-gradient(var(--aqua), var(--aqua)); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 2px; transition: background-size 400ms var(--ease-editorial); }
+.catch-name a:hover, .catch-name a:focus-visible { background-size: 100% 2px; }
+.catch-desc { color: var(--paper-soft); max-width: 36ch; margin-bottom: var(--space-md); }
+.catch .link-arrow { color: var(--paper); }
+.catch :focus-visible { outline-color: var(--aqua); }
+
+/* depth gauge label, floats near each product like a sounding on a sea chart */
+.catch-depth { position: absolute; z-index: 3; top: -0.4rem; font-family: var(--font-accent); font-style: italic; font-size: 0.95rem; letter-spacing: 0.04em; color: var(--paper-soft); padding-left: 2.6rem; }
+.catch-depth::before { content: ''; position: absolute; left: 0; top: 50%; width: 2rem; height: 1px; background: rgba(var(--aqua-rgb), 0.55); }
+
+/* 1: a tall arch (a doorway to the sea), text tucked at its right foot */
+.catch-item--1 { grid-column: 1 / 9; grid-template-columns: 5fr 3fr; }
+.catch-item--1 .catch-media { aspect-ratio: 4 / 5; border-radius: 999px 999px 0 0; }
+.catch-item--1 .catch-depth { left: 0; }
+/* 2: a round porthole, pushed down the right edge */
+.catch-item--2 { grid-column: 8 / 13; margin-top: 7rem; grid-template-columns: 1fr; }
+.catch-item--2 .catch-media { aspect-ratio: 1; border-radius: 50%; width: 82%; margin-left: auto; }
+.catch-item--2 .catch-body { padding-right: 18%; }
+.catch-item--2 .catch-depth { right: 0; padding: 0 2.6rem 0 0; }
+.catch-item--2 .catch-depth::before { left: auto; right: 0; }
+/* 3: a pebble, wide, text on the left */
+.catch-item--3 { grid-column: 2 / 10; grid-template-columns: 3fr 4fr; margin-top: -2rem; }
+.catch-item--3 .catch-media { grid-column: 2; grid-row: 1; aspect-ratio: 5 / 4; border-radius: 62% 38% 54% 46% / 52% 60% 40% 48%; }
+.catch-item--3 .catch-body { grid-column: 1; grid-row: 1; }
+.catch-item--3 .catch-depth { left: 0; }
+/* 4: a leaning oval, offset into the margin */
+.catch-item--4 { grid-column: 6 / 13; grid-template-columns: 4fr 3fr; margin-top: 3rem; }
+.catch-item--4 .catch-media { aspect-ratio: 3 / 4; border-radius: 48% 52% 46% 54% / 62% 38% 62% 38%; }
+.catch-item--4 .catch-depth { left: 0; }
+
+@media (max-width: 980px) {
+  .catch { padding-bottom: calc(var(--space-xl) + 3rem); }
+  .shoal { grid-template-columns: 1fr; row-gap: var(--space-xl); }
+  .catch-item, .catch-item--1, .catch-item--2, .catch-item--3, .catch-item--4 { grid-column: 1; margin-top: 0; grid-template-columns: 1fr; gap: var(--space-sm); }
+  .catch-item--1 .catch-media, .catch-item--3 .catch-media, .catch-item--4 .catch-media { width: 86%; grid-column: 1; grid-row: auto; }
+  .catch-item--1 .catch-media, .catch-item--4 .catch-media { aspect-ratio: 4 / 5; }
+  .catch-item--3 .catch-media { aspect-ratio: 5 / 4; margin-left: auto; }
+  .catch-item--3 .catch-body { grid-column: 1; grid-row: auto; order: 2; }
+  .catch-item--2 .catch-media { width: 74%; }
+  .catch-item--2 .catch-body { padding-right: 0; }
+  .catch-item--2 .catch-depth { right: auto; left: 0; padding: 0 0 0 2.6rem; }
+  .catch-item--2 .catch-depth::before { left: 0; right: auto; }
+  .catch-depth { top: -1.6rem; }
+  .catch-fish--b { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catch-fish, .bubble, .catch-weed path { animation: none; }
+  .catch-fish--a { left: 70%; }
+  .bubble { opacity: 0.5; bottom: 20%; }
+}

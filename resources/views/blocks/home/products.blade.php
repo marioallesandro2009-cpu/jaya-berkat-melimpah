@@ -46,6 +46,10 @@
                     </div>
                 </article>
             @endforeach
+
+            <div class="products-all reveal">
+                <a href="{{ \App\Support\Links::page('products') }}" class="btn btn--dark">{{ $texts['product_all'] }} <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
         </div>
     </section>
 @endif

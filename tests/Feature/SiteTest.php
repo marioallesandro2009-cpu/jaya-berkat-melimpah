@@ -65,3 +65,10 @@ it('ignores the form when the honeypot is filled', function () {
 
     expect(ContactMessage::query()->count())->toBe(0);
 });
+
+it('lists every product on the all-products page in both languages', function () {
+    $this->get('/products')->assertOk()->assertSee('Fresh Grouper')->assertSee('shoal', false);
+    $this->get('/id/produk')->assertOk()->assertSee('Kerapu Segar');
+    $this->get('/')->assertSee('href="/products"', false);
+    $this->get('/sitemap.xml')->assertSee('/products', false);
+});

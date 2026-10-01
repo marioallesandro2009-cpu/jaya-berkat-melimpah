@@ -24,6 +24,8 @@ foreach (Locales::all() as $locale) {
             Route::get('/', HomeController::class)->name('home');
             // /company, /id/perusahaan
             Route::get($segment('company'), CompanyController::class)->name('company');
+            // All products: /products, /id/produk
+            Route::get($segment('products'), [ProductController::class, 'index'])->name('products.index');
             // Product page: /products/{slug}, /id/produk/{slug} (the catalogue is the home page's #products block)
             Route::get($segment('products').'/{slug}', [ProductController::class, 'show'])
                 ->where('slug', '[a-z0-9-]+')

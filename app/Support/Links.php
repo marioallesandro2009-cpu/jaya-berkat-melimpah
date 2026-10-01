@@ -81,7 +81,7 @@ final class Links
         }
 
         $path = $page === 'home' ? Locales::path(Locales::current()) : self::page($page);
-        $routes = ['home' => ['home', '*.home'], 'company' => ['company', '*.company'], 'news' => ['news.*', '*.news.*']];
+        $routes = ['home' => ['home', '*.home'], 'company' => ['company', '*.company'], 'news' => ['news.*', '*.news.*'], 'products' => ['products.*', '*.products.*']];
 
         return [
             'href' => $path.($anchor ? '#'.$anchor : ''),

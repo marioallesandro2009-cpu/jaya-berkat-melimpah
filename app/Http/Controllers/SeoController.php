@@ -65,7 +65,7 @@ class SeoController extends Controller
         // differs per language (/company, /id/perusahaan), so each page builds its own list.
         $add(Locales::alternates('/'), '1.0');
 
-        foreach (['company' => '0.8', 'news' => '0.7'] as $name => $priority) {
+        foreach (['company' => '0.8', 'products' => '0.8', 'news' => '0.7'] as $name => $priority) {
             $add(array_map(fn (string $path): string => Seo::baseUrl().$path, Links::pagePaths($name)), $priority);
         }
 

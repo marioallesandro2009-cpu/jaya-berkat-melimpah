@@ -39,6 +39,7 @@ class MenuItemResource extends Resource
     public const PAGE_TARGETS = [
         'home' => 'Beranda',
         'company' => 'Perusahaan',
+        'products' => 'Semua produk',
         'company#leadership' => 'Perusahaan: Kepemimpinan',
         'company#certifications' => 'Perusahaan: Sertifikasi',
         'news' => 'Berita (tampil otomatis hanya jika ada artikel terbit)',

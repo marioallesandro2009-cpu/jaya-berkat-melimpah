@@ -14,7 +14,7 @@
         @endif
         <div class="wrap">
             <p class="eyebrow on-dark" data-hero-in="1">
-                <a href="{{ Links::section('products') }}" class="eyebrow-link">← {{ $texts['product_back'] }}</a>
+                <a href="{{ Links::page('products') }}" class="eyebrow-link">← {{ $texts['product_back'] }}</a>
             </p>
             <h1 class="on-dark" data-hero-in="2">{{ $page['name'] }}</h1>
             @if ($page['intro'])

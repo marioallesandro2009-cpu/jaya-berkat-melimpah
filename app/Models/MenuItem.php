@@ -62,6 +62,7 @@ class MenuItem extends Model implements HasTranslatableFields
     public const PAGES = [
         'home' => 'Beranda',
         'company' => 'Perusahaan',
+        'products' => 'Semua produk',
         'news' => 'Berita (hanya tampil jika ada artikel terbit)',
     ];
 
