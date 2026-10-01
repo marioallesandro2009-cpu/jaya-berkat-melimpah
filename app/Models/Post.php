@@ -9,6 +9,7 @@ use App\Models\Contracts\HasTranslatableFields;
 use App\Support\Html;
 use App\Support\Locales;
 use App\Support\MediaPresenter;
+use App\Support\SeoAnalyzer;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -100,6 +101,25 @@ class Post extends Model implements HasMedia, HasTranslatableFields
         $locale ??= Locales::current();
 
         return (string) ($this->slugs[$locale] ?? $this->slugs[Locales::default()] ?? $this->slug);
+    }
+
+    /**
+     * On-page SEO score (0-100) for one language, same analysis as the admin panel.
+     */
+    public function seoScore(?string $locale = null): int
+    {
+        $locale ??= Locales::default();
+
+        return SeoAnalyzer::analyze([
+            'title' => $this->translation('title', $locale),
+            'slug' => $this->slugs[$locale] ?? null,
+            'excerpt' => $this->translation('excerpt', $locale),
+            'content' => $this->translation('content', $locale),
+            'seo_title' => $this->translation('seo_title', $locale),
+            'seo_description' => $this->translation('seo_description', $locale),
+            'keyword' => $this->translation('focus_keyword', $locale),
+            'has_cover' => $this->getFirstMedia('cover') !== null,
+        ])['score'];
     }
 
     public function isPublished(): bool

@@ -26,11 +26,11 @@ class PostResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Konten Beranda';
 
-    protected static ?string $modelLabel = 'artikel';
+    protected static ?string $modelLabel = 'artikel blog';
 
-    protected static ?string $pluralModelLabel = 'Berita';
+    protected static ?string $pluralModelLabel = 'Blog';
 
-    protected static ?string $navigationLabel = 'Berita';
+    protected static ?string $navigationLabel = 'Blog';
 
     protected static ?string $recordTitleAttribute = 'title';
 

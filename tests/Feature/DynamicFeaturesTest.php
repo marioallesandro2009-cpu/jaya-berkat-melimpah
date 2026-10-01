@@ -3,11 +3,14 @@
 use App\Filament\Pages\ManageSiteSettings;
 use App\Filament\Resources\MenuItems\Pages\ManageMenuItems;
 use App\Filament\Resources\PageSections\Pages\ManagePageSections;
+use App\Filament\Resources\Posts\Pages\EditPost;
+use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\Faq;
 use App\Models\HeroSlide;
 use App\Models\Location;
 use App\Models\MenuItem;
 use App\Models\PageSection;
+use App\Models\Post;
 use App\Models\Product;
 use App\Models\SiteSetting;
 use App\Models\TrustLogo;
@@ -185,4 +188,30 @@ it('shows partner logos, the FAQ and locations only when they exist', function (
 
 it('keeps the default colours when nothing was changed', function () {
     expect(SiteSetting::current()->cssVariables())->toBe('');
+});
+
+// ---- blog SEO score --------------------------------------------------------------------------
+
+it('shows an SEO score per language in the blog list and scores a post', function () {
+    $post = Post::query()->create([
+        'title' => ['en' => 'Fresh grouper export guide'],
+        'slugs' => ['en' => 'fresh-grouper-export-guide'],
+        'excerpt' => ['en' => 'Short summary'],
+        'content' => ['en' => '<h2>Grouper</h2><p>Fresh grouper export starts at the dock.</p>'],
+        'focus_keyword' => ['en' => 'fresh grouper'],
+        'status' => Post::PUBLISHED,
+        'is_active' => true,
+    ]);
+
+    expect($post->seoScore('en'))->toBeInt()->toBeBetween(1, 100)
+        ->and($post->seoScore('id'))->toBeLessThan($post->seoScore('en'));
+
+    Livewire::test(ListPosts::class)
+        ->assertSuccessful()
+        ->assertSee('SEO EN')
+        ->assertSee($post->seoScore('en').'/100');
+
+    Livewire::test(EditPost::class, ['record' => $post->getKey()])
+        ->assertSuccessful()
+        ->assertSee('Skor SEO');
 });
