@@ -68,15 +68,15 @@ class CatalogSeeder extends Seeder
         }
 
         $rows = [
-            ['dummy-product-1', ['Fresh Grouper', 'Kerapu Segar'],
+            ['product-1', ['Fresh Grouper', 'Kerapu Segar'],
                 ['Prized for its firm, white flesh, our grouper is sourced from Indonesian reef waters and handled to export-grade standards.', 'Dihargai karena dagingnya yang padat dan putih, kerapu kami berasal dari perairan karang Indonesia dan ditangani sesuai standar ekspor.'],
-                ['Placeholder image for fresh grouper (replace with a real photo)', 'Gambar sementara untuk kerapu segar (ganti dengan foto asli)']],
-            ['dummy-product-2', ['Yellowfin Tuna', 'Tuna Sirip Kuning'],
+                ['Sample photo of grouper (replace with your own product photo)', 'Foto contoh kerapu (ganti dengan foto produk Anda)']],
+            ['product-2', ['Yellowfin Tuna', 'Tuna Sirip Kuning'],
                 ['A mainstay of Indonesian fisheries, our yellowfin tuna is handled and processed for both loin and whole-fish export.', 'Andalan perikanan Indonesia, tuna sirip kuning kami ditangani dan diolah untuk ekspor dalam bentuk loin maupun ikan utuh.'],
-                ['Placeholder image for yellowfin tuna (replace with a real photo)', 'Gambar sementara untuk tuna sirip kuning (ganti dengan foto asli)']],
-            ['dummy-product-3', ['Red Snapper', 'Kakap Merah'],
+                ['Sample photo of tuna (replace with your own product photo)', 'Foto contoh tuna (ganti dengan foto produk Anda)']],
+            ['product-3', ['Red Snapper', 'Kakap Merah'],
                 ['Sourced from coastal waters across the archipelago, our red snapper is valued for its clean flavor and consistent quality.', 'Berasal dari perairan pesisir di seluruh nusantara, kakap merah kami dihargai karena rasanya yang bersih dan mutunya yang konsisten.'],
-                ['Placeholder image for red snapper (replace with a real photo)', 'Gambar sementara untuk kakap merah (ganti dengan foto asli)']],
+                ['Sample photo of red snapper (replace with your own product photo)', 'Foto contoh kakap merah (ganti dengan foto produk Anda)']],
         ];
 
         foreach ($rows as $i => [$image, $name, $description, $alt]) {
