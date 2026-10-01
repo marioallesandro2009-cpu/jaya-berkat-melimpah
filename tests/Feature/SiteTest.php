@@ -18,6 +18,9 @@ it('shows the Indonesian text on /id and English on /', function () {
 });
 
 it('hides the news link until a post is published, then shows it', function () {
+    Post::query()->get()->each->delete();
+    FrontendData::flush();
+
     $this->get('/')->assertDontSee('/news"', false);
 
     Post::query()->create(['title' => 'First catch', 'excerpt' => 'Hello', 'status' => Post::PUBLISHED, 'published_at' => now()->subDay(), 'is_active' => true]);

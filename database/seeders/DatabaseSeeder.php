@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PageSectionSeeder::class,
             CatalogSeeder::class,
             CompanySeeder::class,
+            PostSeeder::class,
         ]);
 
         FrontendData::flush();
