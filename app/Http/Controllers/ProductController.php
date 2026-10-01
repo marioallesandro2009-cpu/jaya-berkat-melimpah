@@ -29,7 +29,8 @@ class ProductController extends Controller
             ->filter(fn (ProductCategory $category): bool => isset($counts[$category->id]))
             ->map(fn (ProductCategory $category): array => [...$category->toFrontend(), 'count' => $counts[$category->id]])
             ->values()->all();
-        $current = collect($categories)->firstWhere('slug', (string) $request->query('category'));
+        $wanted = $request->query('category');
+        $current = is_string($wanted) ? collect($categories)->firstWhere('slug', $wanted) : null;
 
         if ($current) {
             $data['products'] = array_values(array_filter($data['products'], fn (array $product): bool => ($product['category']['id'] ?? null) === $current['id']));

@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Database\Seeder;
 
 /**
  * Starting categories (marine, brackish and freshwater). Seeded only while there are none, so
- * categories the admin has edited or removed are never brought back. The sample products are
- * marine species, so they are filed under "Marine".
+ * categories the admin has edited or removed are never brought back. CatalogSeeder files the
+ * sample products (marine species) under "Marine" when it creates them.
  */
 class ProductCategorySeeder extends Seeder
 {
@@ -36,8 +35,5 @@ class ProductCategorySeeder extends Seeder
             ]);
             $category->markTranslationsReviewed('id')->save();
         }
-
-        $marine = ProductCategory::query()->where('slug', 'marine')->value('id');
-        Product::query()->whereNull('category_id')->update(['category_id' => $marine]);
     }
 }

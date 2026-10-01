@@ -6,6 +6,7 @@ use App\Models\ChainStep;
 use App\Models\Contracts\HasTranslatableFields;
 use App\Models\Feature;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Stat;
 use Database\Seeders\Concerns\SeedsImages;
 use Illuminate\Database\Eloquent\Model;
@@ -79,8 +80,11 @@ class CatalogSeeder extends Seeder
                 ['Sample photo of red snapper (replace with your own product photo)', 'Foto contoh kakap merah (ganti dengan foto produk Anda)']],
         ];
 
+        $marine = ProductCategory::query()->where('slug', 'marine')->value('id');
+
         foreach ($rows as $i => [$image, $name, $description, $alt]) {
             $product = $this->create(Product::class, [
+                'category_id' => $marine,
                 'name' => ['en' => $name[0], 'id' => $name[1]],
                 'description' => ['en' => $description[0], 'id' => $description[1]],
                 'image_alt' => ['en' => $alt[0], 'id' => $alt[1]],

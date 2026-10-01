@@ -6,6 +6,7 @@ use App\Models\MenuItem;
 use App\Models\PageSection;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Support\FrontendData;
 use App\Support\Links;
 use Illuminate\Support\Facades\Mail;
@@ -140,4 +141,17 @@ it('renders the notification mail with every field', function () use ($payload) 
     $html = (new ContactMessageReceived(ContactMessage::query()->firstOrFail()))->render();
 
     expect($html)->toContain('Ann Buyer')->toContain('Japan')->toContain('Fresh Grouper')->toContain('5 tons')->toContain('Hello');
+});
+
+it('never errors on odd category filters and keeps category slugs unique', function () {
+    foreach (['/products?category[]=x', '/products?category[a]=b', '/products?category=%00', '/id/produk?category=<script>'] as $url) {
+        $this->get($url)->assertOk()->assertDontSee('<script>alert', false);
+    }
+
+    $a = ProductCategory::query()->create(['name' => ['en' => 'Reef'], 'color' => 'red;}</style>']);
+    $b = ProductCategory::query()->create(['name' => ['en' => 'Reef']]);
+
+    expect($a->slug)->toBe('reef')->and($b->slug)->toBe('reef-2')
+        ->and($a->color)->toBe(ProductCategory::DEFAULT_COLOR)
+        ->and($a->toFrontend()['color'])->toMatch('/^#[0-9a-f]{6}$/i');
 });

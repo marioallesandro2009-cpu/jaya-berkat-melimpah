@@ -43,7 +43,14 @@ class ProductCategory extends Model implements HasTranslatableFields
     protected static function booted(): void
     {
         static::saving(function (self $category): void {
-            $category->slug = Str::slug((string) ($category->slug ?: $category->translation('name', 'en'))) ?: 'category-'.Str::lower(Str::random(6));
+            $base = Str::slug((string) ($category->slug ?: $category->translation('name', 'en'))) ?: 'category';
+            $slug = $base;
+
+            for ($n = 2; static::query()->where('slug', $slug)->whereKeyNot($category->getKey() ?? 0)->exists(); $n++) {
+                $slug = $base.'-'.$n;
+            }
+
+            $category->slug = $slug;
 
             if (! preg_match('/^#[0-9a-fA-F]{6}$/', (string) $category->color)) {
                 $category->color = self::DEFAULT_COLOR;
@@ -69,7 +76,7 @@ class ProductCategory extends Model implements HasTranslatableFields
             'slug' => $this->slug,
             'name' => (string) $this->translate('name'),
             'description' => $this->translate('description'),
-            'color' => $this->color,
+            'color' => preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->color) ? $this->color : self::DEFAULT_COLOR,
             'url' => Links::page('products').'?category='.$this->slug,
         ];
     }
