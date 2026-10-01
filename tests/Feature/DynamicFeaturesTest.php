@@ -5,6 +5,8 @@ use App\Filament\Resources\MenuItems\Pages\ManageMenuItems;
 use App\Filament\Resources\PageSections\Pages\ManagePageSections;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
+use App\Filament\Resources\ProductCategories\Pages\ManageProductCategories;
+use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Models\Faq;
 use App\Models\HeroSlide;
 use App\Models\Location;
@@ -12,10 +14,12 @@ use App\Models\MenuItem;
 use App\Models\PageSection;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\SiteSetting;
 use App\Models\TrustLogo;
 use App\Models\User;
 use App\Support\FrontendData;
+use Filament\Actions\CreateAction;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -214,4 +218,41 @@ it('shows an SEO score per language in the blog list and scores a post', functio
     Livewire::test(EditPost::class, ['record' => $post->getKey()])
         ->assertSuccessful()
         ->assertSee('Skor SEO');
+});
+
+// ---- product categories ----------------------------------------------------------------------
+
+it('manages product categories in the admin and filters the all-products page', function () {
+    Livewire::test(ManageProductCategories::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords(ProductCategory::all())
+        ->callAction(CreateAction::class, ['name' => ['en' => 'Deep sea', 'id' => 'Laut dalam'], 'color' => '#112233', 'is_active' => true])
+        ->assertHasNoActionErrors();
+
+    $deep = ProductCategory::query()->where('slug', 'deep-sea')->firstOrFail();
+    $tuna = Product::query()->whereJsonContains('name->en', 'Yellowfin Tuna')->firstOrFail();
+    $tuna->update(['category_id' => $deep->id]);
+    FrontendData::flush();
+
+    $this->get('/products')->assertOk()->assertSee('Deep sea')->assertSee('?category=deep-sea', false);
+    $this->get('/products?category=deep-sea')->assertOk()->assertSee('Yellowfin Tuna')->assertDontSee('Fresh Grouper');
+    $this->get('/id/produk?category=marine')->assertOk()->assertSee('Kerapu Segar')->assertDontSee('Tuna Sirip Kuning');
+    // an empty or hidden category is not offered
+    $this->get('/products')->assertDontSee('?category=freshwater', false);
+
+    // deleting a category keeps its products
+    $deep->delete();
+    expect($tuna->fresh()->category_id)->toBeNull();
+    $this->get('/products')->assertSee('Yellowfin Tuna');
+});
+
+it('lets the product list change categories in bulk and shows the category column', function () {
+    $freshwater = ProductCategory::query()->where('slug', 'freshwater')->firstOrFail();
+
+    Livewire::test(ListProducts::class)
+        ->assertSuccessful()
+        ->assertTableColumnExists('category.name')
+        ->callTableBulkAction('category', Product::all(), ['category_id' => $freshwater->id]);
+
+    expect(Product::query()->where('category_id', $freshwater->id)->count())->toBe(Product::count());
 });

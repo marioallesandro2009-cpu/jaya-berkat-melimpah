@@ -71,7 +71,7 @@ final class FrontendData
                 // Keyed by section key; a hidden (inactive) section is simply missing.
                 'sections' => PageSection::query()->active()->with('media')->get()->mapWithKeys(fn (PageSection $s): array => [$s->key => $s->toFrontend()])->all(),
                 'stats' => array_values(Stat::query()->active()->ordered()->get()->map->toFrontend()->all()),
-                'products' => array_values(Product::query()->active()->ordered()->with('media')->get()->map->toFrontend()->all()),
+                'products' => array_values(Product::query()->active()->ordered()->with(['media', 'category'])->get()->map->toFrontend()->all()),
                 'chain' => array_values(ChainStep::query()->active()->ordered()->with('media')->get()->map->toFrontend()->all()),
                 'features' => $features,
                 'timeline' => array_values(TimelineItem::query()->active()->ordered()->get()->map->toFrontend()->all()),

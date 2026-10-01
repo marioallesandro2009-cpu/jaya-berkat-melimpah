@@ -34,6 +34,22 @@
         </div>
 
         <div class="wrap">
+            @if ($categories)
+                <nav class="catch-filter" aria-label="{{ $texts['product_categories'] }}">
+                    <a href="{{ \App\Support\Links::page('products') }}" class="chip {{ $currentCategory ? '' : 'is-active' }}" @if (! $currentCategory) aria-current="page" @endif>
+                        {{ $texts['product_all'] }} <span class="chip-count">{{ $totalProducts }}</span>
+                    </a>
+                    @foreach ($categories as $category)
+                        <a href="{{ $category['url'] }}" class="chip {{ ($currentCategory['id'] ?? null) === $category['id'] ? 'is-active' : '' }}" style="--cat: {{ $category['color'] }}" @if (($currentCategory['id'] ?? null) === $category['id']) aria-current="page" @endif>
+                            <span class="chip-dot" aria-hidden="true"></span>{{ $category['name'] }} <span class="chip-count">{{ $category['count'] }}</span>
+                        </a>
+                    @endforeach
+                </nav>
+                @if ($currentCategory && $currentCategory['description'])
+                    <p class="catch-filter-note">{{ $currentCategory['description'] }}</p>
+                @endif
+            @endif
+
             <ol class="shoal">
                 @foreach ($products as $i => $product)
                     @php($tag = $product['url'] ? 'a' : 'div')
@@ -45,7 +61,7 @@
                             </{{ $tag }}>
                         @endif
                         <div class="catch-body reveal">
-                            <span class="catch-num">{{ sprintf('%02d', $i + 1) }}</span>
+                            <span class="catch-num">{{ sprintf('%02d', $i + 1) }}@if ($product['category']) <span class="catch-cat" style="--cat: {{ $product['category']['color'] }}"><span class="chip-dot" aria-hidden="true"></span>{{ $product['category']['name'] }}</span>@endif</span>
                             <h2 class="catch-name">
                                 @if ($product['url'])
                                     <a href="{{ $product['url'] }}">{{ $product['name'] }}</a>

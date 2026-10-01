@@ -14,6 +14,7 @@ use App\Support\MediaPresenter;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -25,6 +26,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * story and a gallery. The name also fills the "Product of interest" choice of the inquiry form.
  *
  * @property int $id
+ * @property int|null $category_id
  * @property string|null $slug
  * @property string $detail_status
  * @property array<string, string|null>|null $name
@@ -39,7 +41,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property bool $is_active
  * @property array<string, array<string, string>>|null $translation_status
  */
-#[Fillable(['slug', 'detail_status', 'name', 'description', 'image_alt', 'intro', 'content', 'specs', 'seo_title', 'seo_description', 'sort_order', 'is_active', 'translation_status'])]
+#[Fillable(['category_id', 'slug', 'detail_status', 'name', 'description', 'image_alt', 'intro', 'content', 'specs', 'seo_title', 'seo_description', 'sort_order', 'is_active', 'translation_status'])]
 class Product extends Model implements HasMedia, HasTranslatableFields
 {
     use FlushesFrontendCache, HasTranslations, InteractsWithMedia, RegistersWebpConversions, Sortable;
@@ -62,6 +64,14 @@ class Product extends Model implements HasMedia, HasTranslatableFields
         static::saving(function (self $product): void {
             $product->slug = Str::slug((string) ($product->slug ?: $product->translation('name', Locales::default()))) ?: null;
         });
+    }
+
+    /**
+     * @return BelongsTo<ProductCategory, $this>
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
     public function registerMediaCollections(): void
@@ -133,6 +143,8 @@ class Product extends Model implements HasMedia, HasTranslatableFields
             'description' => $this->translate('description'),
             'image' => MediaPresenter::image($this->getFirstMedia('image'), 'lg', 'sm', 1200, 600, $this->translate('image_alt') ?? $this->translate('name')),
             'url' => $this->hasDetailPage() ? $this->detailPath() : null,
+            // Only an active category is shown on the site.
+            'category' => $this->category?->is_active ? $this->category->toFrontend() : null,
         ];
     }
 

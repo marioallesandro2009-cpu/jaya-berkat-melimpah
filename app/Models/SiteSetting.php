@@ -137,6 +137,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
         'product_other' => 'Other products',
         'product_all' => 'All products',
         'product_back' => 'Back to products',
+        'product_categories' => 'Product categories',
         'skip_link' => 'Skip to content',
         'menu_open' => 'Open menu',
         'menu_close' => 'Close menu',
@@ -190,6 +191,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
             'product_other' => 'Judul produk lainnya',
             'product_all' => 'Tautan semua produk',
             'product_back' => 'Tautan kembali ke produk',
+            'product_categories' => 'Nama navigasi filter kategori (pembaca layar)',
         ],
         'Aksesibilitas (dibaca pembaca layar)' => [
             'skip_link' => 'Tautan "lewati ke konten"',

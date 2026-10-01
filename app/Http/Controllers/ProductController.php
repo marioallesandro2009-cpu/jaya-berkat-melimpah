@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Support\FrontendData;
 use App\Support\Links;
 use App\Support\Locales;
 use App\Support\Seo;
 use App\Support\StructuredData;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 /**
  * A product's own page: /products/{slug}, /id/produk/{slug}. Only products whose detail page is
@@ -16,9 +18,23 @@ use Illuminate\Contracts\View\View;
  */
 class ProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $data = FrontendData::all();
+        $totalProducts = count($data['products']);
+
+        // Category chips: only active categories that have at least one visible product.
+        $counts = array_count_values(array_filter(array_map(fn (array $product): ?int => $product['category']['id'] ?? null, $data['products'])));
+        $categories = ProductCategory::query()->active()->ordered()->get()
+            ->filter(fn (ProductCategory $category): bool => isset($counts[$category->id]))
+            ->map(fn (ProductCategory $category): array => [...$category->toFrontend(), 'count' => $counts[$category->id]])
+            ->values()->all();
+        $current = collect($categories)->firstWhere('slug', (string) $request->query('category'));
+
+        if ($current) {
+            $data['products'] = array_values(array_filter($data['products'], fn (array $product): bool => ($product['category']['id'] ?? null) === $current['id']));
+        }
+
         $section = $data['sections']['products'] ?? null;
         $seo = Seo::page($data, 'products', (string) ($section['title'] ?? __('Products')), $section['body'] ?? null, $data['products'][0]['image'] ?? null);
 
@@ -26,6 +42,9 @@ class ProductController extends Controller
 
         return view('products.index', [
             ...$data,
+            'categories' => $categories,
+            'currentCategory' => $current,
+            'totalProducts' => $totalProducts,
             'seo' => $seo,
             'jsonLd' => StructuredData::page($data, $seo),
         ]);

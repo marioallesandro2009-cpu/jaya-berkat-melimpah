@@ -1069,3 +1069,13 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
   .catch-fish--a { left: 70%; }
   .bubble { opacity: 0.5; bottom: 20%; }
 }
+
+/* Category filter on the all-products page */
+.catch-filter { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-lg); }
+.chip { --cat: var(--aqua); display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.6rem 1.15rem; border: 1px solid rgba(var(--warm-off-white-rgb), 0.28); border-radius: 999px; color: var(--paper); font-size: 0.92rem; transition: background var(--dur-fast) var(--ease-editorial), border-color var(--dur-fast) var(--ease-editorial), color var(--dur-fast) var(--ease-editorial); }
+.chip:hover { border-color: var(--cat); }
+.chip.is-active { background: var(--paper); border-color: var(--paper); color: var(--near-black); }
+.chip-dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--cat); flex: none; }
+.chip-count { font-family: var(--font-accent); font-style: italic; opacity: 0.7; }
+.catch-filter-note { max-width: 52ch; margin: calc(var(--space-sm) * -1) 0 var(--space-lg); color: var(--paper-soft); }
+.catch-cat { --cat: var(--aqua); display: inline-flex; align-items: center; gap: 0.4rem; margin-left: 0.9rem; font-family: var(--font-body); font-style: normal; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-soft); }

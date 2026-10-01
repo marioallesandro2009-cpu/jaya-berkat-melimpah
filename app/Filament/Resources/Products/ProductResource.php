@@ -2,23 +2,27 @@
 
 namespace App\Filament\Resources\Products;
 
+use App\Filament\Resources\ProductCategories\ProductCategoryResource;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Translatable;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\SiteSetting;
 use App\Support\FrontendData;
 use App\Support\ImageConversions;
 use App\Support\ImageUpload;
 use BackedEnum;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,7 +37,9 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use UnitEnum;
 
 class ProductResource extends Resource
@@ -72,6 +78,16 @@ class ProductResource extends Resource
         return $schema->columns(1)->components([
             Tabs::make('product')->persistTabInQueryString()->columnSpanFull()->tabs([
                 Tab::make('Kartu produk')->icon(Heroicon::OutlinedRectangleStack)->schema([
+                    Select::make('category_id')
+                        ->label('Kategori')
+                        ->relationship('category', 'slug')
+                        ->getOptionLabelFromRecordUsing(fn (ProductCategory $record): string => (string) $record->translate('name', 'en'))
+                        ->searchable()
+                        ->preload()
+                        ->placeholder('Tanpa kategori')
+                        ->createOptionForm(ProductCategoryResource::fields())
+                        ->createOptionModalHeading('Kategori baru')
+                        ->helperText('Mis. Air laut, Air payau, Air tawar. Bisa dibuat langsung dari sini (ikon +), atau kelola di menu Kategori Produk.'),
                     Translatable::fields(fn (string $locale): TextInput => TextInput::make("name.{$locale}")
                         ->label(Translatable::label('Nama produk', $locale))
                         ->required(Translatable::isRequired($locale))
@@ -169,14 +185,36 @@ class ProductResource extends Resource
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->label('Foto')->collection('image')->imageHeight(56)->when(ImageConversions::enabled(), fn ($c) => $c->conversion('sm')),
                 Translatable::column('name', 'Nama'),
+                TextColumn::make('category.name')->label('Kategori')->badge()->color('info')
+                    ->state(fn (Product $record): ?string => $record->category?->translation('name', 'en'))
+                    ->placeholder('Tanpa kategori'),
                 TextColumn::make('detail_status')->label('Halaman detail')->badge()
                     ->formatStateUsing(fn (string $state): string => $state === Product::PUBLISHED ? 'Terbit' : 'Draf')
                     ->color(fn (string $state): string => $state === Product::PUBLISHED ? 'success' : 'gray'),
                 ...Translatable::statusColumns(self::LABELS),
                 ToggleColumn::make('is_active')->label('Tampil'),
             ])
+            ->filters([
+                SelectFilter::make('category_id')
+                    ->label('Kategori')
+                    ->options(fn (): array => ProductCategory::query()->ordered()->get()->mapWithKeys(fn (ProductCategory $c): array => [$c->id => (string) $c->translation('name', 'en')])->all())
+                    ->placeholder('Semua kategori'),
+            ])
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->toolbarActions([BulkActionGroup::make([
+                BulkAction::make('category')
+                    ->label('Ubah kategori')
+                    ->icon(Heroicon::OutlinedSquares2x2)
+                    ->schema([
+                        Select::make('category_id')
+                            ->label('Kategori baru')
+                            ->options(fn (): array => ProductCategory::query()->ordered()->get()->mapWithKeys(fn (ProductCategory $c): array => [$c->id => (string) $c->translation('name', 'en')])->all())
+                            ->placeholder('Tanpa kategori'),
+                    ])
+                    ->action(fn (Collection $records, array $data) => $records->each->update(['category_id' => $data['category_id'] ?? null]))
+                    ->deselectRecordsAfterCompletion(),
+                DeleteBulkAction::make(),
+            ])]);
     }
 
     public static function getPages(): array
