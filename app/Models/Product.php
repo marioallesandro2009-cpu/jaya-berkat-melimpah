@@ -143,6 +143,7 @@ class Product extends Model implements HasMedia, HasTranslatableFields
             'description' => $this->translate('description'),
             'image' => MediaPresenter::image($this->getFirstMedia('image'), 'lg', 'sm', 1200, 600, $this->translate('image_alt') ?? $this->translate('name')),
             'url' => $this->hasDetailPage() ? $this->detailPath() : null,
+            'specs' => array_slice($this->specRows(), 0, 4),
             // Only an active category is shown on the site.
             'category' => $this->category?->is_active ? $this->category->toFrontend() : null,
         ];

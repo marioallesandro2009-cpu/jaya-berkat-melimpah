@@ -38,11 +38,14 @@ class Feature extends Model implements HasTranslatableFields
 
     public const VALUE = 'value';
 
+    public const PRODUCT_FORM = 'product_form';
+
     public const GROUPS = [
         self::QUALITY => 'Mutu (baris teks)',
         self::CHECKPOINT => 'Mutu (titik pemeriksaan)',
         self::SUSTAINABILITY => 'Keberlanjutan',
         self::VALUE => 'Nilai perusahaan',
+        self::PRODUCT_FORM => 'Bentuk produk (halaman Semua Produk)',
     ];
 
     protected function casts(): array

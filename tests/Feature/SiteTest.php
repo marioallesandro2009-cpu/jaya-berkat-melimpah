@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ContactMessage;
+use App\Models\Feature;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\User;
@@ -71,4 +72,17 @@ it('lists every product on the all-products page in both languages', function ()
     $this->get('/id/produk')->assertOk()->assertSee('Kerapu Segar');
     $this->get('/')->assertSee('href="/products"', false);
     $this->get('/sitemap.xml')->assertSee('/products', false);
+});
+
+it('shows the refined all-products sections, with the product forms strip only when forms exist', function () {
+    $this->get('/products')->assertOk()
+        ->assertSee('From source to export')->assertSee('Looking for a specific seafood product?')
+        ->assertSee('Every catch has a story.')->assertDontSee('Product forms');
+
+    Feature::query()->create(['group' => Feature::PRODUCT_FORM, 'title' => ['en' => 'Fillet', 'id' => 'Fillet'], 'is_active' => true]);
+    Product::query()->first()->update(['specs' => [['label' => ['en' => 'Handling'], 'value' => ['en' => 'Chilled']]]]);
+    FrontendData::flush();
+
+    $this->get('/products')->assertSee('Product forms')->assertSee('Fillet')->assertSee('Handling')->assertSee('Chilled');
+    $this->get('/id/produk')->assertOk()->assertSee('Dari sumber hingga ekspor');
 });

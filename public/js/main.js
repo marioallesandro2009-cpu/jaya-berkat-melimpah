@@ -92,6 +92,7 @@
   var heroMedia = hero && $('.hero-media', hero);
   var heroContent = hero && $('.hero-content', hero);
   var plx = $$('[data-parallax]');
+  var drift = $$('[data-drift]');                       // slow vertical drift in px (products page depth labels and photos)
   var chain = $('[data-chain]');
   var steps = chain ? $$('.chain-step', chain) : [];
   var frames = chain ? $$('.chain-frame', chain) : [];
@@ -126,6 +127,15 @@
         if (r.bottom < -100 || r.top > vh + 100) return;
         var mid = (r.top + r.height / 2 - vh / 2) / vh;       // -1 .. 1 across the viewport
         el.style.transform = 'translate3d(0,' + (mid * -0.06 * r.height).toFixed(1) + 'px,0)';
+      });
+    }
+
+    if (!reduced && !isMobile()) {
+      drift.forEach(function (el) {
+        var r = el.parentNode.getBoundingClientRect();
+        if (r.bottom < -150 || r.top > vh + 150) return;
+        var mid = (r.top + r.height / 2 - vh / 2) / vh;
+        el.style.transform = 'translate3d(0,' + (mid * -parseFloat(el.getAttribute('data-drift'))).toFixed(1) + 'px,0)';
       });
     }
 
