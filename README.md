@@ -37,12 +37,14 @@ Seeder aman dijalankan ulang: isi yang sudah ada tidak ditimpa.
 | Blok Halaman | teks dan foto tiap blok beranda/perusahaan; **seret untuk mengubah urutan**, sembunyikan blok, atau **tambah blok sendiri** (4 tata letak) |
 | Angka Skala | angka yang naik saat di-scroll (tahun, pasar, tim, kota) |
 | Slide Hero | foto tambahan hero; dua atau lebih slide aktif = hero berganti otomatis |
-| Produk | katalog seafood (juga pilihan di form penawaran) dan **halaman detail** per produk (pengantar, spesifikasi, isi, galeri, SEO) |
+| Produk | katalog seafood (juga pilihan di form penawaran), **kategori** per produk, dan **halaman detail** per produk (pengantar, spesifikasi, isi, galeri, SEO). Semua produk tampil di halaman **/products** (`/id/produk`) dengan filter kategori. Spesifikasi produk tampil sebagai metadata di halaman itu |
+| Kategori Produk | tambah, ubah, urutkan, sembunyikan, dan hapus kategori (mis. Air laut, Air payau, Air tawar). Menghapus kategori tidak menghapus produknya. Produk bisa dipindah kategori massal dari daftar Produk |
+| Blok Teks > Bentuk produk | isi grup "Bentuk produk" (Whole, Fillet, dst.) bila perusahaan memang menyediakannya: tampil di bagian "What we supply" halaman /products. Kosong = baris bentuk tidak tampil |
 | FAQ, Lokasi, Logo Partner | blok FAQ (dengan data terstruktur Google), daftar lokasi, dan baris logo partner; masing-masing tampil di beranda hanya jika ada isinya |
 | Perjalanan (rantai nilai) | tahap Source → Market beserta fotonya |
 | Blok Teks | baris Mutu, titik pemeriksaan, bab Keberlanjutan, nilai perusahaan |
 | Sejarah / Kepemimpinan / Sertifikasi | halaman Perusahaan |
-| Berita | artikel (menu "News" di situs baru muncul setelah ada artikel terbit) |
+| Blog | artikel dengan **skor SEO** langsung per bahasa (panel di form dan kolom di daftar), focus keyword, foto sampul (menu "Blog" di situs baru muncul setelah ada artikel terbit; `/news`, `/id/berita`) |
 | Pesan Masuk | permintaan penawaran dari form, plus notifikasi email |
 
 Setiap teks punya kolom EN dan ID. Kolom ID yang kosong atau berstatus "Draf" menampilkan teks EN

@@ -7,8 +7,9 @@ use Database\Seeders\Concerns\SeedsImages;
 use Illuminate\Database\Seeder;
 
 /**
- * Three sample blog articles so the Blog link and page are visible from day one. Seeded only
- * while there are no articles; replace them in the admin (Blog) before launch.
+ * Three sample blog articles so the Blog link and page are visible while developing. Seeded only
+ * while there are no articles, and never in production: there the Blog link stays hidden until the
+ * first real article is published (admin > Blog).
  */
 class PostSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class PostSeeder extends Seeder
 
     public function run(): void
     {
-        if (Post::query()->exists()) {
+        if (app()->environment('production') || Post::query()->exists()) {
             return;
         }
 

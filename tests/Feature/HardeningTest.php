@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\ContactMessage;
+use App\Models\Post;
 use App\Support\LoginThrottle;
 use App\Support\SafeImage;
+use Database\Seeders\PostSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
@@ -60,4 +62,14 @@ it('re-encodes an image so hidden payloads do not survive', function () {
     $clean = SafeImage::clean($payload, 'image/jpeg');
 
     expect($clean['extension'])->toBe('jpg')->and($clean['content'])->not->toContain('<?php')->not->toContain('system(');
+});
+
+it('never seeds the sample blog posts in production', function () {
+    seedSite();
+    Post::query()->get()->each->delete();
+    app()->detectEnvironment(fn (): string => 'production');
+
+    (new PostSeeder)->run();
+
+    expect(Post::count())->toBe(0);
 });

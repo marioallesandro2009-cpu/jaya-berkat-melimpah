@@ -91,11 +91,14 @@ Tidak ada `php artisan admin:create` tanpa Terminal, jadi akun dibuat lewat SQL:
 - **Cron scheduler** (`php artisan schedule:run` tiap menit) untuk retensi data pribadi: tambahkan di Cron Jobs dengan perintah
   `/usr/local/bin/php /home/NAMAUSER/jbm/artisan schedule:run >> /dev/null 2>&1` (path PHP bisa `ea-php83`; lihat petunjuk di halaman Cron).
 - Isi **semua data DUMMY** lewat admin (angka, sejarah, pimpinan, sertifikasi, kontak, logo, foto produk) sebelum mengumumkan situs.
+- Cek **Kategori Produk** (Air laut, Air payau, Air tawar tersedia sebagai contoh; hapus yang tidak dipakai) dan isi **Spesifikasi** tiap produk bila ada datanya.
+- **Blog** belum berisi artikel di server: menu Blog muncul otomatis setelah artikel pertama diterbitkan.
+- Teks ajakan di halaman produk (Teks & Label, grup Produk) berisi kalimat umum; sesuaikan, dan kosongkan "Isi asal" bila tidak ingin ada baris Origin.
 
 ## Catatan
 
 - Cache konfigurasi/route/view **sengaja tidak** disertakan di zip: cache semacam itu menyimpan path dan nilai `.env` mesin pembuatnya.
   Situs berjalan normal tanpa cache. Bila nanti ada Terminal, jalankan `php artisan optimize` di server.
 - Update berikutnya: unggah zip baru, ekstrak menimpa `jbm/` (jangan timpa `.env` dan `storage/app/public/`), lalu impor migrasi baru
-  (atau jalankan `php artisan migrate --force` lewat cron satu kali).
+  (atau jalankan `php artisan migrate --force` lewat cron satu kali). Dari v1.0.2 ke v1.0.3 ada satu migrasi baru (tabel `product_categories` dan kolom `products.category_id`). Cache konten otomatis dibangun ulang setelah kode berubah.
 - Membuat ulang paket dari kode: `git archive`, `composer install --no-dev --optimize-autoloader`, `php artisan filament:assets`, lalu zip.
