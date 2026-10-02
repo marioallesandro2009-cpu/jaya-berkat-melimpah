@@ -1311,3 +1311,17 @@ a.pforms-name:hover, a.pforms-name:focus-visible { color: var(--paper); }
 .depth-gauge-now { font-size: 0.78rem; padding-left: 0.7rem; }
 @media (min-width: 1200px) and (max-width: 1439px) { .depth-gauge { display: none; } }
 @media (min-width: 981px) { .catch-item { padding-top: 2.6rem; } .catch-item--4 { padding-top: 2.6rem; } .catch-depth { top: 0; } }
+
+/* every product uses the same composition: photo at the left edge, text rows running from the photo to the right edge */
+@media (min-width: 981px) {
+  .shoal { row-gap: 6rem; }
+  .catch-item, .catch-item--1, .catch-item--2, .catch-item--3, .catch-item--4 { grid-column: 1 / 13; grid-template-columns: minmax(0, 29rem) minmax(0, 1fr); margin-top: 0; padding-left: 0; }
+  .catch-item .catch-media { grid-column: 1; grid-row: 1; width: 100%; margin-left: 0; aspect-ratio: 5 / 6; }
+  .catch-item .catch-body { grid-column: 2; grid-row: 1; padding-right: 0; }
+  .catch-item .catch-depth { left: 0; right: auto; padding: 0 0 0 2.6rem; }
+  .catch-item .catch-depth::before { left: 0; right: auto; }
+  .fish-wrap--1 { left: 33%; top: 3%; right: auto; bottom: auto; }
+  .fish-wrap--2 { left: 12%; top: -1.2rem; right: auto; bottom: auto; }
+  .fish-wrap--3 { left: auto; right: 6%; top: 14%; bottom: auto; }
+  .fish-wrap--4 { left: 31%; right: auto; top: auto; bottom: 8%; }
+}
