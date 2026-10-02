@@ -986,11 +986,20 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
 .catch-decor { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .catch-contours { position: absolute; inset: 0; width: 100%; height: 100%; }
 .catch-contours path { fill: none; stroke: rgba(var(--aqua-rgb), 0.1); stroke-width: 1.2; }
-.catch-fish { position: absolute; left: -110px; fill: rgba(var(--aqua-rgb), 0.16); animation: fishSwim 42s linear infinite; }
-.catch-fish .eye { fill: var(--deep-ocean); }
-.catch-fish--a { top: 18%; width: 64px; }
-.catch-fish--b { top: 61%; width: 96px; animation-duration: 64s; animation-delay: -24s; animation-direction: reverse; transform: scaleX(-1); }
-@keyframes fishSwim { from { left: -110px; } to { left: calc(100% + 110px); } }
+.catch-fish { position: absolute; left: -200px; color: var(--aqua); opacity: 0.55; height: auto; animation: fishSwim 46s linear infinite, fishBob 6s ease-in-out infinite; }
+.catch-fish--a { top: 17%; width: 150px; }
+.catch-fish--b { top: 60%; width: 210px; opacity: 0.4; animation-duration: 70s, 8s; animation-delay: -28s, -2s; animation-direction: reverse, normal; transform: scaleX(-1); }
+.catch-fish--c { top: 84%; width: 90px; opacity: 0.3; animation-duration: 38s, 5s; animation-delay: -12s, -1s; }
+.fish-tail { transform-origin: 28px 46px; animation: fishTail 1.1s ease-in-out infinite; }
+.fish-pectoral { transform-origin: 118px 54px; animation: fishFin 2.2s ease-in-out infinite; }
+.fish-pelvic { transform-origin: 80px 64px; animation: fishFin 2.6s ease-in-out infinite reverse; }
+.fish-dorsal { transform-origin: 80px 24px; animation: fishFin 3.2s ease-in-out infinite; }
+.fish-gill { animation: fishGill 3.4s ease-in-out infinite; }
+@keyframes fishSwim { from { left: -220px; } to { left: calc(100% + 220px); } }
+@keyframes fishBob { 0%, 100% { margin-top: 0; } 50% { margin-top: -26px; } }
+@keyframes fishTail { 0%, 100% { transform: skewY(-9deg) scaleX(0.96); } 50% { transform: skewY(9deg) scaleX(1.04); } }
+@keyframes fishFin { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(8deg); } }
+@keyframes fishGill { 0%, 100% { stroke-opacity: 0.6; } 50% { stroke-opacity: 0.2; } }
 .bubble { position: absolute; bottom: -24px; border: 1.5px solid rgba(var(--aqua-rgb), 0.35); border-radius: 50%; animation: bubbleRise 16s ease-in infinite; }
 .bubble:nth-of-type(1) { left: 6%; width: 10px; height: 10px; animation-delay: -2s; }
 .bubble:nth-of-type(2) { left: 14%; width: 18px; height: 18px; animation-delay: -9s; animation-duration: 21s; }
@@ -1012,7 +1021,7 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
 
 /* the shoal: 12 columns, each product placed on its own offset and given its own shape */
 .shoal { list-style: none; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--space-md); row-gap: var(--space-lg); }
-.catch-item { position: relative; display: grid; align-items: end; gap: var(--space-md); }
+.catch-item { position: relative; display: grid; align-items: end; gap: var(--space-md); column-gap: clamp(3rem, 7vw, 7rem); }
 .catch-media { display: block; position: relative; overflow: hidden; background: var(--secondary-ocean); }
 .catch-media img { width: 100%; height: 100%; object-fit: cover; }
 .catch-media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(var(--aqua-rgb), 0.25); pointer-events: none; }
@@ -1061,11 +1070,12 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
   .catch-item--2 .catch-depth { right: auto; left: 0; padding: 0 0 0 2.6rem; }
   .catch-item--2 .catch-depth::before { left: 0; right: auto; }
   .catch-depth { top: -1.6rem; }
-  .catch-fish--b { display: none; }
+  .catch-fish--b, .catch-fish--c { display: none; }
+  .catch-fish--a { width: 110px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .catch-fish, .bubble, .catch-weed path { animation: none; }
+  .catch-fish, .bubble, .catch-weed path, .fish-tail, .fish-pectoral, .fish-pelvic, .fish-dorsal, .fish-gill { animation: none; }
   .catch-fish--a { left: 70%; }
   .bubble { opacity: 0.5; bottom: 20%; }
 }

@@ -26,8 +26,9 @@
                 <path d="M-20 1160 C 240 1080, 420 1240, 640 1160 S 1020 1080, 1240 1180" />
                 <path d="M-20 1420 C 200 1340, 400 1500, 650 1420 S 1040 1340, 1240 1440" />
             </svg>
-            <svg class="catch-fish catch-fish--a" viewBox="0 0 70 40" focusable="false"><path d="M0 20 C12 3 36 3 52 20 C36 37 12 37 0 20Z M50 20 L69 6 L69 34Z" /><circle cx="14" cy="17" r="1.6" class="eye" /></svg>
-            <svg class="catch-fish catch-fish--b" viewBox="0 0 70 40" focusable="false"><path d="M0 20 C12 3 36 3 52 20 C36 37 12 37 0 20Z M50 20 L69 6 L69 34Z" /><circle cx="14" cy="17" r="1.6" class="eye" /></svg>
+            <x-ui.fish id="fish-a" class="catch-fish catch-fish--a" />
+            <x-ui.fish id="fish-b" class="catch-fish catch-fish--b" />
+            <x-ui.fish id="fish-c" class="catch-fish catch-fish--c" />
             @for ($b = 0; $b < 12; $b++)
                 <span class="bubble"></span>
             @endfor
