@@ -1325,3 +1325,14 @@ a.pforms-name:hover, a.pforms-name:focus-visible { color: var(--paper); }
   .fish-wrap--3 { left: auto; right: 6%; top: 14%; bottom: auto; }
   .fish-wrap--4 { left: 31%; right: auto; top: auto; bottom: 8%; }
 }
+
+/* alternate sides: odd products have the photo on the left, even products on the right (text still starts at the page edge) */
+@media (min-width: 981px) {
+  .catch-item--2, .catch-item--4 { grid-template-columns: minmax(0, 1fr) minmax(0, 29rem); }
+  .catch-item--2 .catch-media, .catch-item--4 .catch-media { grid-column: 2; }
+  .catch-item--2 .catch-body, .catch-item--4 .catch-body { grid-column: 1; }
+  .catch-item--2 .catch-depth, .catch-item--4 .catch-depth { left: auto; right: 0; padding: 0 2.6rem 0 0; }
+  .catch-item--2 .catch-depth::before, .catch-item--4 .catch-depth::before { left: auto; right: 0; }
+  .fish-wrap--2 { left: 58%; top: -1rem; }
+  .fish-wrap--4 { left: 38%; bottom: 6%; }
+}
