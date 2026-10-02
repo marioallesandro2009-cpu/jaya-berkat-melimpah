@@ -235,8 +235,16 @@ it('manages product categories in the admin and filters the all-products page', 
     FrontendData::flush();
 
     $this->get('/products')->assertOk()->assertSee('Deep sea')->assertSee('?category=deep-sea', false);
-    $this->get('/products?category=deep-sea')->assertOk()->assertSee('Yellowfin Tuna')->assertDontSee('Fresh Grouper');
-    $this->get('/id/produk?category=marine')->assertOk()->assertSee('Kerapu Segar')->assertDontSee('Tuna Sirip Kuning');
+    // the shoal lists only the filtered products ("what we supply" below always lists every species)
+    $shoal = function (string $html): array {
+        preg_match_all('/class="catch-name">(.*?)<\/h2>/s', $html, $names);
+
+        return array_map(fn (string $name): string => trim(strip_tags($name)), $names[1]);
+    };
+    $filtered = $this->get('/products?category=deep-sea')->assertOk()->getContent();
+    expect($shoal($filtered))->toHaveCount(1)->and($shoal($filtered)[0])->toContain('Yellowfin Tuna');
+    $marine = $this->get('/id/produk?category=marine')->assertOk()->getContent();
+    expect($shoal($marine))->toHaveCount(2)->and(implode(' ', $shoal($marine)))->toContain('Kerapu Segar')->not->toContain('Tuna Sirip Kuning');
     // an empty or hidden category is not offered
     $this->get('/products')->assertDontSee('?category=freshwater', false);
 

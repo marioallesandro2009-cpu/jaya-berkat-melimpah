@@ -92,6 +92,13 @@
   var heroMedia = hero && $('.hero-media', hero);
   var heroContent = hero && $('.hero-content', hero);
   var plx = $$('[data-parallax]');
+  var driftX = $$('[data-drift-x]');                    // fish that slide slightly sideways while scrolling
+  var gauge = $('[data-depth-gauge]');
+  var gaugeNow = gauge && $('[data-depth-now]', gauge);
+  var gaugeTrack = gauge && $('.depth-gauge-track', gauge);
+  var gaugeBox = gauge && gauge.parentNode;
+  var gaugeMax = gauge ? parseFloat(gauge.getAttribute('data-depth-max')) : 0;
+  var gaugeLast = '';
   var drift = $$('[data-drift]');                       // slow vertical drift in px (products page depth labels and photos)
   var chain = $('[data-chain]');
   var steps = chain ? $$('.chain-step', chain) : [];
@@ -137,6 +144,24 @@
         var mid = (r.top + r.height / 2 - vh / 2) / vh;
         el.style.transform = 'translate3d(0,' + (mid * -parseFloat(el.getAttribute('data-drift'))).toFixed(1) + 'px,0)';
       });
+    }
+
+    if (!reduced) {
+      driftX.forEach(function (el) {
+        var r = el.parentNode.getBoundingClientRect();
+        if (r.bottom < -150 || r.top > vh + 150) return;
+        var mid = (r.top + r.height / 2 - vh / 2) / vh;
+        el.style.transform = 'translate3d(' + (mid * parseFloat(el.getAttribute('data-drift-x'))).toFixed(1) + 'px,0,0)';
+      });
+    }
+
+    if (gauge) {
+      var gb = gaugeBox.getBoundingClientRect();
+      var gp = clamp((vh * 0.4 - gb.top) / gb.height, 0, 1);
+      var dm = Math.round(gp * gaugeMax / 10) * 10;
+      var label = dm === 0 ? '0 m' : '−' + dm + ' m';
+      if (label !== gaugeLast) { gaugeLast = label; gaugeNow.textContent = label; }
+      gaugeNow.style.transform = 'translate3d(0,' + (gp * (gaugeTrack.clientHeight - 24)).toFixed(1) + 'px,0)';
     }
 
     if (chain && steps.length) {

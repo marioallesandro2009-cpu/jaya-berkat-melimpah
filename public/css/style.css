@@ -1202,3 +1202,85 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
 @media (max-width: 980px) { .catch-item--3 { grid-column: 1; grid-template-columns: 1fr; } }
 @media (max-width: 1180px) { .pjourney-steps { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 600px) { .pjourney-steps { grid-template-columns: 1fr; } .pjourney-steps p { -webkit-line-clamp: unset; display: block; } }
+
+/* ==========================================================================
+   All products — polish pass: hero, depth line, irregular shapes, quieter life, closing sections
+   ========================================================================== */
+
+/* hero: about 70vh, headline then the fact line */
+.catch-head { min-height: 70vh; display: flex; align-items: flex-end; padding-bottom: var(--space-xl); }
+.catch-head .wrap { width: 100%; }
+.catch-meta dd { max-width: 22ch; }
+
+/* every product starts clear of the fixed navbar (anchors, keyboard focus) */
+.catch-item { scroll-margin-top: 8rem; }
+.catch { overflow: hidden; overflow: clip; }   /* clip keeps position: sticky working for the depth line */
+.catch-media, .catch-body { z-index: 1; }
+.catch-body { position: relative; }
+
+/* irregular, organic frames: each product has its own, none is a plain circle or rectangle */
+.catch-item--1 .catch-media { aspect-ratio: 5 / 6; border-radius: 58% 42% 47% 53% / 44% 52% 48% 56%; }
+.catch-item--2 .catch-media { aspect-ratio: 1 / 1.04; border-radius: 46% 54% 61% 39% / 55% 43% 57% 45%; }
+.catch-item--3 .catch-media { aspect-ratio: 16 / 10; border-radius: 38% 62% 52% 48% / 58% 44% 56% 42%; }
+.catch-item--4 .catch-media { aspect-ratio: 3 / 4; border-radius: 52% 48% 40% 60% / 36% 58% 42% 64%; }
+
+/* continuous depth line: a hairline with ticks along the left edge, the reading follows the scroll */
+.depth-gauge { display: none; position: absolute; z-index: 2; top: 0; bottom: 0; left: calc(var(--gutter) * 0.3); width: 4.5rem; pointer-events: none; }
+.depth-gauge-track { position: sticky; top: 7rem; height: calc(100vh - 11rem); border-left: 1px solid rgba(var(--aqua-rgb), 0.28); background: repeating-linear-gradient(to bottom, transparent 0 23px, rgba(var(--aqua-rgb), 0.28) 23px 24px) left top / 7px 100% no-repeat; }
+.depth-gauge-top { display: none; }
+.depth-gauge-now { position: absolute; left: 0; top: 0; padding-left: 0.8rem; font-family: var(--font-accent); font-style: italic; font-size: 0.85rem; letter-spacing: 0.03em; color: var(--paper-soft); white-space: nowrap; will-change: transform; }
+.depth-gauge-now::before { content: ''; position: absolute; left: 0; top: 50%; width: 0.6rem; height: 1px; background: var(--aqua); }
+@media (min-width: 1200px) { .depth-gauge { display: block; } }
+
+/* fish that swim near the image edge, the depth markers and in the open water, never behind the headings */
+.fish-wrap { position: absolute; z-index: 0; pointer-events: none; will-change: transform; }
+.catch-fish-near { display: block; width: 92px; height: auto; color: var(--aqua); opacity: 0.2; animation: fishIdle 11s ease-in-out infinite alternate; }
+.fish-wrap--1 { left: 55%; top: 3%; }
+.fish-wrap--2 { left: 31%; top: -2.4rem; }
+.fish-wrap--2 .catch-fish-near, .fish-wrap--4 .catch-fish-near { transform: scaleX(-1); animation-name: fishIdleFlip; }
+.fish-wrap--3 { left: 21%; top: -2rem; }
+.fish-wrap--4 { right: 5%; top: 16%; }
+@keyframes fishIdle { from { translate: 0 0; } to { translate: 22px -6px; } }
+@keyframes fishIdleFlip { from { translate: 0 0; } to { translate: -22px -6px; } }
+.catch-fish--a { top: 38%; }
+.catch-fish--b { top: 72%; }
+
+/* quieter water: fewer, fainter particles and lines */
+.catch-motes { opacity: 0.5; }
+.bubble { border-color: rgba(var(--aqua-rgb), 0.13); }
+.catch-contours path { stroke: rgba(var(--aqua-rgb), 0.07); }
+
+/* what we supply: the species in large type, forms (if listed) smaller underneath */
+.pforms-title { margin-bottom: var(--space-lg); }
+a.pforms-name { transition: color 400ms var(--ease-editorial); }
+a.pforms-name:hover, a.pforms-name:focus-visible { color: var(--paper); }
+.pforms-label { margin: var(--space-lg) 0 var(--space-xs); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper-soft); }
+.pforms-list--forms .pforms-name { font-size: clamp(1.4rem, 3vw, 2.4rem); }
+.pforms-list--forms li { padding-top: var(--space-xs); padding-bottom: var(--space-xs); }
+
+/* from source to export: display heading, the steps joined by thin arrows */
+.pjourney-title { font-size: clamp(2.4rem, 5.4vw, 4.6rem); font-weight: 400; letter-spacing: -0.03em; line-height: 1; text-transform: none; color: var(--paper); max-width: 11ch; margin-bottom: var(--space-lg); }
+@media (min-width: 1181px) {
+  .pjourney-steps li { position: relative; }
+  .pjourney-steps li:not(:last-child)::after { content: '→'; position: absolute; top: -0.78rem; right: -1.1rem; font-size: 0.85rem; color: rgba(var(--aqua-rgb), 0.7); background: var(--near-black); padding: 0 0.25rem; }
+}
+
+/* the closing call to action is the loudest thing on the page */
+.pcta { min-height: 62vh; display: flex; align-items: center; border-top: 1px solid var(--hairline-dark); }
+.pcta .wrap { width: 100%; }
+.pcta h2 { font-size: clamp(2.8rem, 8.2vw, 7.4rem); max-width: 14ch; }
+.pcta .btn { padding: 1.3rem 2.7rem; font-size: 1.05rem; }
+
+@media (max-width: 980px) {
+  .catch-head { min-height: 58vh; }
+  .fish-wrap { display: none; }
+  .catch-item--1 .catch-media, .catch-item--4 .catch-media { aspect-ratio: 4 / 5; }
+  .catch-item--2 .catch-media { aspect-ratio: 1; }
+  .catch-item--3 .catch-media { aspect-ratio: 4 / 3; }
+  .pcta { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catch-fish-near { animation: none; }
+  .fish-wrap { transform: none !important; }
+}

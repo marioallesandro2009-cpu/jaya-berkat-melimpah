@@ -24,7 +24,7 @@
             <dl class="catch-meta" data-hero-in="4">
                 <div><dt>{{ $texts['products_species'] }}</dt><dd>{{ sprintf('%02d', $totalProducts) }}</dd></div>
                 @if (count($categories) > 0)
-                    <div><dt>{{ $texts['products_categories_label'] }}</dt><dd>{{ sprintf('%02d', count($categories)) }}</dd></div>
+                    <div><dt>{{ $texts['products_categories_label'] }}</dt><dd>{{ collect($categories)->pluck('name')->implode(' / ') }}</dd></div>
                 @endif
                 @if (filled($texts['products_source_value']))
                     <div><dt>{{ $texts['products_source'] }}</dt><dd>{{ $texts['products_source_value'] }}</dd></div>
@@ -50,10 +50,16 @@
             <div class="catch-motes"></div>
             <x-ui.fish id="fish-a" class="catch-fish catch-fish--a" />
             <x-ui.fish id="fish-b" class="catch-fish catch-fish--b" />
-            <x-ui.fish id="fish-c" class="catch-fish catch-fish--c" />
-            @for ($b = 0; $b < 6; $b++)
+            @for ($b = 0; $b < 4; $b++)
                 <span class="bubble"></span>
             @endfor
+        </div>
+
+        <div class="depth-gauge" data-depth-gauge data-depth-max="{{ $depth(max(count($products) - 1, 0)) + 30 }}" aria-hidden="true">
+            <div class="depth-gauge-track">
+                <span class="depth-gauge-top">0 m</span>
+                <span class="depth-gauge-now" data-depth-now>0 m</span>
+            </div>
         </div>
 
         <div class="wrap">
@@ -77,7 +83,8 @@
             <ol class="shoal">
                 @foreach ($products as $i => $product)
                     @php($tag = $product['url'] ? 'a' : 'div')
-                    <li class="catch-item catch-item--{{ ($i % 4) + 1 }}">
+                    <li class="catch-item catch-item--{{ ($i % 4) + 1 }}" id="product-{{ $product['id'] }}">
+                        <span class="fish-wrap fish-wrap--{{ ($i % 4) + 1 }}" data-drift-x="{{ $i % 2 === 0 ? 28 : -28 }}" aria-hidden="true"><x-ui.fish id="fish-n{{ $i }}" class="catch-fish-near" /></span>
                         <span class="catch-depth" data-drift="14" aria-hidden="true">−{{ $depth($i) }} m</span>
                         @if ($product['image'])
                             <{{ $tag }} class="catch-media img-reveal" data-dir="{{ $i % 2 === 0 ? 'l' : 'r' }}" data-drift="22" @if ($product['url']) href="{{ $product['url'] }}" tabindex="-1" aria-hidden="true" @endif>
@@ -96,10 +103,13 @@
                             @if ($product['description'])
                                 <p class="catch-desc">{{ $product['description'] }}</p>
                             @endif
-                            @if ($product['category'] || $product['specs'])
+                            @if ($product['category'] || $product['specs'] || filled($texts['products_source_value']))
                                 <dl class="catch-specs">
                                     @if ($product['category'])
                                         <div><dt>{{ $texts['product_category'] }}</dt><dd>{{ $product['category']['name'] }}</dd></div>
+                                    @endif
+                                    @if (filled($texts['products_source_value']))
+                                        <div><dt>{{ $texts['product_origin'] }}</dt><dd>{{ $texts['products_source_value'] }}</dd></div>
                                     @endif
                                     @foreach ($product['specs'] as $row)
                                         <div><dt>{{ $row['label'] }}</dt><dd>{{ $row['value'] }}</dd></div>
@@ -127,16 +137,30 @@
         </svg>
     </section>
 
-    {{-- ==================== PRODUCT FORMS (hidden until the admin adds forms: Fitur > Bentuk produk) ==================== --}}
-    @if ($forms)
+    {{-- ==================== WHAT WE SUPPLY: the species, then the product forms the admin lists (Fitur > Bentuk produk) ==================== --}}
+    @if ($allProducts)
         <section class="pforms">
             <div class="wrap">
                 <h2 class="pforms-title reveal">{{ $texts['products_forms_title'] }}</h2>
                 <ul class="pforms-list" data-stagger>
-                    @foreach ($forms as $form)
-                        <li><span class="pforms-name">{{ $form['title'] }}</span>@if ($form['body'])<span class="pforms-note">{{ $form['body'] }}</span>@endif</li>
+                    @foreach ($allProducts as $item)
+                        <li>
+                            @if ($item['url'])
+                                <a href="{{ $item['url'] }}" class="pforms-name">{{ $item['name'] }}</a>
+                            @else
+                                <span class="pforms-name">{{ $item['name'] }}</span>
+                            @endif
+                        </li>
                     @endforeach
                 </ul>
+                @if ($forms)
+                    <p class="pforms-label reveal">{{ $texts['products_forms_note'] }}</p>
+                    <ul class="pforms-list pforms-list--forms" data-stagger>
+                        @foreach ($forms as $form)
+                            <li><span class="pforms-name">{{ $form['title'] }}</span>@if ($form['body'])<span class="pforms-note">{{ $form['body'] }}</span>@endif</li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </section>
     @endif

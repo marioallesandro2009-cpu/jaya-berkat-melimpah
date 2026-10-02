@@ -76,13 +76,13 @@ it('lists every product on the all-products page in both languages', function ()
 
 it('shows the refined all-products sections, with the product forms strip only when forms exist', function () {
     $this->get('/products')->assertOk()
-        ->assertSee('From source to export')->assertSee('Looking for a specific seafood product?')
-        ->assertSee('Every catch has a story.')->assertDontSee('Product forms');
+        ->assertSee('From source to export')->assertSee('Looking for a specific product?')
+        ->assertSee('Every catch has a story.')->assertSee('What we supply')->assertDontSee('pforms-list--forms', false);
 
     Feature::query()->create(['group' => Feature::PRODUCT_FORM, 'title' => ['en' => 'Fillet', 'id' => 'Fillet'], 'is_active' => true]);
     Product::query()->first()->update(['specs' => [['label' => ['en' => 'Handling'], 'value' => ['en' => 'Chilled']]]]);
     FrontendData::flush();
 
-    $this->get('/products')->assertSee('Product forms')->assertSee('Fillet')->assertSee('Handling')->assertSee('Chilled');
+    $this->get('/products')->assertSee('pforms-list--forms', false)->assertSee('Fillet')->assertSee('Handling')->assertSee('Chilled');
     $this->get('/id/produk')->assertOk()->assertSee('Dari sumber hingga ekspor');
 });

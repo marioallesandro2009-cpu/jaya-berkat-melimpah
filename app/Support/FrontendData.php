@@ -136,11 +136,28 @@ final class FrontendData
     {
         $version = (int) Cache::get(self::VERSION_KEY, 0);
 
-        return Cache::rememberForever(config('site.cache_key').".{$key}.v{$version}", $build);
+        return Cache::rememberForever(config('site.cache_key').".{$key}.v{$version}.".self::fingerprint(), $build);
     }
 
     private static function key(?string $locale = null): string
     {
-        return config('site.cache_key').'.'.($locale ?? Locales::current());
+        return config('site.cache_key').'.'.($locale ?? Locales::current()).'.'.self::fingerprint();
+    }
+
+    /**
+     * Changes whenever the application code changes (a deploy, a git pull): the newest modification
+     * time of the model files and of this class. Cached content built by older code (missing a new
+     * text or field) is then never read by newer views; it is simply rebuilt.
+     */
+    private static function fingerprint(): string
+    {
+        static $fingerprint = null;
+
+        if ($fingerprint === null) {
+            $times = array_map('filemtime', [...(glob(app_path('Models/*.php')) ?: []), __FILE__]);
+            $fingerprint = dechex((int) max($times));
+        }
+
+        return $fingerprint;
     }
 }

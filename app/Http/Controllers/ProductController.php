@@ -21,7 +21,8 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $data = FrontendData::all();
-        $totalProducts = count($data['products']);
+        $allProducts = $data['products'];
+        $totalProducts = count($allProducts);
 
         // Category chips: only active categories that have at least one visible product.
         $counts = array_count_values(array_filter(array_map(fn (array $product): ?int => $product['category']['id'] ?? null, $data['products'])));
@@ -46,6 +47,7 @@ class ProductController extends Controller
             'categories' => $categories,
             'currentCategory' => $current,
             'totalProducts' => $totalProducts,
+            'allProducts' => $allProducts,
             'seo' => $seo,
             'jsonLd' => StructuredData::page($data, $seo),
         ]);
