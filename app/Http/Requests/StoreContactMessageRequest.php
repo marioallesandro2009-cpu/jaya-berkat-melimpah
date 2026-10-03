@@ -35,6 +35,7 @@ class StoreContactMessageRequest extends FormRequest
             'product' => ['required', 'string', 'max:150'],
             'volume' => ['nullable', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:3000'],
+            'items' => ['nullable', 'string', 'max:1500'],
         ];
     }
 

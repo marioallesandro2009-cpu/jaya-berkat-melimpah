@@ -193,6 +193,97 @@
     }, delay);
   }
 
+  /* ---------- Catalogue refine: submit when a choice changes (it is a plain GET form without JS) ---------- */
+  $$('form[data-autosubmit]').forEach(function (f) {
+    $$('select', f).forEach(function (s) { s.addEventListener('change', function () { $$('select', f).forEach(function (x) { if (!x.value) x.disabled = true; }); f.submit(); }); });
+  });
+
+  /* ---------- Inquiry list: pick several products, send one inquiry (kept in this browser only) ---------- */
+  var INQUIRY_KEY = 'jbm.inquiry';
+  var bar = $('[data-inquiry-bar]');
+  var picked = $('[data-inquiry-picked]');
+  function readInquiry() {
+    try {
+      var list = JSON.parse(localStorage.getItem(INQUIRY_KEY) || '[]');
+      return Array.isArray(list) ? list.filter(function (x) { return x && typeof x.name === 'string' && x.name; }).slice(0, 20) : [];
+    } catch (err) { return []; }
+  }
+  function writeInquiry(list) {
+    try { localStorage.setItem(INQUIRY_KEY, JSON.stringify(list.slice(0, 20))); } catch (err) { /* private mode: the list lives for this page only */ }
+    renderInquiry(list);
+  }
+  function inquiryHas(list, name) { return list.some(function (x) { return x.name === name; }); }
+  function renderInquiryRows(ul, list, removeLabel) {
+    ul.textContent = '';
+    list.forEach(function (item) {
+      var li = document.createElement('li');
+      var span = document.createElement('span');
+      span.textContent = item.name;
+      if (item.code) { var code = document.createElement('span'); code.className = 'inquiry-item-code'; code.textContent = item.code; span.appendChild(code); }
+      var rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'inquiry-remove'; rm.setAttribute('data-inquiry-remove', item.name);
+      rm.setAttribute('aria-label', removeLabel + ': ' + item.name); rm.textContent = '\u00D7';
+      li.appendChild(span); li.appendChild(rm); ul.appendChild(li);
+    });
+  }
+  function renderInquiry(list) {
+    list = list || readInquiry();
+    $$('[data-inquiry-item]').forEach(function (box) {
+      var btn = $('[data-inquiry-add]', box);
+      if (!btn) return;
+      var on = inquiryHas(list, box.getAttribute('data-name'));
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var text = $('.prow-add-text', btn);
+      if (text) text.textContent = btn.getAttribute(on ? 'data-label-added' : 'data-label-add');
+    });
+    if (bar) {
+      var removeLabel = bar.getAttribute('data-remove') || 'Remove';
+      $('[data-inquiry-count]', bar).textContent = list.length;
+      renderInquiryRows($('[data-inquiry-listbox]', bar), list, removeLabel);
+      bar.hidden = list.length === 0;
+      if (!list.length) { $('[data-inquiry-panel]', bar).hidden = true; $('[data-inquiry-toggle]', bar).setAttribute('aria-expanded', 'false'); }
+    }
+    if (picked) {
+      var field = $('#f-items');
+      picked.hidden = list.length === 0;
+      renderInquiryRows($('ul', picked), list, (bar && bar.getAttribute('data-remove')) || 'Remove');
+      if (field) field.value = list.map(function (x) { return x.name + (x.code ? ' (' + x.code + ')' : ''); }).join('\n');
+      var sel = $('#f-product');
+      if (sel && list.length) {
+        var want = list.length === 1 ? list[0].name : 'Other / multiple';
+        if ($('option[value="' + want.replace(/"/g, '\\"') + '"]', sel)) sel.value = want;
+      }
+    }
+  }
+  function clearInquiry() { writeInquiry([]); }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target : null;
+    if (!t) return;
+    var add = t.closest('[data-inquiry-add]');
+    if (add) {
+      var box = add.closest('[data-inquiry-item]');
+      var list = readInquiry(), name = box.getAttribute('data-name');
+      list = inquiryHas(list, name) ? list.filter(function (x) { return x.name !== name; }) : list.concat([{ name: name, code: box.getAttribute('data-code') || '' }]);
+      writeInquiry(list);
+      return;
+    }
+    var rm = t.closest('[data-inquiry-remove]');
+    if (rm) { var n = rm.getAttribute('data-inquiry-remove'); writeInquiry(readInquiry().filter(function (x) { return x.name !== n; })); return; }
+    if (t.closest('[data-inquiry-clear]')) { clearInquiry(); return; }
+    var tog = t.closest('[data-inquiry-toggle]');
+    if (tog && bar) {
+      var panel = $('[data-inquiry-panel]', bar), open = panel.hidden;
+      panel.hidden = !open; tog.setAttribute('aria-expanded', open ? 'true' : 'false');
+      return;
+    }
+    if (bar && !t.closest('[data-inquiry-bar]')) { $('[data-inquiry-panel]', bar).hidden = true; $('[data-inquiry-toggle]', bar).setAttribute('aria-expanded', 'false'); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && bar && !$('[data-inquiry-panel]', bar).hidden) { $('[data-inquiry-panel]', bar).hidden = true; $('[data-inquiry-toggle]', bar).setAttribute('aria-expanded', 'false'); $('[data-inquiry-toggle]', bar).focus(); }
+  });
+  window.addEventListener('storage', function (e) { if (e.key === INQUIRY_KEY) renderInquiry(); });
+  renderInquiry();
+
   /* ---------- Inquiry form: saved on the server (works without JS too) ---------- */
   var form = $('#inquiry-form');
   if (form) {
@@ -244,6 +335,7 @@
       }).then(function (r) {
         if (r.res.ok) {
           form.reset();
+          clearInquiry();
           setStatus(r.body.message, false);
         } else if (r.res.status === 422 && r.body.errors) {
           setStatus(r.body.message || form.getAttribute('data-check'), true);

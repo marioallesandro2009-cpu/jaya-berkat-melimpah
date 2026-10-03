@@ -75,6 +75,12 @@
                     <p class="field-error" id="e-product">{{ $field('product') }}</p>
                 </div>
             </div>
+            {{-- Filled by the inquiry list script (several products, one quote); hidden when the list is empty. --}}
+            <div class="inquiry-picked" data-inquiry-picked hidden>
+                <p class="inquiry-picked-title">{{ $texts['inquiry_items'] }}</p>
+                <ul class="inquiry-picked-list"></ul>
+                <input type="hidden" name="items" id="f-items" value="">
+            </div>
             <div class="field">
                 <label for="f-volume">{{ $texts['form_volume'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
                 <input id="f-volume" name="volume" type="text" placeholder="{{ $texts['form_volume_placeholder'] }}" value="{{ old('volume') }}">

@@ -8,6 +8,8 @@ use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\RegistersWebpConversions;
 use App\Models\Concerns\Sortable;
 use App\Models\Contracts\HasTranslatableFields;
+use App\Support\Links;
+use App\Support\MediaPresenter;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -83,6 +85,36 @@ class Species extends Model implements HasMedia, HasTranslatableFields
     {
         $this->addWebpConversion('lg', 1200, 'image');
         $this->addWebpConversion('sm', 600, 'image');
+    }
+
+    /**
+     * Path of the species page: /products/{category}/{species}, /id/produk/{category}/{species}.
+     */
+    public function detailPath(?string $locale = null): ?string
+    {
+        $category = $this->category;
+
+        return $category ? Links::page('products', $locale).'/'.$category->slug.'/'.$this->slug : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toFrontend(): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'name' => (string) $this->translate('common_name'),
+            'scientific' => $this->scientific_name,
+            'japanese' => $this->japanese_name,
+            'description' => $this->translate('short_description'),
+            'origin' => $this->origin,
+            'habitat' => $this->habitat,
+            'sashimi' => $this->is_sashimi_suitable,
+            'image' => MediaPresenter::image($this->getFirstMedia('image'), 'lg', 'sm', 1600, 1000, (string) $this->translate('common_name')),
+            'url' => $this->detailPath(),
+        ];
     }
 
     /**

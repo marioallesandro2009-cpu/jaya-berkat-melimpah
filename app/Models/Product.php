@@ -204,7 +204,19 @@ class Product extends Model implements HasMedia, HasTranslatableFields
             'specs' => array_slice($this->specRows(), 0, 3),
             'origin' => $this->origin,
             'featured' => $this->is_featured,
-            'species' => $this->species?->is_active ? ['id' => $this->species->id, 'name' => (string) $this->species->translate('common_name')] : null,
+            'species' => $this->species?->is_active ? [
+                'id' => $this->species->id,
+                'slug' => $this->species->slug,
+                'name' => (string) $this->species->translate('common_name'),
+                'scientific' => $this->species->scientific_name,
+                'url' => $this->species->detailPath(),
+            ] : null,
+            'code' => $this->product_code,
+            'cut' => $this->cut_type,
+            'cutSlug' => $this->cut?->slug,
+            'freezing' => $this->freezing_method,
+            'storage' => $this->freezing_method ? self::FREEZING[$this->freezing_method][0].($this->temperature ? ', '.$this->temperature : '') : null,
+            'grade' => $this->sashimi_grade,
             // Only an active category is shown on the site.
             'category' => $this->category?->is_active ? $this->category->toFrontend() : null,
         ];

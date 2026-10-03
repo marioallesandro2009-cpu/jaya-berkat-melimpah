@@ -14,6 +14,7 @@ use App\Models\PageSection;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\SiteSetting;
+use App\Models\Species;
 use App\Models\Stat;
 use App\Models\TimelineItem;
 use App\Models\TrustLogo;
@@ -51,7 +52,7 @@ class SeoController extends Controller
     {
         $lastModified = collect(array_map(
             fn (string $model) => $model::query()->max('updated_at'),
-            [SiteSetting::class, PageSection::class, Stat::class, Product::class, ChainStep::class, Feature::class, TimelineItem::class, Leader::class, Certification::class, Post::class, MenuItem::class, HeroSlide::class, TrustLogo::class, Faq::class, Location::class],
+            [SiteSetting::class, Species::class, PageSection::class, Stat::class, Product::class, ChainStep::class, Feature::class, TimelineItem::class, Leader::class, Certification::class, Post::class, MenuItem::class, HeroSlide::class, TrustLogo::class, Faq::class, Location::class],
         ))->filter()->map(fn ($date) => Carbon::parse($date))->max() ?? now();
 
         $urls = [];
@@ -78,6 +79,21 @@ class SeoController extends Controller
             }
 
             $add($alternates, '0.7', $product->updated_at ? Carbon::parse($product->updated_at) : null);
+        }
+
+        // Species pages (the path differs per language, the slugs do not).
+        foreach (Species::query()->active()->with('category')->get() as $species) {
+            if ($species->category === null) {
+                continue;
+            }
+
+            $alternates = [];
+
+            foreach (Locales::all() as $locale) {
+                $alternates[$locale] = Seo::baseUrl().$species->detailPath($locale);
+            }
+
+            $add($alternates, '0.7', $species->updated_at ? Carbon::parse($species->updated_at) : null);
         }
 
         // Published news articles: their own slug in each language, their own lastmod.

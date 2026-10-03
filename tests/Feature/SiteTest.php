@@ -80,7 +80,7 @@ it('shows the refined all-products sections, with the product forms strip only w
         ->assertSee('Every catch has a story.')->assertSee('What we supply')->assertDontSee('pforms-list--forms', false);
 
     Feature::query()->create(['group' => Feature::PRODUCT_FORM, 'title' => ['en' => 'Fillet', 'id' => 'Fillet'], 'is_active' => true]);
-    Product::query()->first()->update(['specs' => [['label' => ['en' => 'Handling'], 'value' => ['en' => 'Chilled']]]]);
+    Product::query()->where('is_featured', true)->first()->update(['specs' => [['label' => ['en' => 'Handling'], 'value' => ['en' => 'Chilled']]]]);
     FrontendData::flush();
 
     $this->get('/products')->assertSee('pforms-list--forms', false)->assertSee('Fillet')->assertSee('Handling')->assertSee('Chilled');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ContactMessage;
 use App\Models\Cut;
 use App\Models\ProcessingMethod;
 use App\Models\Product;
@@ -66,4 +67,43 @@ it('lets an admin open the catalogue pages and edit a species with its cuts', fu
 
     $yft = Product::query()->where('product_code', 'YFT-LOIN-001')->firstOrFail();
     $this->get("/admin/products/{$yft->id}/edit")->assertOk()->assertSee('Katalog');
+});
+
+it('serves species pages and filters the catalogue', function () {
+    $this->get('/products/tuna/yellowfin-tuna')->assertOk()
+        ->assertSee('Thunnus albacares')->assertSee('Kihada Maguro')->assertSee('Yellowfin Tuna Loin')->assertSee('Bluefin Tuna');
+    $this->get('/id/produk/salmon/atlantic-salmon')->assertOk()->assertSee('Salmo salar');
+    // wrong category for the species, or unknown slugs
+    $this->get('/products/salmon/yellowfin-tuna')->assertNotFound();
+    $this->get('/products/nope/none')->assertNotFound();
+    // species pages are in the sitemap
+    $this->get('/sitemap.xml')->assertSee('/products/tuna/yellowfin-tuna', false)->assertSee('/id/produk/tuna/yellowfin-tuna', false);
+
+    $names = function (string $html): array {
+        preg_match_all('/class="prow-name">(.*?)<\/h4>/s', $html, $m);
+
+        return array_map(fn (string $name): string => trim(strip_tags($name)), $m[1]);
+    };
+
+    expect($names($this->get('/products')->getContent()))->toHaveCount(31)
+        ->and($names($this->get('/products?species=yellowfin-tuna')->getContent()))->toHaveCount(6)
+        ->and($names($this->get('/products?cut=saku')->getContent()))->toHaveCount(7)
+        ->and($names($this->get('/products?storage=fresh')->getContent()))->toHaveCount(7)
+        ->and($names($this->get('/products?cut=saku&storage=super_frozen')->getContent()))->toHaveCount(3)
+        // odd values never break the page and just show everything
+        ->and($names($this->get('/products?species[]=x&cut=%00&grade=nope')->getContent()))->toHaveCount(31);
+});
+
+it('accepts an inquiry list and keeps it in the lead message', function () {
+    $this->postJson('/contact', [
+        'name' => 'Ann Buyer', 'company' => 'Buyer Co', 'email' => 'ann@buyer.test', 'country' => 'Japan', 'product' => 'Other / multiple',
+        'items' => "Yellowfin Tuna Loin (YFT-LOIN-001)\nBluefin Tuna Otoro (BFT-OTO-001)\n\x00bad\x1Fline",
+        'message' => 'Need a quote for both.',
+    ])->assertOk();
+
+    $lead = ContactMessage::query()->latest('id')->firstOrFail();
+
+    expect($lead->message)->toStartWith("Products of interest:\n- Yellowfin Tuna Loin (YFT-LOIN-001)\n- Bluefin Tuna Otoro (BFT-OTO-001)\n- bad line")
+        ->and($lead->message)->toContain('Need a quote for both.')
+        ->and($lead->product_title)->toBe('Other / multiple');
 });

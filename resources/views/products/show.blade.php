@@ -15,13 +15,20 @@
         <div class="wrap">
             <p class="eyebrow on-dark" data-hero-in="1">
                 <a href="{{ Links::page('products') }}" class="eyebrow-link">← {{ $texts['product_back'] }}</a>
+                @if ($page['category'])
+                    <span class="crumb-sep" aria-hidden="true">/</span><a href="{{ $page['category']['url'] }}" class="eyebrow-link">{{ $page['category']['name'] }}</a>
+                @endif
+                @if ($page['species'])
+                    <span class="crumb-sep" aria-hidden="true">/</span><a href="{{ $page['species']['url'] }}" class="eyebrow-link">{{ $page['species']['name'] }}</a>
+                @endif
             </p>
             <h1 class="on-dark" data-hero-in="2">{{ $page['name'] }}</h1>
             @if ($page['intro'])
                 <p class="lede on-dark" data-hero-in="3">{{ $page['intro'] }}</p>
             @endif
-            <div class="hero-cta" data-hero-in="4">
+            <div class="hero-cta" data-hero-in="4" data-inquiry-item data-name="{{ $page['value'] }}" data-code="{{ $page['code'] }}">
                 <a href="{{ Links::contactFor($page['value']) }}" class="btn btn--primary" data-product="{{ $page['value'] }}">{{ $texts['hero_secondary_cta'] }} <span class="arrow" aria-hidden="true">→</span></a>
+                <button type="button" class="btn btn--outline" data-inquiry-add data-label-add="{{ $texts['inquiry_add'] }}" data-label-added="{{ $texts['inquiry_added'] }}" aria-pressed="false"><span class="prow-add-text">{{ $texts['inquiry_add'] }}</span></button>
             </div>
         </div>
     </section>
@@ -66,19 +73,17 @@
         </section>
     @endif
 
-    {{-- ==================== OTHER PRODUCTS ==================== --}}
+    {{-- ==================== OTHER PRODUCTS (same species first) ==================== --}}
     @if ($others)
-        <section class="section section--white other-products">
+        <section class="catalogue other-products">
             <div class="wrap">
-                <h2 class="reveal">{{ $texts['product_other'] }}</h2>
-                <ul class="other-list" data-stagger>
+                <div class="catalogue-head reveal">
+                    <h2>{{ $texts['product_other'] }}</h2>
+                    <a class="catalogue-count" href="{{ Links::page('products') }}">{{ $texts['product_all'] }} →</a>
+                </div>
+                <ul class="plist" data-stagger>
                     @foreach ($others as $other)
-                        <li>
-                            <a href="{{ $other['url'] ?: Links::section('products') }}">
-                                <span>{{ $other['name'] }}</span>
-                                <span class="arrow" aria-hidden="true">→</span>
-                            </a>
-                        </li>
+                        <x-catalog.row :product="$other" :texts="$texts" />
                     @endforeach
                 </ul>
             </div>

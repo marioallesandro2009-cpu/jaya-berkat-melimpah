@@ -42,7 +42,7 @@ class ContactController extends Controller
             'product_id' => $product?->id,
             'product_title' => $name,
             'volume' => $this->clean($data['volume'] ?? null),
-            'message' => filled($data['message'] ?? null) ? trim($data['message']) : null,
+            'message' => $this->composeMessage($data['items'] ?? null, $data['message'] ?? null),
             'locale' => app()->getLocale(),
             'ip' => $request->ip(),
             'user_agent' => mb_substr((string) $request->userAgent(), 0, 255) ?: null,
@@ -84,6 +84,24 @@ class ContactController extends Controller
         }
 
         return redirect(Links::section('contact'))->with('contact_status', $text);
+    }
+
+    /**
+     * The visitor's note, preceded by the inquiry list (one product per line) when several products were picked.
+     */
+    private function composeMessage(?string $items, ?string $message): ?string
+    {
+        $lines = array_slice(array_values(array_filter(array_map(
+            fn (string $line): string => mb_substr((string) $this->clean($line), 0, 120),
+            preg_split('/\R/u', (string) $items) ?: [],
+        ))), 0, 20);
+        $note = filled($message) ? trim((string) $message) : null;
+
+        if ($lines === []) {
+            return $note;
+        }
+
+        return "Products of interest:\n- ".implode("\n- ", $lines).($note !== null ? "\n\n".$note : '');
     }
 
     /**

@@ -237,9 +237,9 @@ it('manages product categories in the admin and filters the all-products page', 
     FrontendData::flush();
 
     $this->get('/products')->assertOk()->assertSee('Deep sea')->assertSee('?category=deep-sea', false);
-    // the shoal lists only the filtered products ("what we supply" below always lists every species)
+    // the catalogue rows list only the filtered products ("what we supply" below always lists every species)
     $shoal = function (string $html): array {
-        preg_match_all('/class="catch-name">(.*?)<\/h2>/s', $html, $names);
+        preg_match_all('/class="prow-name">(.*?)<\/h4>/s', $html, $names);
 
         return array_map(fn (string $name): string => trim(strip_tags($name)), $names[1]);
     };

@@ -56,12 +56,14 @@
             @endfor
         </div>
 
-        <div class="depth-gauge" data-depth-gauge data-depth-max="{{ $depth(max(count($products) - 1, 0)) + 30 }}" aria-hidden="true">
+        @if ($featured)
+        <div class="depth-gauge" data-depth-gauge data-depth-max="{{ $depth(max(count($featured) - 1, 0)) + 30 }}" aria-hidden="true">
             <div class="depth-gauge-track">
                 <span class="depth-gauge-top">0 m</span>
                 <span class="depth-gauge-now" data-depth-now>0 m</span>
             </div>
         </div>
+        @endif
 
         <div class="wrap">
             @if ($categories)
@@ -81,8 +83,34 @@
                 @endif
             @endif
 
+            {{-- Refine: species, cut, storage, grade. A plain GET form, it works without JavaScript (the script submits on change). --}}
+            <form class="catch-refine" method="get" action="{{ Links::page('products') }}" data-autosubmit>
+                @if ($currentCategory)
+                    <input type="hidden" name="category" value="{{ $currentCategory['slug'] }}">
+                @endif
+                @foreach (['species' => 'products_species', 'cut' => 'filter_cut', 'storage' => 'filter_storage', 'grade' => 'filter_grade'] as $name => $labelKey)
+                    @if (count($options[$name]) > 1 || $filters[$name])
+                        <label class="refine">
+                            <span>{{ $texts[$labelKey] }}</span>
+                            <select name="{{ $name }}">
+                                <option value="">{{ $texts['filter_all'] }}</option>
+                                @foreach ($options[$name] as $key => $option)
+                                    <option value="{{ $key }}" @selected($filters[$name] === $key)>{{ $option['label'] }} ({{ $option['count'] }})</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+                @endforeach
+                <noscript><button type="submit" class="btn btn--outline">{{ $texts['filter_apply'] }}</button></noscript>
+                @if ($active)
+                    <a class="refine-clear" href="{{ Links::page('products') }}">{{ $texts['filter_clear'] }} <span aria-hidden="true">×</span></a>
+                @endif
+            </form>
+
+            @if ($featured)
+                <h2 class="catch-subhead reveal"><span>{{ $texts['catalog_featured'] }}</span></h2>
             <ol class="shoal">
-                @foreach ($products as $i => $product)
+                @foreach ($featured as $i => $product)
                     @php($tag = $product['url'] ? 'a' : 'div')
                     <li class="catch-item catch-item--{{ ($i % 4) + 1 }}" id="product-{{ $product['id'] }}">
                         <span class="fish-wrap fish-wrap--{{ ($i % 4) + 1 }}" data-drift-x="{{ $i % 2 === 0 ? 28 : -28 }}" aria-hidden="true"><x-ui.fish id="fish-n{{ $i }}" class="catch-fish-near" /></span>
@@ -129,6 +157,7 @@
                     </li>
                 @endforeach
             </ol>
+            @endif
         </div>
 
         <svg class="catch-weed" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -136,6 +165,37 @@
             <path class="w2" d="M520 120 C 500 84, 540 56, 520 14 M560 120 C 580 90, 548 60, 566 26" />
             <path class="w1" d="M1020 120 C 1000 88, 1040 58, 1018 16 M1062 120 C 1082 84, 1050 54, 1072 4 M1110 120 C 1092 94, 1124 70, 1108 40" />
         </svg>
+    </section>
+
+    {{-- ==================== CATALOGUE: every product as one row, grouped by category ==================== --}}
+    <section class="catalogue" id="catalogue">
+        <div class="wrap">
+            <div class="catalogue-head reveal">
+                <h2>{{ $active ? $texts['catalog_results'] : $texts['catalog_full'] }}</h2>
+                <p class="catalogue-count">{{ count($products) }} {{ $texts['catalog_count'] }}</p>
+            </div>
+
+            @forelse ($groups as $group)
+                <div class="cgroup">
+                    @if ($group['category'])
+                        <h3 class="cgroup-title reveal" style="--cat: {{ $group['category']['color'] }}">
+                            <span class="chip-dot" aria-hidden="true"></span>{{ $group['category']['name'] }}
+                            <span class="cgroup-count">{{ count($group['products']) }}</span>
+                        </h3>
+                        @if ($group['category']['description'])
+                            <p class="cgroup-note reveal">{{ $group['category']['description'] }}</p>
+                        @endif
+                    @endif
+                    <ul class="plist" data-stagger>
+                        @foreach ($group['products'] as $product)
+                            <x-catalog.row :product="$product" :texts="$texts" />
+                        @endforeach
+                    </ul>
+                </div>
+            @empty
+                <p class="catalogue-empty">{{ $texts['catalog_no_results'] }} <a href="{{ Links::page('products') }}">{{ $texts['filter_clear'] }}</a></p>
+            @endforelse
+        </div>
     </section>
 
     {{-- ==================== WHAT WE SUPPLY: the species, then the product forms the admin lists (Fitur > Bentuk produk) ==================== --}}

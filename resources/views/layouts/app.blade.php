@@ -100,6 +100,16 @@
 
         <x-layout.footer :settings="$settings" />
 
+        {{-- Inquiry list (products picked on the catalogue), shown by main.js only while the list is not empty. --}}
+        <div class="inquiry-bar" data-inquiry-bar data-remove="{{ $settings['texts']['inquiry_remove'] }}" hidden>
+            <div class="inquiry-panel" id="inquiry-panel" data-inquiry-panel hidden>
+                <div class="inquiry-panel-head"><strong>{{ $settings['texts']['inquiry_list'] }}</strong><button type="button" data-inquiry-clear>{{ $settings['texts']['inquiry_clear'] }}</button></div>
+                <ul class="inquiry-panel-list" data-inquiry-listbox></ul>
+                <a class="btn btn--primary" href="{{ \App\Support\Links::section('contact') }}" data-no-transition>{{ $settings['texts']['hero_secondary_cta'] }} <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+            <button type="button" class="inquiry-toggle" data-inquiry-toggle aria-expanded="false" aria-controls="inquiry-panel"><span class="inquiry-count" data-inquiry-count>0</span> {{ $settings['texts']['inquiry_list'] }}</button>
+        </div>
+
         <script src="{{ $asset('js/main.js') }}" @if ($nonce) nonce="{{ $nonce }}" @endif defer></script>
     </body>
 </html>
