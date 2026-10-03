@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Admin (Filament) — "deep water" skin for the JBM CMS.
+   Loaded by the admin panel only (App\Providers\Filament\AdminPanelProvider, view filament/admin-styles).
+   Plain CSS on top of Filament's own classes (fi-*): no theme build. Palette and fonts match the site.
+   ========================================================================== */
+
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/schibsted-grotesk-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/schibsted-grotesk-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/schibsted-grotesk-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-latin-400-italic.woff2') format('woff2'); }
+
+:root {
+  --o-950: #071A21;
+  --o-900: #0A2530;
+  --o-800: #123A43;
+  --o-700: #184F65;
+  --o-600: #1E6680;
+  --aqua: #7CC4E4;
+  --aqua-soft: #B5DDE9;
+  --foam: #EDF6F8;
+  --foam-2: #E1EFF3;
+  --surface: #FFFFFF;
+  --line: rgba(18, 58, 67, 0.11);
+  --line-strong: rgba(18, 58, 67, 0.2);
+  --shadow: 0 1px 2px rgba(7, 26, 33, 0.05), 0 12px 28px -16px rgba(7, 26, 33, 0.28);
+  --coral: #C97B4A;
+  --font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --serif: 'Fraunces', Georgia, serif;
+  /* a wave line, reused as a divider */
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='10' viewBox='0 0 64 10'%3E%3Cpath d='M0 5 Q8 0 16 5 T32 5 T48 5 T64 5' fill='none' stroke='%237CC4E4' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.dark {
+  --foam: #061219;
+  --foam-2: #08171F;
+  --surface: #0B222C;
+  --line: rgba(124, 196, 228, 0.14);
+  --line-strong: rgba(124, 196, 228, 0.26);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 14px 30px -16px rgba(0, 0, 0, 0.7);
+}
+
+::selection { background: rgba(124, 196, 228, 0.35); }
+
+body.fi-body, .fi-body { font-family: var(--font-family); }
+
+/* ---------- canvas ---------- */
+.fi-layout, .fi-body:has(.fi-layout) { background: linear-gradient(180deg, var(--foam) 0%, var(--foam-2) 100%); }
+.fi-main-ctn { background: transparent; }
+.fi-main-ctn::before {
+  /* faint contour lines in the corner of the work area */
+  content: ''; position: fixed; right: 0; bottom: 0; width: min(900px, 80vw); height: 420px; pointer-events: none; z-index: 0; opacity: 0.55;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='420' viewBox='0 0 900 420'%3E%3Cg fill='none' stroke='%231E6680' stroke-opacity='0.09' stroke-width='1.2'%3E%3Cpath d='M0 330 C150 270 300 390 460 330 S760 250 900 320'/%3E%3Cpath d='M0 370 C160 310 310 430 470 370 S770 290 900 360'/%3E%3Cpath d='M0 410 C170 350 320 470 480 410 S780 330 900 400'/%3E%3C/g%3E%3C/svg%3E") right bottom / contain no-repeat;
+}
+.fi-main { position: relative; z-index: 1; }
+
+/* ---------- sidebar: deep water with a tide at the foot ---------- */
+.fi-sidebar, .fi-sidebar-header { background: transparent; }
+.fi-sidebar {
+  background: linear-gradient(180deg, var(--o-950) 0%, #0A2833 55%, var(--o-800) 100%);
+  border-inline-end: 1px solid rgba(124, 196, 228, 0.12);
+  box-shadow: none; --tw-ring-shadow: 0 0 #0000;
+  color: #E9F1F3;
+}
+.fi-sidebar-header {
+  background: transparent; box-shadow: none; --tw-ring-shadow: 0 0 #0000;
+  border-bottom: 1px solid rgba(124, 196, 228, 0.14);
+}
+.fi-logo { font-family: var(--serif); font-weight: 400; font-size: 1.12rem; letter-spacing: 0.01em; color: var(--o-800); display: inline-flex; align-items: center; gap: 0.6rem; }
+.dark .fi-logo, .fi-sidebar .fi-logo { color: #F5F4EF; }
+.fi-topbar .fi-logo::before { filter: brightness(0.55) saturate(1.3); }
+.dark .fi-topbar .fi-logo::before { filter: none; }
+.fi-logo::before {
+  content: ''; flex: none; width: 30px; height: 18px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 18'%3E%3Cpath d='M1 8 C5 1 13 1 18 8 C13 15 5 15 1 8Z M17 8 L27 2 L27 14Z' fill='%237CC4E4'/%3E%3Ccircle cx='6' cy='6.6' r='1.2' fill='%23071A21'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.fi-sidebar-nav { padding-bottom: 7rem; }
+.fi-sidebar-group-label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(181, 221, 233, 0.72); font-weight: 500; }
+.fi-sidebar-group-btn { color: rgba(181, 221, 233, 0.72); }
+.fi-sidebar-group-collapse-btn { color: rgba(181, 221, 233, 0.6); }
+.fi-sidebar-item-btn { color: #D6E6EA; border-radius: 10px; transition: background 180ms ease, color 180ms ease; }
+.fi-sidebar-item-btn:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
+.fi-sidebar-item-btn .fi-sidebar-item-label { color: inherit; }
+.fi-sidebar-item-btn .fi-sidebar-item-icon { color: rgba(124, 196, 228, 0.85); }
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+  background: linear-gradient(90deg, rgba(124, 196, 228, 0.22), rgba(124, 196, 228, 0.06));
+  color: #fff; box-shadow: inset 3px 0 0 var(--aqua);
+}
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon { color: var(--aqua); }
+.fi-sidebar-item-badge, .fi-sidebar-item .fi-badge { font-size: 0.7rem; }
+.fi-sidebar-nav::-webkit-scrollbar { width: 6px; }
+.fi-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(124, 196, 228, 0.25); border-radius: 9px; }
+/* the tide: two slow waves along the bottom edge of the sidebar */
+.fi-sidebar::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 84px; pointer-events: none; z-index: 0; opacity: 0.9;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='84' viewBox='0 0 400 84'%3E%3Cpath d='M0 46 C50 24 100 24 150 46 S250 68 300 46 S350 24 400 46 V84 H0Z' fill='%237CC4E4' fill-opacity='0.13'/%3E%3C/svg%3E") 0 100% / 400px 84px repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='84' viewBox='0 0 400 84'%3E%3Cpath d='M0 58 C60 40 120 40 180 58 S300 76 360 58 L400 54 V84 H0Z' fill='%237CC4E4' fill-opacity='0.1'/%3E%3C/svg%3E") 0 100% / 400px 84px repeat-x;
+  animation: tide 26s linear infinite;
+}
+.fi-sidebar > * { position: relative; z-index: 1; }
+@keyframes tide { to { background-position: 400px 100%, -400px 100%; } }
+
+/* ---------- top bar ---------- */
+.fi-topbar { background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(10px); box-shadow: none; --tw-ring-shadow: 0 0 #0000; border-bottom: 1px solid var(--line); position: sticky; }
+.dark .fi-topbar { background: rgba(8, 23, 31, 0.82); }
+.fi-topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, transparent, rgba(124, 196, 228, 0.55) 20%, rgba(124, 196, 228, 0.55) 80%, transparent); pointer-events: none; }
+
+/* ---------- page header ---------- */
+.fi-header-heading { font-family: var(--serif); font-weight: 400; font-size: 2.15rem; letter-spacing: -0.012em; line-height: 1.1; color: var(--o-800); }
+.dark .fi-header-heading { color: #EAF4F7; }
+.fi-header-heading::after { content: ''; display: block; width: 64px; height: 10px; margin-top: 0.55rem; background: var(--wave) left center / contain no-repeat; }
+.fi-breadcrumbs-item-label { font-family: var(--serif); font-style: italic; font-size: 0.9rem; color: var(--o-600); }
+.dark .fi-breadcrumbs-item-label { color: var(--aqua); }
+
+/* ---------- surfaces ---------- */
+.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat, .fi-fo-field-wrp-has-card, .fi-modal-window, .fi-dropdown-panel, .fi-sc-section {
+  border-radius: 16px;
+}
+.fi-section:not(.fi-section-not-contained), .fi-ta-ctn, .fi-wi-stats-overview-stat, .fi-wi-chart, .fi-account-widget, .fi-fo-repeater-item {
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); --tw-ring-shadow: 0 0 #0000; --tw-shadow: 0 0 #0000;
+}
+.fi-section-header-heading { font-family: var(--serif); font-weight: 400; font-size: 1.12rem; letter-spacing: 0; color: var(--o-800); }
+.dark .fi-section-header-heading { color: #EAF4F7; }
+.fi-section-header-description, .fi-section-header-text-ctn p { color: rgba(18, 58, 67, 0.7); }
+.dark .fi-section-header-description { color: rgba(234, 244, 247, 0.7); }
+
+/* ---------- tables ---------- */
+.fi-ta-ctn { overflow: hidden; }
+.fi-ta-header-cell, .fi-ta-table thead th { background: color-mix(in srgb, var(--aqua) 14%, var(--surface)); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--o-700); }
+.dark .fi-ta-header-cell, .dark .fi-ta-table thead th { background: color-mix(in srgb, var(--aqua) 10%, var(--surface)); color: var(--aqua-soft); }
+.fi-ta-row { transition: background 160ms ease; }
+.fi-ta-row:hover { background: color-mix(in srgb, var(--aqua) 10%, transparent); }
+.fi-ta-row.fi-selected { background: color-mix(in srgb, var(--aqua) 16%, transparent); }
+.fi-ta-header-toolbar { border-bottom: 1px solid var(--line); }
+.fi-ta-empty-state-heading { font-family: var(--serif); font-weight: 400; }
+
+/* ---------- controls ---------- */
+.fi-btn { border-radius: 10px; transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease; }
+.fi-btn:not(.fi-outlined):is(.fi-color-primary, [class*="fi-bg-color-600"]) {
+  background: linear-gradient(135deg, var(--o-600), var(--o-800)); color: #fff; border-color: transparent;
+  box-shadow: 0 6px 16px -8px rgba(18, 58, 67, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.fi-btn:not(.fi-outlined):is(.fi-color-primary, [class*="fi-bg-color-600"]):hover { filter: brightness(1.12); transform: translateY(-1px); }
+.fi-input-wrp { border-radius: 10px; }
+.fi-input-wrp:focus-within, .fi-fo-select:focus-within { box-shadow: 0 0 0 3px rgba(124, 196, 228, 0.35); }
+.fi-badge { border-radius: 999px; letter-spacing: 0.01em; }
+.fi-pagination-item-btn { border-radius: 8px; }
+.fi-dropdown-panel, .fi-modal-window { border: 1px solid var(--line); box-shadow: var(--shadow); }
+.fi-modal-heading { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; }
+.fi-tabs { border-radius: 14px; }
+.fi-tabs-item.fi-active { box-shadow: inset 0 -2px 0 var(--aqua); }
+.fi-avatar { box-shadow: 0 0 0 2px rgba(124, 196, 228, 0.55); }
+
+/* stats */
+.fi-wi-stats-overview-stat { position: relative; overflow: hidden; }
+.fi-wi-stats-overview-stat::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; pointer-events: none; opacity: 0.8;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cpath d='M0 14 C20 4 40 4 60 14 S100 24 120 14 S150 4 160 10 V26 H0Z' fill='%237CC4E4' fill-opacity='0.16'/%3E%3C/svg%3E") 0 100% / 160px 26px repeat-x;
+}
+.fi-wi-stats-overview-stat-value { font-family: var(--serif); font-weight: 400; }
+
+/* ---------- login: the surface of the sea at dusk ---------- */
+.fi-simple-layout {
+  position: relative; overflow: hidden; min-height: 100vh;
+  background:
+    radial-gradient(900px 520px at 15% -10%, rgba(124, 196, 228, 0.22), transparent 62%),
+    radial-gradient(700px 420px at 95% 8%, rgba(201, 123, 74, 0.13), transparent 60%),
+    linear-gradient(180deg, var(--o-950) 0%, #0A2833 52%, var(--o-800) 100%);
+}
+.fi-simple-main-ctn { position: relative; z-index: 2; }
+.fi-simple-main {
+  background: rgba(255, 255, 255, 0.96); border-radius: 22px; border: 1px solid rgba(124, 196, 228, 0.3);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(124, 196, 228, 0.06); --tw-ring-shadow: 0 0 #0000;
+}
+.dark .fi-simple-main { background: rgba(11, 34, 44, 0.94); }
+.fi-simple-layout .fi-logo { color: var(--o-800); justify-content: center; font-size: 1.3rem; }
+.dark .fi-simple-layout .fi-logo { color: #F5F4EF; }
+.fi-simple-layout .fi-logo::before { width: 38px; height: 22px; filter: brightness(0.55) saturate(1.3); }
+.dark .fi-simple-layout .fi-logo::before { filter: none; }
+.fi-simple-header-heading { font-family: var(--serif); font-weight: 400; font-size: 1.7rem; letter-spacing: -0.01em; }
+.fi-simple-header-heading::after { content: ''; display: block; width: 64px; height: 10px; margin: 0.6rem auto 0; background: var(--wave) center / contain no-repeat; }
+
+/* login decoration (markup injected by the BODY_END hook: .ocean-decor) */
+.ocean-decor { display: none; }
+body:has(.fi-simple-layout) .ocean-decor { display: block; position: fixed; inset: auto 0 0 0; height: 46vh; pointer-events: none; z-index: 1; overflow: hidden; }
+.ocean-decor .w { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background-repeat: repeat-x; background-position: 0 100%; background-size: 1200px 100%; }
+.ocean-decor .w1 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 150 C150 90 300 210 450 150 S750 90 900 150 S1050 210 1200 150 V300 H0Z' fill='%237CC4E4' fill-opacity='0.07'/%3E%3C/svg%3E"); animation: swell 38s linear infinite; }
+.ocean-decor .w2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 190 C200 140 400 240 600 190 S1000 140 1200 190 V300 H0Z' fill='%237CC4E4' fill-opacity='0.09'/%3E%3C/svg%3E"); animation: swell 54s linear infinite reverse; }
+.ocean-decor .w3 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 230 C150 200 300 260 450 230 S750 200 900 230 S1050 260 1200 230 V300 H0Z' fill='%23071A21' fill-opacity='0.5'/%3E%3C/svg%3E"); animation: swell 70s linear infinite; }
+.ocean-decor i { position: absolute; bottom: -20px; border: 1.5px solid rgba(124, 196, 228, 0.3); border-radius: 50%; animation: rise 18s ease-in infinite; }
+.ocean-decor i:nth-of-type(1) { left: 8%; width: 9px; height: 9px; animation-delay: -3s; }
+.ocean-decor i:nth-of-type(2) { left: 21%; width: 15px; height: 15px; animation-delay: -10s; animation-duration: 23s; }
+.ocean-decor i:nth-of-type(3) { left: 37%; width: 7px; height: 7px; animation-delay: -6s; }
+.ocean-decor i:nth-of-type(4) { left: 63%; width: 12px; height: 12px; animation-delay: -14s; animation-duration: 21s; }
+.ocean-decor i:nth-of-type(5) { left: 79%; width: 8px; height: 8px; animation-delay: -1s; }
+.ocean-decor i:nth-of-type(6) { left: 91%; width: 14px; height: 14px; animation-delay: -8s; animation-duration: 25s; }
+@keyframes swell { to { background-position: 1200px 100%; } }
+@keyframes rise { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 1; } 100% { transform: translateY(-62vh) translateX(14px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fi-sidebar::after, .ocean-decor .w, .ocean-decor i, .fi-btn { animation: none !important; transition: none !important; }
+}
+@media (max-width: 1023px) {
+  .fi-header-heading { font-size: 1.7rem; }
+}

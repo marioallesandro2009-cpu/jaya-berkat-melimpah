@@ -54,6 +54,8 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups(['Konten Beranda', 'Katalog Produk', 'Halaman Perusahaan', 'Tampilan'])
             // Small AA fix for Filament's placeholder colour (see the view).
             ->renderHook(PanelsRenderHook::HEAD_END, fn (): string => view('filament.admin-styles')->render())
+            // Waves and bubbles behind the login card.
+            ->renderHook(PanelsRenderHook::BODY_END, fn (): string => view('filament.ocean-decor')->render())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
