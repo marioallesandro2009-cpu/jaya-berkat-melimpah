@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\FlushesFrontendCache;
+use App\Models\Concerns\HasSampleFlag;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\RegistersWebpConversions;
 use App\Models\Concerns\Sortable;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -27,6 +29,28 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  *
  * @property int $id
  * @property int|null $category_id
+ * @property int|null $species_id
+ * @property int|null $cut_id
+ * @property string|null $product_code
+ * @property string|null $body_part
+ * @property string|null $cut_type
+ * @property string|null $freezing_method
+ * @property string|null $temperature
+ * @property string|null $sashimi_grade
+ * @property string|null $color
+ * @property string|null $texture
+ * @property string|null $flavor_profile
+ * @property string|null $typical_usage
+ * @property string|null $packaging
+ * @property string|null $shelf_life
+ * @property string|null $origin
+ * @property string|null $certification
+ * @property string|null $image_url
+ * @property string|null $image_credit
+ * @property bool $image_is_reference
+ * @property list<string>|null $gallery_urls
+ * @property bool $is_featured
+ * @property bool $is_sample
  * @property string|null $slug
  * @property string $detail_status
  * @property array<string, string|null>|null $name
@@ -41,10 +65,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property bool $is_active
  * @property array<string, array<string, string>>|null $translation_status
  */
-#[Fillable(['category_id', 'slug', 'detail_status', 'name', 'description', 'image_alt', 'intro', 'content', 'specs', 'seo_title', 'seo_description', 'sort_order', 'is_active', 'translation_status'])]
+#[Fillable(['category_id', 'species_id', 'cut_id', 'product_code', 'body_part', 'cut_type', 'freezing_method', 'temperature', 'sashimi_grade', 'color', 'texture', 'flavor_profile', 'typical_usage', 'packaging', 'shelf_life', 'origin', 'certification', 'image_url', 'image_credit', 'image_is_reference', 'gallery_urls', 'is_featured', 'is_sample', 'slug', 'detail_status', 'name', 'description', 'image_alt', 'intro', 'content', 'specs', 'seo_title', 'seo_description', 'sort_order', 'is_active', 'translation_status'])]
 class Product extends Model implements HasMedia, HasTranslatableFields
 {
-    use FlushesFrontendCache, HasTranslations, InteractsWithMedia, RegistersWebpConversions, Sortable;
+    use FlushesFrontendCache, HasSampleFlag, HasTranslations, InteractsWithMedia, RegistersWebpConversions, Sortable;
 
     public const TRANSLATABLE = ['name', 'description', 'image_alt', 'intro', 'content', 'seo_title', 'seo_description'];
 
@@ -54,9 +78,19 @@ class Product extends Model implements HasMedia, HasTranslatableFields
 
     public const STATUSES = [self::DRAFT => 'Draf (tanpa halaman detail)', self::PUBLISHED => 'Terbit (halaman detail aktif)'];
 
+    /** Freezing choices: key => [label, temperature, description]. Super Frozen is -60°C. */
+    public const FREEZING = [
+        'fresh' => ['Fresh', '0 to 4°C', 'Chilled, never frozen. Kept on ice or in a chiller and shipped by air or reefer.'],
+        'frozen' => ['Frozen', '-18°C or below', 'Frozen and stored at standard cold-storage temperature.'],
+        'super_frozen' => ['Super Frozen', '-60°C', 'Ultra-low temperature freezing designed to preserve texture, color and freshness after thawing.'],
+    ];
+
+    /** Sashimi grading of a product (not of the species). */
+    public const GRADES = ['Sashimi Grade' => 'Sashimi Grade', 'Sushi Grade' => 'Sushi Grade', 'Sashimi Suitable' => 'Sashimi Suitable', 'General Seafood' => 'General Seafood'];
+
     protected function casts(): array
     {
-        return ['is_active' => 'boolean', 'sort_order' => 'integer', 'specs' => 'array'];
+        return ['is_active' => 'boolean', 'sort_order' => 'integer', 'specs' => 'array', 'gallery_urls' => 'array', 'image_is_reference' => 'boolean', 'is_featured' => 'boolean'];
     }
 
     protected static function booted(): void
@@ -72,6 +106,30 @@ class Product extends Model implements HasMedia, HasTranslatableFields
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+
+    /**
+     * @return BelongsTo<Species, $this>
+     */
+    public function species(): BelongsTo
+    {
+        return $this->belongsTo(Species::class, 'species_id');
+    }
+
+    /**
+     * @return BelongsTo<Cut, $this>
+     */
+    public function cut(): BelongsTo
+    {
+        return $this->belongsTo(Cut::class, 'cut_id');
+    }
+
+    /**
+     * @return BelongsToMany<ProcessingMethod, $this>
+     */
+    public function processingMethods(): BelongsToMany
+    {
+        return $this->belongsToMany(ProcessingMethod::class, 'processing_method_product')->orderBy('processing_methods.sort_order');
     }
 
     public function registerMediaCollections(): void
@@ -143,7 +201,10 @@ class Product extends Model implements HasMedia, HasTranslatableFields
             'description' => $this->translate('description'),
             'image' => MediaPresenter::image($this->getFirstMedia('image'), 'lg', 'sm', 1200, 600, $this->translate('image_alt') ?? $this->translate('name')),
             'url' => $this->hasDetailPage() ? $this->detailPath() : null,
-            'specs' => array_slice($this->specRows(), 0, 4),
+            'specs' => array_slice($this->specRows(), 0, 3),
+            'origin' => $this->origin,
+            'featured' => $this->is_featured,
+            'species' => $this->species?->is_active ? ['id' => $this->species->id, 'name' => (string) $this->species->translate('common_name')] : null,
             // Only an active category is shown on the site.
             'category' => $this->category?->is_active ? $this->category->toFrontend() : null,
         ];

@@ -7,10 +7,14 @@ use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Support\HasTranslatableRecordTitle;
+use App\Filament\Support\Sample;
 use App\Filament\Support\Translatable;
+use App\Models\Cut;
+use App\Models\ProcessingMethod;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\SiteSetting;
+use App\Models\Species;
 use App\Support\FrontendData;
 use App\Support\ImageConversions;
 use App\Support\ImageUpload;
@@ -29,16 +33,20 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use UnitEnum;
 
@@ -61,7 +69,7 @@ class ProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Beranda';
+    protected static string|UnitEnum|null $navigationGroup = 'Katalog Produk';
 
     protected static ?string $modelLabel = 'produk';
 
@@ -71,7 +79,7 @@ class ProductResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -87,7 +95,7 @@ class ProductResource extends Resource
                         ->placeholder('Tanpa kategori')
                         ->createOptionForm(ProductCategoryResource::fields())
                         ->createOptionModalHeading('Kategori baru')
-                        ->helperText('Mis. Air laut, Air payau, Air tawar. Bisa dibuat langsung dari sini (ikon +), atau kelola di menu Kategori Produk.'),
+                        ->helperText('Mis. Tuna, Salmon, Snapper. Terisi otomatis saat Spesies dipilih di tab Katalog. Bisa dibuat langsung dari sini (ikon +), atau kelola di menu Kategori Produk.'),
                     Translatable::fields(fn (string $locale): TextInput => TextInput::make("name.{$locale}")
                         ->label(Translatable::label('Nama produk', $locale))
                         ->required(Translatable::isRequired($locale))
@@ -108,6 +116,37 @@ class ProductResource extends Resource
                         ->label(Translatable::label('Teks alternatif foto (alt)', $locale))
                         ->maxLength(160)),
                     Toggle::make('is_active')->label('Tampilkan di situs')->default(true),
+                ]),
+                Tab::make('Katalog')->icon(Heroicon::OutlinedSquares2x2)->schema([
+                    Sample::notice(),
+                    Section::make('Klasifikasi')->columns(2)->schema([
+                        Select::make('species_id')->label('Spesies')->relationship('species', 'slug')->getOptionLabelFromRecordUsing(fn (Species $record): string => (string) $record->translation('common_name', 'en'))->searchable()->preload()->placeholder('Tanpa spesies')->live()->afterStateUpdated(fn (?string $state, Set $set) => $state && ($categoryId = Species::query()->whereKey($state)->value('category_id')) ? $set('category_id', $categoryId) : null),
+                        Select::make('cut_id')->label('Potongan')->relationship('cut', 'slug')->getOptionLabelFromRecordUsing(fn (Cut $record): string => (string) $record->translation('name', 'en'))->searchable()->preload()->placeholder('Tanpa potongan'),
+                        TextInput::make('product_code')->label('Kode produk')->maxLength(40)->unique(ignoreRecord: true)->helperText('Contoh: YFT-LOIN-001. Dipakai tim untuk penawaran dan stok.'),
+                        TextInput::make('body_part')->label('Bagian tubuh')->maxLength(120),
+                        Toggle::make('is_featured')->label('Produk unggulan (tampil di beranda)')->columnSpanFull(),
+                    ]),
+                    Section::make('Pengolahan dan penyimpanan')->columns(2)->schema([
+                        Select::make('processingMethods')->label('Metode pengolahan')->relationship('processingMethods', 'slug')->getOptionLabelFromRecordUsing(fn (ProcessingMethod $record): string => (string) $record->translation('name', 'en'))->multiple()->preload()->searchable()->columnSpanFull()->helperText('Pilih kombinasi yang memang berlaku, mis. Super Frozen + Skinless + Boneless + Trimmed.'),
+                        Select::make('freezing_method')->label('Pembekuan')->options(array_map(fn (array $row): string => $row[0], Product::FREEZING))->placeholder('-')->live()->afterStateUpdated(fn (?string $state, Set $set) => $set('temperature', $state ? Product::FREEZING[$state][1] : null)),
+                        TextInput::make('temperature')->label('Suhu')->maxLength(40),
+                        Select::make('sashimi_grade')->label('Grade sashimi')->options(Product::GRADES)->placeholder('-')->helperText('Diisi per produk. Jangan otomatis "Sashimi Grade" hanya karena spesiesnya biasa untuk sashimi.'),
+                        TextInput::make('shelf_life')->label('Masa simpan')->maxLength(120),
+                    ]),
+                    Section::make('Karakter produk')->columns(2)->schema([
+                        TextInput::make('color')->label('Warna')->maxLength(120),
+                        TextInput::make('texture')->label('Tekstur')->maxLength(160),
+                        TextInput::make('flavor_profile')->label('Rasa')->maxLength(160),
+                        TextInput::make('typical_usage')->label('Pemakaian umum')->maxLength(255),
+                        TextInput::make('packaging')->label('Kemasan')->maxLength(255),
+                        TextInput::make('origin')->label('Asal')->maxLength(255),
+                        TextInput::make('certification')->label('Sertifikasi')->maxLength(255)->helperText('Isi hanya sertifikasi yang benar-benar dimiliki.')->columnSpanFull(),
+                    ]),
+                    Section::make('Sumber foto (referensi)')->collapsed()->columns(2)->schema([
+                        TextInput::make('image_url')->label('URL foto sumber')->url()->maxLength(500)->columnSpanFull(),
+                        TextInput::make('image_credit')->label('Kredit dan lisensi')->maxLength(500)->columnSpanFull(),
+                        Toggle::make('image_is_reference')->label('Foto referensi (bukan potongan persis ini)')->columnSpanFull(),
+                    ]),
                 ]),
                 Tab::make('Halaman detail')->icon(Heroicon::OutlinedDocumentText)->schema([
                     ToggleButtons::make('detail_status')
@@ -178,13 +217,18 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['species', 'category', 'media']))
             ->reorderable('sort_order')
             ->defaultSort('sort_order')
             ->afterReordering(fn () => FrontendData::flush())
-            ->paginated(false)
+            ->paginated([25, 50, 100])
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->label('Foto')->collection('image')->imageHeight(56)->when(ImageConversions::enabled(), fn ($c) => $c->conversion('sm')),
+                Sample::column(),
                 Translatable::column('name', 'Nama'),
+                TextColumn::make('product_code')->label('Kode')->fontFamily('mono')->color('gray')->searchable()->toggleable(),
+                TextColumn::make('species_name')->label('Spesies')->state(fn (Product $record): ?string => $record->species?->translation('common_name', 'en'))->toggleable(),
+                TextColumn::make('cut_type')->label('Potongan')->toggleable(),
                 TextColumn::make('category.name')->label('Kategori')->badge()->color('info')
                     ->state(fn (Product $record): ?string => $record->category?->translation('name', 'en'))
                     ->placeholder('Tanpa kategori'),
@@ -195,6 +239,11 @@ class ProductResource extends Resource
                 ToggleColumn::make('is_active')->label('Tampil'),
             ])
             ->filters([
+                SelectFilter::make('species_id')->label('Spesies')->options(fn (): array => Species::query()->ordered()->get()->mapWithKeys(fn (Species $s): array => [$s->id => (string) $s->translation('common_name', 'en')])->all()),
+                SelectFilter::make('cut_id')->label('Potongan')->options(fn (): array => Cut::query()->ordered()->get()->mapWithKeys(fn (Cut $c): array => [$c->id => (string) $c->translation('name', 'en')])->all()),
+                SelectFilter::make('freezing_method')->label('Pembekuan')->options(array_map(fn (array $row): string => $row[0], Product::FREEZING)),
+                SelectFilter::make('sashimi_grade')->label('Grade sashimi')->options(Product::GRADES),
+                TernaryFilter::make('is_featured')->label('Unggulan'),
                 SelectFilter::make('category_id')
                     ->label('Kategori')
                     ->options(fn (): array => ProductCategory::query()->ordered()->get()->mapWithKeys(fn (ProductCategory $c): array => [$c->id => (string) $c->translation('name', 'en')])->all())

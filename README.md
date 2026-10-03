@@ -38,6 +38,7 @@ Seeder aman dijalankan ulang: isi yang sudah ada tidak ditimpa.
 | Angka Skala | angka yang naik saat di-scroll (tahun, pasar, tim, kota) |
 | Slide Hero | foto tambahan hero; dua atau lebih slide aktif = hero berganti otomatis |
 | Produk | katalog seafood (juga pilihan di form penawaran), **kategori** per produk, dan **halaman detail** per produk (pengantar, spesifikasi, isi, galeri, SEO). Semua produk tampil di halaman **/products** (`/id/produk`) dengan filter kategori. Spesifikasi produk tampil sebagai metadata di halaman itu |
+| Katalog Produk (grup menu) | **Spesies Ikan** (nama umum/ilmiah/Jepang, wilayah, kecocokan sashimi, potongan yang tersedia dan mana yang benar-benar dijual), **Potongan Ikan** (Loin, Saku, Akami, Fillet...), **Metode Pengolahan** (Fresh, Frozen, Super Frozen, Skinless, Boneless, Trimmed, CO Treated), dan di **Produk** tab *Katalog*: kode produk, pembekuan dan suhu, grade sashimi, kemasan, masa simpan, foto sumber. Seeder: `SeafoodCatalogSeeder` (7 kategori, 9 spesies, 17 potongan, 8 metode, 31 produk contoh) |
 | Kategori Produk | tambah, ubah, urutkan, sembunyikan, dan hapus kategori (mis. Air laut, Air payau, Air tawar). Menghapus kategori tidak menghapus produknya. Produk bisa dipindah kategori massal dari daftar Produk |
 | Blok Teks > Bentuk produk | isi grup "Bentuk produk" (Whole, Fillet, dst.) bila perusahaan memang menyediakannya: tampil di bagian "What we supply" halaman /products. Kosong = baris bentuk tidak tampil |
 | FAQ, Lokasi, Logo Partner | blok FAQ (dengan data terstruktur Google), daftar lokasi, dan baris logo partner; masing-masing tampil di beranda hanya jika ada isinya |
@@ -56,6 +57,8 @@ Baris dengan penanda **Contoh** di admin adalah data DUMMY dari seeder: angka sk
 nama pimpinan, dan sertifikasi (HACCP, ISO 22000, Halal). Kontak di Pengaturan Situs (email,
 telepon, WhatsApp, alamat) dan `logo` juga dummy. Penanda hilang setelah baris disimpan dari admin.
 Jangan menayangkan sertifikasi yang tidak dimiliki perusahaan.
+
+Katalog seafood (kategori, spesies, potongan, 31 produk) juga data contoh: spesies di sana **bukan** daftar produk yang dijual, itu diatur per produk dan per potongan (kolom *Dijual sebagai produk*). Masa simpan, kemasan, suhu, dan asal adalah nilai umum untuk ilustrasi, dan tidak ada sertifikasi yang diisi. Fotonya dari Wikimedia Commons dengan lisensi masing-masing (lihat `docs/image-credits.md`; CC BY dan CC BY-SA wajib mencantumkan penulis): ganti dengan foto produk sendiri sebelum rilis.
 
 ## Pemeriksaan
 

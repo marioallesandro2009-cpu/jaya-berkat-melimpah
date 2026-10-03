@@ -5,15 +5,13 @@ namespace Database\Seeders;
 use App\Models\ChainStep;
 use App\Models\Contracts\HasTranslatableFields;
 use App\Models\Feature;
-use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Models\Stat;
 use Database\Seeders\Concerns\SeedsImages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
 /**
- * Products, the journey stages, quality/sustainability/value blocks and the scale figures.
+ * The journey stages, quality/sustainability/value blocks and the scale figures (the product catalogue is SeafoodCatalogSeeder).
  * Each table is seeded only while it is empty, so re-running never overwrites admin edits.
  * Stats are DUMMY figures (is_sample) until the company confirms the real ones.
  */
@@ -24,7 +22,6 @@ class CatalogSeeder extends Seeder
     public function run(): void
     {
         $this->stats();
-        $this->products();
         $this->chain();
         $this->features();
     }
@@ -59,38 +56,6 @@ class CatalogSeeder extends Seeder
 
         foreach ($rows as $i => [$attributes]) {
             $this->create(Stat::class, [...$attributes, 'is_sample' => true], $i + 1);
-        }
-    }
-
-    private function products(): void
-    {
-        if (Product::query()->exists()) {
-            return;
-        }
-
-        $rows = [
-            ['product-1', ['Fresh Grouper', 'Kerapu Segar'],
-                ['Prized for its firm, white flesh, our grouper is sourced from Indonesian reef waters and handled to export-grade standards.', 'Dihargai karena dagingnya yang padat dan putih, kerapu kami berasal dari perairan karang Indonesia dan ditangani sesuai standar ekspor.'],
-                ['Sample photo of grouper (replace with your own product photo)', 'Foto contoh kerapu (ganti dengan foto produk Anda)']],
-            ['product-2', ['Yellowfin Tuna', 'Tuna Sirip Kuning'],
-                ['A mainstay of Indonesian fisheries, our yellowfin tuna is handled and processed for both loin and whole-fish export.', 'Andalan perikanan Indonesia, tuna sirip kuning kami ditangani dan diolah untuk ekspor dalam bentuk loin maupun ikan utuh.'],
-                ['Sample photo of tuna (replace with your own product photo)', 'Foto contoh tuna (ganti dengan foto produk Anda)']],
-            ['product-3', ['Red Snapper', 'Kakap Merah'],
-                ['Sourced from coastal waters across the archipelago, our red snapper is valued for its clean flavor and consistent quality.', 'Berasal dari perairan pesisir di seluruh nusantara, kakap merah kami dihargai karena rasanya yang bersih dan mutunya yang konsisten.'],
-                ['Sample photo of red snapper (replace with your own product photo)', 'Foto contoh kakap merah (ganti dengan foto produk Anda)']],
-        ];
-
-        $marine = ProductCategory::query()->where('slug', 'marine')->value('id');
-
-        foreach ($rows as $i => [$image, $name, $description, $alt]) {
-            $product = $this->create(Product::class, [
-                'category_id' => $marine,
-                'name' => ['en' => $name[0], 'id' => $name[1]],
-                'description' => ['en' => $description[0], 'id' => $description[1]],
-                'image_alt' => ['en' => $alt[0], 'id' => $alt[1]],
-            ], $i + 1);
-
-            $this->attachSeedImage($product, 'image', $image, 1600, 900);
         }
     }
 

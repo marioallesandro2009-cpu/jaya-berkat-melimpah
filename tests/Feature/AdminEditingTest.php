@@ -17,7 +17,7 @@ beforeEach(function () {
 });
 
 it('changes a product in the admin and the public page follows', function () {
-    $product = Product::query()->orderBy('sort_order')->firstOrFail();
+    $product = Product::query()->where('is_featured', true)->orderBy('sort_order')->firstOrFail();
 
     Livewire::test(EditProduct::class, ['record' => $product->getKey()])
         ->fillForm([
@@ -28,12 +28,15 @@ it('changes a product in the admin and the public page follows', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
+    // an Indonesian text is shown on /id once someone has checked it (the catalogue is seeded in English only)
+    $product->fresh()->markTranslationsReviewed('id')->save();
+
     $this->get('/')->assertSee('Fresh Grouper Premium');
     $this->get('/id')->assertSee('Kerapu Segar Premium');
 });
 
 it('hides a product from the site when it is switched off', function () {
-    $product = Product::query()->orderBy('sort_order')->firstOrFail();
+    $product = Product::query()->where('is_featured', true)->orderBy('sort_order')->firstOrFail();
     $name = $product->translation('name', 'en');
 
     $this->get('/')->assertSee($name);

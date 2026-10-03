@@ -136,7 +136,9 @@ it('lets the admin change interface labels per language', function () {
 // ---- 5. product pages ----------------------------------------------------------------------
 
 it('only serves a product page once it is published', function () {
-    $product = Product::query()->orderBy('sort_order')->firstOrFail();
+    $product = Product::query()->where('is_featured', true)->orderBy('sort_order')->firstOrFail();
+    $product->update(['detail_status' => Product::DRAFT]);
+    FrontendData::flush();
     expect($product->slug)->not->toBeNull();
 
     $this->get('/products/'.$product->slug)->assertNotFound();
@@ -230,7 +232,7 @@ it('manages product categories in the admin and filters the all-products page', 
         ->assertHasNoActionErrors();
 
     $deep = ProductCategory::query()->where('slug', 'deep-sea')->firstOrFail();
-    $tuna = Product::query()->whereJsonContains('name->en', 'Yellowfin Tuna')->firstOrFail();
+    $tuna = Product::query()->where('product_code', 'YFT-LOIN-001')->firstOrFail();
     $tuna->update(['category_id' => $deep->id]);
     FrontendData::flush();
 
@@ -242,20 +244,21 @@ it('manages product categories in the admin and filters the all-products page', 
         return array_map(fn (string $name): string => trim(strip_tags($name)), $names[1]);
     };
     $filtered = $this->get('/products?category=deep-sea')->assertOk()->getContent();
-    expect($shoal($filtered))->toHaveCount(1)->and($shoal($filtered)[0])->toContain('Yellowfin Tuna');
-    $marine = $this->get('/id/produk?category=marine')->assertOk()->getContent();
-    expect($shoal($marine))->toHaveCount(2)->and(implode(' ', $shoal($marine)))->toContain('Kerapu Segar')->not->toContain('Tuna Sirip Kuning');
+    expect($shoal($filtered))->toHaveCount(1)->and($shoal($filtered)[0])->toContain('Yellowfin Tuna Loin');
+    $salmon = $this->get('/id/produk?category=salmon')->assertOk()->getContent();
+    expect($shoal($salmon))->toHaveCount(5)->and(implode(' ', $shoal($salmon)))->toContain('Atlantic Salmon Saku')->not->toContain('Tuna');
     // an empty or hidden category is not offered
-    $this->get('/products')->assertDontSee('?category=freshwater', false);
+    ProductCategory::query()->create(['name' => ['en' => 'Empty'], 'slug' => 'empty']);
+    $this->get('/products')->assertDontSee('?category=empty', false);
 
     // deleting a category keeps its products
     $deep->delete();
     expect($tuna->fresh()->category_id)->toBeNull();
-    $this->get('/products')->assertSee('Yellowfin Tuna');
+    $this->get('/products')->assertSee('Yellowfin Tuna Loin');
 });
 
 it('lets the product list change categories in bulk and shows the category column', function () {
-    $freshwater = ProductCategory::query()->where('slug', 'freshwater')->firstOrFail();
+    $freshwater = ProductCategory::query()->where('slug', 'other-sashimi-fish')->firstOrFail();
 
     Livewire::test(ListProducts::class)
         ->assertSuccessful()

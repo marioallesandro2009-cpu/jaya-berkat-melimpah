@@ -24,3 +24,54 @@ replace them) before launch.
 
 `dummy-product-1..3.jpg` (illustrations used only by the automated tests), `logo.png`, `favicon.png`, `og-image.jpg`
 (placeholder logo and social image): replace with the real brand assets.
+
+## Seafood catalogue photos (species and products)
+
+Files in `database/seeders/images/catalog/`, referenced by `database/seeders/data/catalog-images.json` and `seafood_catalog.php`.
+Source: Wikimedia Commons. Each photo has its own licence: **CC BY and CC BY-SA require attribution** (author and licence, as listed
+below), CC0 and public domain do not. Photos were resized and cropped to 1600 x 1000 px.
+
+**Replace all of them with the company's own product photography before production.** Many photos only show the species, the market
+or the finished dish, not the exact cut: those products are flagged `image_is_reference` in the database ("Foto referensi" in the admin).
+
+| Key | Title on Commons | Author | Licence | Page |
+| --- | --- | --- | --- | --- |
+| `sp-yellowfin-tuna` | Thon albacore (Thunnus albacares) (Ifremer 00764-87616).jpg | Hugues Evano (IFREMER, Délégation océan Indien (DOI), Départ | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Thon_albacore_(Thunnus_albacares)_(Ifremer_00764-87616).jpg |
+| `sp-bluefin-tuna` | Bluefin-big.jpg | Unknown authorUnknown author | Public domain | https://commons.wikimedia.org/wiki/File:Bluefin-big.jpg |
+| `sp-bigeye-tuna` | Thon obèse (Thunnus obesus) (Ifremer 00764-87617).jpg | Hugues Evano (IFREMER, Délégation océan Indien (DOI), Départ | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Thon_ob%C3%A8se_(Thunnus_obesus)_(Ifremer_00764-87617).jpg |
+| `sp-atlantic-salmon` | Salmo salar-Atlantic Salmon-Atlanterhavsparken Norway (cropped).JPG | Hans-Petter Fjeld | CC BY-SA 2.5 | https://commons.wikimedia.org/wiki/File:Salmo_salar-Atlantic_Salmon-Atlanterhavsparken_Norway_(cropped).JPG |
+| `sp-hamachi` | Japanese amberjack by Vincent C Chen.jpg | Longdongdiver (Vincent C. Chen) | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Japanese_amberjack_by_Vincent_C_Chen.jpg |
+| `sp-tai` | Pagrus major ioworld.jpg | タウナギ | CC0 | https://commons.wikimedia.org/wiki/File:Pagrus_major_ioworld.jpg |
+| `sp-spanish-mackerel` | Narrow-barred spanish mackerel (Scomberomorus commerson).jpg | Rickard Zerpe | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Narrow-barred_spanish_mackerel_(Scomberomorus_commerson).jpg |
+| `sp-red-snapper` | Red Snapper.jpg | Geeklikepi | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Red_Snapper.jpg |
+| `sp-kanpachi` | Pez limón (Seriola dumerili), Madeira, Portugal, 2019-05-31, DD 31.jpg | Diego Delso | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Pez_lim%C3%B3n_(Seriola_dumerili),_Madeira,_Portugal,_2019-05-31,_DD_31.jpg |
+| `p-yft-whole` | Mensuration d'un thon albacore (Thunnus albacares) (Ifremer 00540-65193).jpg | Marc Taquet | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Mensuration_d%27un_thon_albacore_(Thunnus_albacares)_(Ifremer_00540-65193).jpg |
+| `p-tuna-loin` | Corte de atún-10.jpg | Tamorlan | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Corte_de_at%C3%BAn-10.jpg |
+| `p-tuna-saku` | Blocks of Tuna (2678121167).jpg | Naotake Murayama from San Francisco, CA, USA | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Blocks_of_Tuna_(2678121167).jpg |
+| `p-tuna-steak` | Awesome tuna steak.jpg | Luca.favorido | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Awesome_tuna_steak.jpg |
+| `p-tuna-cube` | Juicy Tuna Steak.jpg | George Alexander Ishida Newman from Japan | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Juicy_Tuna_Steak.jpg |
+| `p-yft-strip` | Tuna Recall (7090098867).jpg | The U.S. Food and Drug Administration | Public domain | https://commons.wikimedia.org/wiki/File:Tuna_Recall_(7090098867).jpg |
+| `p-yft-pack` | Tuna Recall (7173249608).jpg | The U.S. Food and Drug Administration | Public domain | https://commons.wikimedia.org/wiki/File:Tuna_Recall_(7173249608).jpg |
+| `p-bft-loin` | Atún Rojo (Boquería) - 2011.JPG | Tamorlan | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:At%C3%BAn_Rojo_(Boquer%C3%ADa)_-_2011.JPG |
+| `p-bft-saku` | Atún en el Mercado de la Boquería.jpg | flydime | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:At%C3%BAn_en_el_Mercado_de_la_Boquer%C3%ADa.jpg |
+| `p-akami` | Maguro Akami (lean tuna) Nigiri.jpg | Zheng Zhou | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Maguro_Akami_(lean_tuna)_Nigiri.jpg |
+| `p-chutoro` | Chu-Toro sushi.jpg | TarnishedPath | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Chu-Toro_sushi.jpg |
+| `p-otoro` | Maguro Otoro (fatty tuna) Nigiri.jpg | Zheng Zhou | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Maguro_Otoro_(fatty_tuna)_Nigiri.jpg |
+| `p-bet-whole` | Thunnus obesus (bigeye tuna).jpg | Allen Shimada, NOAA NMFS OST | Public domain | https://commons.wikimedia.org/wiki/File:Thunnus_obesus_(bigeye_tuna).jpg |
+| `p-salmon-whole` | Salmo salar, by 'n vismark in Pretoria, a.jpg | JMK | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Salmo_salar,_by_%27n_vismark_in_Pretoria,_a.jpg |
+| `p-salmon-fillet` | Atlantic Salmon.png | Robpedia at English Wikipedia | Public domain | https://commons.wikimedia.org/wiki/File:Atlantic_Salmon.png |
+| `p-salmon-saku` | Salmon sashimi slices.jpg | CNEcija12345 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Salmon_sashimi_slices.jpg |
+| `p-salmon-steak` | 8807Photos taken 2020 coronavirus pandemic Baliuag, Bulacan 12.jpg | Judgefloro | CC0 | https://commons.wikimedia.org/wiki/File:8807Photos_taken_2020_coronavirus_pandemic_Baliuag,_Bulacan_12.jpg |
+| `p-salmon-pack` | " 15 - ITALY - salmon fillet esselunga dishes.jpg | Pava | CC BY-SA 3.0 it | https://commons.wikimedia.org/wiki/File:%22_15_-_ITALY_-_salmon_fillet_esselunga_dishes.jpg |
+| `p-hamachi-whole` | 氷見ブリ（寒ブリではない）20240210-P1038532.jpg | くろふね | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:%E6%B0%B7%E8%A6%8B%E3%83%96%E3%83%AA%EF%BC%88%E5%AF%92%E3%83%96%E3%83%AA%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BC%8920240210-P1038532.jpg |
+| `p-hamachi-saku` | ブリ刺身定食（氷見魚市場食堂）20240330-P1040829.jpg | くろふね | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:%E3%83%96%E3%83%AA%E5%88%BA%E8%BA%AB%E5%AE%9A%E9%A3%9F%EF%BC%88%E6%B0%B7%E8%A6%8B%E9%AD%9A%E5%B8%82%E5%A0%B4%E9%A3%9F%E5%A0%82%EF%BC%8920240330-P1040829.jpg |
+| `p-hamachi-fillet` | Seriola quinqueradiata (200810).jpg | E-190's | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Seriola_quinqueradiata_(200810).jpg |
+| `p-tai-whole` | Pagrus major.jpg | 국립국어원 | CC BY-SA 2.0 kr | https://commons.wikimedia.org/wiki/File:Pagrus_major.jpg |
+| `p-tai-fillet` | Sea Bream Fillet.jpg | Tzahy Lerner | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Sea_Bream_Fillet.jpg |
+| `p-tai-saku` | Sashimi of red seabream.jpg | ノボホショコロトソ | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Sashimi_of_red_seabream.jpg |
+| `p-mackerel-fillet` | Mackerel fillet.jpg | Tiia Monto | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Mackerel_fillet.jpg |
+| `p-mackerel-saku` | Scomberomorus niphonius 1.jpg | re_nebel | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Scomberomorus_niphonius_1.jpg |
+| `p-snapper-whole` | Lutjanus campechanus on ice.jpg | Garitzko | Public domain | https://commons.wikimedia.org/wiki/File:Lutjanus_campechanus_on_ice.jpg |
+| `p-snapper-fillet` | Red snapper (?) fillet 013 - Tony's Seafood, Baton Rouge.jpg | Louisiana Sea Grant College Program Louisiana State Universi | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Red_snapper_(%3F)_fillet_013_-_Tony%27s_Seafood,_Baton_Rouge.jpg |
+| `p-kanpachi-whole` | Seriola dumerili Gibraltar.jpg | nick88 | CC0 | https://commons.wikimedia.org/wiki/File:Seriola_dumerili_Gibraltar.jpg |
+| `p-tuna-seared` | Seared Ahi Tuna Steak.jpg | eric molina from San Francisco, United States | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Seared_Ahi_Tuna_Steak.jpg |

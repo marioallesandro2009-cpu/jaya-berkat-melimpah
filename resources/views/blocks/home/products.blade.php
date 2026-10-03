@@ -1,6 +1,8 @@
 @php
     $block = $sections['products'] ?? null;
     $texts = $settings['texts'];
+    // The home page shows the featured products (at most 6); the whole catalogue is on /products.
+    $products = array_slice(array_values(array_filter($products, fn (array $product): bool => $product['featured'])) ?: $products, 0, 6);
 @endphp
 @if ($products)
     <section id="products" class="section section--white products">

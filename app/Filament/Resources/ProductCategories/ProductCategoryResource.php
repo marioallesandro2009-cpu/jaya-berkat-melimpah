@@ -16,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -46,7 +47,7 @@ class ProductCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Beranda';
+    protected static string|UnitEnum|null $navigationGroup = 'Katalog Produk';
 
     protected static ?string $modelLabel = 'kategori produk';
 
@@ -81,6 +82,14 @@ class ProductCategoryResource extends Resource
                 ->rows(2)
                 ->maxLength(240)
                 ->helperText($locale === 'en' ? 'Opsional. Tampil di bawah filter kategori di halaman Semua Produk.' : null)),
+            Translatable::fields(fn (string $locale): TextInput => TextInput::make("meta_title.{$locale}")
+                ->label(Translatable::label('Judul SEO', $locale))
+                ->maxLength(120)),
+            Translatable::fields(fn (string $locale): Textarea => Textarea::make("meta_description.{$locale}")
+                ->label(Translatable::label('Meta description', $locale))
+                ->rows(2)
+                ->maxLength(320)),
+            SpatieMediaLibraryFileUpload::make('image')->label('Foto kategori')->collection('image')->image()->maxSize(5120)->helperText('Opsional. JPG, PNG, atau WebP, maks. 5 MB.'),
             ColorPicker::make('color')
                 ->label('Warna penanda')
                 ->default(ProductCategory::DEFAULT_COLOR)

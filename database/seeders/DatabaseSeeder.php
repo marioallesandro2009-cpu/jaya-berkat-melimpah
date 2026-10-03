@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
             SiteSettingSeeder::class,
             MenuSeeder::class,
             PageSectionSeeder::class,
-            ProductCategorySeeder::class,
             CatalogSeeder::class,
+            SeafoodCatalogSeeder::class,
             CompanySeeder::class,
             PostSeeder::class,
         ]);

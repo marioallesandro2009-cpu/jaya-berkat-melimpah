@@ -47,6 +47,7 @@ class ProductController extends Controller
             'categories' => $categories,
             'currentCategory' => $current,
             'totalProducts' => $totalProducts,
+            'speciesCount' => max(1, count(array_unique(array_filter(array_map(fn (array $product): ?int => $product['species']['id'] ?? null, $allProducts))))),
             'allProducts' => $allProducts,
             'seo' => $seo,
             'jsonLd' => StructuredData::page($data, $seo),

@@ -16,7 +16,7 @@ beforeEach(fn () => seedSite());
 
 $payload = fn (array $extra = []): array => [
     'name' => 'Ann Buyer', 'email' => 'ann@buyer.test', 'company' => 'Buyer Ltd', 'country' => 'Japan',
-    'product' => 'Fresh Grouper', ...$extra,
+    'product' => 'Yellowfin Tuna Whole', ...$extra,
 ];
 
 it('sends the standard security headers on every page', function () {
@@ -140,7 +140,7 @@ it('renders the notification mail with every field', function () use ($payload) 
 
     $html = (new ContactMessageReceived(ContactMessage::query()->firstOrFail()))->render();
 
-    expect($html)->toContain('Ann Buyer')->toContain('Japan')->toContain('Fresh Grouper')->toContain('5 tons')->toContain('Hello');
+    expect($html)->toContain('Ann Buyer')->toContain('Japan')->toContain('Yellowfin Tuna Whole')->toContain('5 tons')->toContain('Hello');
 });
 
 it('never errors on odd category filters and keeps category slugs unique', function () {

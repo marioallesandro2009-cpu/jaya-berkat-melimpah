@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\FlushesFrontendCache;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Concerns\RegistersWebpConversions;
 use App\Models\Concerns\Sortable;
 use App\Models\Contracts\HasTranslatableFields;
 use App\Support\Links;
@@ -11,6 +12,9 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * A product category (e.g. marine, brackish water, freshwater). Products point to it with
@@ -26,12 +30,12 @@ use Illuminate\Support\Str;
  * @property bool $is_active
  * @property array<string, array<string, string>>|null $translation_status
  */
-#[Fillable(['slug', 'name', 'description', 'color', 'sort_order', 'is_active', 'translation_status'])]
-class ProductCategory extends Model implements HasTranslatableFields
+#[Fillable(['slug', 'name', 'description', 'meta_title', 'meta_description', 'image_url', 'image_credit', 'color', 'sort_order', 'is_active', 'translation_status'])]
+class ProductCategory extends Model implements HasMedia, HasTranslatableFields
 {
-    use FlushesFrontendCache, HasTranslations, Sortable;
+    use FlushesFrontendCache, HasTranslations, InteractsWithMedia, RegistersWebpConversions, Sortable;
 
-    public const TRANSLATABLE = ['name', 'description'];
+    public const TRANSLATABLE = ['name', 'description', 'meta_title', 'meta_description'];
 
     public const DEFAULT_COLOR = '#7CC4E4';
 
@@ -56,6 +60,25 @@ class ProductCategory extends Model implements HasTranslatableFields
                 $category->color = self::DEFAULT_COLOR;
             }
         });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('image')->singleFile()->acceptsMimeTypes(SiteSetting::IMAGE_MIMES);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addWebpConversion('lg', 1200, 'image');
+        $this->addWebpConversion('sm', 600, 'image');
+    }
+
+    /**
+     * @return HasMany<Species, $this>
+     */
+    public function species(): HasMany
+    {
+        return $this->hasMany(Species::class, 'category_id');
     }
 
     /**

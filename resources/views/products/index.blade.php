@@ -22,7 +22,8 @@
                 <p class="lede on-dark" data-hero-in="3">{{ $block['body'] }}</p>
             @endif
             <dl class="catch-meta" data-hero-in="4">
-                <div><dt>{{ $texts['products_species'] }}</dt><dd>{{ sprintf('%02d', $totalProducts) }}</dd></div>
+                <div><dt>{{ $texts['products_species'] }}</dt><dd>{{ sprintf('%02d', $speciesCount) }}</dd></div>
+                <div><dt>{{ $texts['products_count_label'] }}</dt><dd>{{ sprintf('%02d', $totalProducts) }}</dd></div>
                 @if (count($categories) > 0)
                     <div><dt>{{ $texts['products_categories_label'] }}</dt><dd>{{ collect($categories)->pluck('name')->implode(' / ') }}</dd></div>
                 @endif
@@ -65,7 +66,7 @@
         <div class="wrap">
             @if ($categories)
                 <nav class="catch-filter" aria-label="{{ $texts['product_categories'] }}">
-                    <span class="catch-filter-label">{{ $texts['products_species'] }} <b>{{ sprintf('%02d', $totalProducts) }}</b></span>
+                    <span class="catch-filter-label">{{ $texts['products_count_label'] }} <b>{{ sprintf('%02d', $totalProducts) }}</b></span>
                     <a href="{{ Links::page('products') }}" class="chip {{ $currentCategory ? '' : 'is-active' }}" @if (! $currentCategory) aria-current="page" @endif>
                         {{ $texts['product_all'] }} <span class="chip-count">{{ $totalProducts }}</span>
                     </a>
@@ -103,13 +104,13 @@
                             @if ($product['description'])
                                 <p class="catch-desc">{{ $product['description'] }}</p>
                             @endif
-                            @if ($product['category'] || $product['specs'] || filled($texts['products_source_value']))
+                            @if ($product['category'] || $product['specs'] || $product['origin'])
                                 <dl class="catch-specs">
                                     @if ($product['category'])
                                         <div><dt>{{ $texts['product_category'] }}</dt><dd>{{ $product['category']['name'] }}</dd></div>
                                     @endif
-                                    @if (filled($texts['products_source_value']))
-                                        <div><dt>{{ $texts['product_origin'] }}</dt><dd>{{ $texts['products_source_value'] }}</dd></div>
+                                    @if ($product['origin'])
+                                        <div><dt>{{ $texts['product_origin'] }}</dt><dd>{{ $product['origin'] }}</dd></div>
                                     @endif
                                     @foreach ($product['specs'] as $row)
                                         <div><dt>{{ $row['label'] }}</dt><dd>{{ $row['value'] }}</dd></div>

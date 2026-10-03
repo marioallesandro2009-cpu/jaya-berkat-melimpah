@@ -1,0 +1,392 @@
+{
+  "sp-yellowfin-tuna": {
+    "file": "catalog/sp-yellowfin-tuna",
+    "source": "https://commons.wikimedia.org/wiki/File:Thon_albacore_(Thunnus_albacares)_(Ifremer_00764-87616).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thon_albacore_(Thunnus_albacares)_(Ifremer_00764-87616).jpg?width=1600",
+    "title": "Thon albacore (Thunnus albacares) (Ifremer 00764-87616).jpg",
+    "license": "CC BY 4.0",
+    "author": "Hugues Evano (IFREMER, Délégation océan Indien (DOI), Départ",
+    "width": 3648,
+    "height": 2736
+  },
+  "sp-bluefin-tuna": {
+    "file": "catalog/sp-bluefin-tuna",
+    "source": "https://commons.wikimedia.org/wiki/File:Bluefin-big.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bluefin-big.jpg?width=1600",
+    "title": "Bluefin-big.jpg",
+    "license": "Public domain",
+    "author": "Unknown authorUnknown author",
+    "width": 1728,
+    "height": 1140
+  },
+  "sp-bigeye-tuna": {
+    "file": "catalog/sp-bigeye-tuna",
+    "source": "https://commons.wikimedia.org/wiki/File:Thon_ob%C3%A8se_(Thunnus_obesus)_(Ifremer_00764-87617).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thon_ob%C3%A8se_(Thunnus_obesus)_(Ifremer_00764-87617).jpg?width=1600",
+    "title": "Thon obèse (Thunnus obesus) (Ifremer 00764-87617).jpg",
+    "license": "CC BY 4.0",
+    "author": "Hugues Evano (IFREMER, Délégation océan Indien (DOI), Départ",
+    "width": 2048,
+    "height": 1536
+  },
+  "sp-atlantic-salmon": {
+    "file": "catalog/sp-atlantic-salmon",
+    "source": "https://commons.wikimedia.org/wiki/File:Salmo_salar-Atlantic_Salmon-Atlanterhavsparken_Norway_(cropped).JPG",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Salmo_salar-Atlantic_Salmon-Atlanterhavsparken_Norway_(cropped).JPG?width=1600",
+    "title": "Salmo salar-Atlantic Salmon-Atlanterhavsparken Norway (cropped).JPG",
+    "license": "CC BY-SA 2.5",
+    "author": "Hans-Petter Fjeld",
+    "width": 1992,
+    "height": 1436
+  },
+  "sp-hamachi": {
+    "file": "catalog/sp-hamachi",
+    "source": "https://commons.wikimedia.org/wiki/File:Japanese_amberjack_by_Vincent_C_Chen.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Japanese_amberjack_by_Vincent_C_Chen.jpg",
+    "title": "Japanese amberjack by Vincent C Chen.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Longdongdiver (Vincent C. Chen)",
+    "width": 1251,
+    "height": 704
+  },
+  "sp-tai": {
+    "file": "catalog/sp-tai",
+    "source": "https://commons.wikimedia.org/wiki/File:Pagrus_major_ioworld.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pagrus_major_ioworld.jpg?width=1600",
+    "title": "Pagrus major ioworld.jpg",
+    "license": "CC0",
+    "author": "タウナギ",
+    "width": 6000,
+    "height": 4000
+  },
+  "sp-spanish-mackerel": {
+    "file": "catalog/sp-spanish-mackerel",
+    "source": "https://commons.wikimedia.org/wiki/File:Narrow-barred_spanish_mackerel_(Scomberomorus_commerson).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Narrow-barred_spanish_mackerel_(Scomberomorus_commerson).jpg?width=1600",
+    "title": "Narrow-barred spanish mackerel (Scomberomorus commerson).jpg",
+    "license": "CC BY 2.0",
+    "author": "Rickard Zerpe",
+    "width": 2733,
+    "height": 2050
+  },
+  "sp-red-snapper": {
+    "file": "catalog/sp-red-snapper",
+    "source": "https://commons.wikimedia.org/wiki/File:Red_Snapper.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Red_Snapper.jpg?width=1600",
+    "title": "Red Snapper.jpg",
+    "license": "CC BY-SA 3.0",
+    "author": "Geeklikepi",
+    "width": 3264,
+    "height": 2448
+  },
+  "sp-kanpachi": {
+    "file": "catalog/sp-kanpachi",
+    "source": "https://commons.wikimedia.org/wiki/File:Pez_lim%C3%B3n_(Seriola_dumerili),_Madeira,_Portugal,_2019-05-31,_DD_31.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pez_lim%C3%B3n_(Seriola_dumerili)%2C_Madeira%2C_Portugal%2C_2019-05-31%2C_DD_31.jpg?width=1600",
+    "title": "Pez limón (Seriola dumerili), Madeira, Portugal, 2019-05-31, DD 31.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Diego Delso",
+    "width": 3789,
+    "height": 2482
+  },
+  "p-yft-whole": {
+    "file": "catalog/p-yft-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Mensuration_d%27un_thon_albacore_(Thunnus_albacares)_(Ifremer_00540-65193).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mensuration_d'un_thon_albacore_(Thunnus_albacares)_(Ifremer_00540-65193).jpg?width=1600",
+    "title": "Mensuration d'un thon albacore (Thunnus albacares) (Ifremer 00540-65193).jpg",
+    "license": "CC BY 4.0",
+    "author": "Marc Taquet",
+    "width": 2000,
+    "height": 3008
+  },
+  "p-tuna-loin": {
+    "file": "catalog/p-tuna-loin",
+    "source": "https://commons.wikimedia.org/wiki/File:Corte_de_at%C3%BAn-10.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Corte_de_at%C3%BAn-10.jpg?width=1600",
+    "title": "Corte de atún-10.jpg",
+    "license": "CC BY 3.0",
+    "author": "Tamorlan",
+    "width": 3888,
+    "height": 2592
+  },
+  "p-tuna-saku": {
+    "file": "catalog/p-tuna-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:Blocks_of_Tuna_(2678121167).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Blocks_of_Tuna_(2678121167).jpg?width=1600",
+    "title": "Blocks of Tuna (2678121167).jpg",
+    "license": "CC BY 2.0",
+    "author": "Naotake Murayama from San Francisco, CA, USA",
+    "width": 2736,
+    "height": 2736
+  },
+  "p-tuna-steak": {
+    "file": "catalog/p-tuna-steak",
+    "source": "https://commons.wikimedia.org/wiki/File:Awesome_tuna_steak.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Awesome_tuna_steak.jpg?width=1600",
+    "title": "Awesome tuna steak.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Luca.favorido",
+    "width": 3120,
+    "height": 4160
+  },
+  "p-tuna-cube": {
+    "file": "catalog/p-tuna-cube",
+    "source": "https://commons.wikimedia.org/wiki/File:Juicy_Tuna_Steak.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Juicy_Tuna_Steak.jpg?width=1600",
+    "title": "Juicy Tuna Steak.jpg",
+    "license": "CC BY 2.0",
+    "author": "George Alexander Ishida Newman from Japan",
+    "width": 5616,
+    "height": 3744
+  },
+  "p-yft-strip": {
+    "file": "catalog/p-yft-strip",
+    "source": "https://commons.wikimedia.org/wiki/File:Tuna_Recall_(7090098867).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tuna_Recall_(7090098867).jpg",
+    "title": "Tuna Recall (7090098867).jpg",
+    "license": "Public domain",
+    "author": "The U.S. Food and Drug Administration",
+    "width": 600,
+    "height": 450
+  },
+  "p-yft-pack": {
+    "file": "catalog/p-yft-pack",
+    "source": "https://commons.wikimedia.org/wiki/File:Tuna_Recall_(7173249608).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tuna_Recall_(7173249608).jpg",
+    "title": "Tuna Recall (7173249608).jpg",
+    "license": "Public domain",
+    "author": "The U.S. Food and Drug Administration",
+    "width": 640,
+    "height": 480
+  },
+  "p-bft-loin": {
+    "file": "catalog/p-bft-loin",
+    "source": "https://commons.wikimedia.org/wiki/File:At%C3%BAn_Rojo_(Boquer%C3%ADa)_-_2011.JPG",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/At%C3%BAn_Rojo_(Boquer%C3%ADa)_-_2011.JPG?width=1600",
+    "title": "Atún Rojo (Boquería) - 2011.JPG",
+    "license": "CC BY 3.0",
+    "author": "Tamorlan",
+    "width": 3888,
+    "height": 2592
+  },
+  "p-bft-saku": {
+    "file": "catalog/p-bft-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:At%C3%BAn_en_el_Mercado_de_la_Boquer%C3%ADa.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/At%C3%BAn_en_el_Mercado_de_la_Boquer%C3%ADa.jpg?width=1600",
+    "title": "Atún en el Mercado de la Boquería.jpg",
+    "license": "CC BY-SA 2.0",
+    "author": "flydime",
+    "width": 3866,
+    "height": 2577
+  },
+  "p-akami": {
+    "file": "catalog/p-akami",
+    "source": "https://commons.wikimedia.org/wiki/File:Maguro_Akami_(lean_tuna)_Nigiri.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Maguro_Akami_(lean_tuna)_Nigiri.jpg?width=1600",
+    "title": "Maguro Akami (lean tuna) Nigiri.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Zheng Zhou",
+    "width": 4032,
+    "height": 3024
+  },
+  "p-chutoro": {
+    "file": "catalog/p-chutoro",
+    "source": "https://commons.wikimedia.org/wiki/File:Chu-Toro_sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chu-Toro_sushi.jpg?width=1600",
+    "title": "Chu-Toro sushi.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "TarnishedPath",
+    "width": 2236,
+    "height": 2982
+  },
+  "p-otoro": {
+    "file": "catalog/p-otoro",
+    "source": "https://commons.wikimedia.org/wiki/File:Maguro_Otoro_(fatty_tuna)_Nigiri.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Maguro_Otoro_(fatty_tuna)_Nigiri.jpg?width=1600",
+    "title": "Maguro Otoro (fatty tuna) Nigiri.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Zheng Zhou",
+    "width": 4032,
+    "height": 3024
+  },
+  "p-bet-whole": {
+    "file": "catalog/p-bet-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Thunnus_obesus_(bigeye_tuna).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thunnus_obesus_(bigeye_tuna).jpg?width=1600",
+    "title": "Thunnus obesus (bigeye tuna).jpg",
+    "license": "Public domain",
+    "author": "Allen Shimada, NOAA NMFS OST",
+    "width": 2592,
+    "height": 1224
+  },
+  "p-salmon-whole": {
+    "file": "catalog/p-salmon-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Salmo_salar,_by_%27n_vismark_in_Pretoria,_a.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Salmo_salar%2C_by_'n_vismark_in_Pretoria%2C_a.jpg?width=1600",
+    "title": "Salmo salar, by 'n vismark in Pretoria, a.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "JMK",
+    "width": 3888,
+    "height": 2592
+  },
+  "p-salmon-fillet": {
+    "file": "catalog/p-salmon-fillet",
+    "source": "https://commons.wikimedia.org/wiki/File:Atlantic_Salmon.png",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Atlantic_Salmon.png",
+    "title": "Atlantic Salmon.png",
+    "license": "Public domain",
+    "author": "Robpedia at English Wikipedia",
+    "width": 800,
+    "height": 600
+  },
+  "p-salmon-saku": {
+    "file": "catalog/p-salmon-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:Salmon_sashimi_slices.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Salmon_sashimi_slices.jpg?width=1600",
+    "title": "Salmon sashimi slices.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "CNEcija12345",
+    "width": 3277,
+    "height": 2058
+  },
+  "p-salmon-steak": {
+    "file": "catalog/p-salmon-steak",
+    "source": "https://commons.wikimedia.org/wiki/File:8807Photos_taken_2020_coronavirus_pandemic_Baliuag,_Bulacan_12.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/8807Photos_taken_2020_coronavirus_pandemic_Baliuag%2C_Bulacan_12.jpg?width=1600",
+    "title": "8807Photos taken 2020 coronavirus pandemic Baliuag, Bulacan 12.jpg",
+    "license": "CC0",
+    "author": "Judgefloro",
+    "width": 4608,
+    "height": 3456
+  },
+  "p-salmon-pack": {
+    "file": "catalog/p-salmon-pack",
+    "source": "https://commons.wikimedia.org/wiki/File:%22_15_-_ITALY_-_salmon_fillet_esselunga_dishes.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22_15_-_ITALY_-_salmon_fillet_esselunga_dishes.jpg",
+    "title": "\" 15 - ITALY - salmon fillet esselunga dishes.jpg",
+    "license": "CC BY-SA 3.0 it",
+    "author": "Pava",
+    "width": 728,
+    "height": 1296
+  },
+  "p-hamachi-whole": {
+    "file": "catalog/p-hamachi-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:%E6%B0%B7%E8%A6%8B%E3%83%96%E3%83%AA%EF%BC%88%E5%AF%92%E3%83%96%E3%83%AA%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BC%8920240210-P1038532.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/%E6%B0%B7%E8%A6%8B%E3%83%96%E3%83%AA%EF%BC%88%E5%AF%92%E3%83%96%E3%83%AA%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%EF%BC%8920240210-P1038532.jpg?width=1600",
+    "title": "氷見ブリ（寒ブリではない）20240210-P1038532.jpg",
+    "license": "CC BY 4.0",
+    "author": "くろふね",
+    "width": 1600,
+    "height": 1200
+  },
+  "p-hamachi-saku": {
+    "file": "catalog/p-hamachi-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:%E3%83%96%E3%83%AA%E5%88%BA%E8%BA%AB%E5%AE%9A%E9%A3%9F%EF%BC%88%E6%B0%B7%E8%A6%8B%E9%AD%9A%E5%B8%82%E5%A0%B4%E9%A3%9F%E5%A0%82%EF%BC%8920240330-P1040829.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/%E3%83%96%E3%83%AA%E5%88%BA%E8%BA%AB%E5%AE%9A%E9%A3%9F%EF%BC%88%E6%B0%B7%E8%A6%8B%E9%AD%9A%E5%B8%82%E5%A0%B4%E9%A3%9F%E5%A0%82%EF%BC%8920240330-P1040829.jpg?width=1600",
+    "title": "ブリ刺身定食（氷見魚市場食堂）20240330-P1040829.jpg",
+    "license": "CC BY 4.0",
+    "author": "くろふね",
+    "width": 1600,
+    "height": 1200
+  },
+  "p-hamachi-fillet": {
+    "file": "catalog/p-hamachi-fillet",
+    "source": "https://commons.wikimedia.org/wiki/File:Seriola_quinqueradiata_(200810).jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seriola_quinqueradiata_(200810).jpg",
+    "title": "Seriola quinqueradiata (200810).jpg",
+    "license": "CC BY-SA 3.0",
+    "author": "E-190's",
+    "width": 640,
+    "height": 426
+  },
+  "p-tai-whole": {
+    "file": "catalog/p-tai-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Pagrus_major.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pagrus_major.jpg?width=1600",
+    "title": "Pagrus major.jpg",
+    "license": "CC BY-SA 2.0 kr",
+    "author": "국립국어원",
+    "width": 2000,
+    "height": 1528
+  },
+  "p-tai-fillet": {
+    "file": "catalog/p-tai-fillet",
+    "source": "https://commons.wikimedia.org/wiki/File:Sea_Bream_Fillet.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sea_Bream_Fillet.jpg?width=1600",
+    "title": "Sea Bream Fillet.jpg",
+    "license": "CC BY-SA 3.0",
+    "author": "Tzahy Lerner",
+    "width": 2288,
+    "height": 1712
+  },
+  "p-tai-saku": {
+    "file": "catalog/p-tai-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:Sashimi_of_red_seabream.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sashimi_of_red_seabream.jpg?width=1600",
+    "title": "Sashimi of red seabream.jpg",
+    "license": "CC BY 4.0",
+    "author": "ノボホショコロトソ",
+    "width": 4032,
+    "height": 3024
+  },
+  "p-mackerel-fillet": {
+    "file": "catalog/p-mackerel-fillet",
+    "source": "https://commons.wikimedia.org/wiki/File:Mackerel_fillet.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mackerel_fillet.jpg?width=1600",
+    "title": "Mackerel fillet.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "Tiia Monto",
+    "width": 3396,
+    "height": 2030
+  },
+  "p-mackerel-saku": {
+    "file": "catalog/p-mackerel-saku",
+    "source": "https://commons.wikimedia.org/wiki/File:Scomberomorus_niphonius_1.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Scomberomorus_niphonius_1.jpg",
+    "title": "Scomberomorus niphonius 1.jpg",
+    "license": "CC BY 4.0",
+    "author": "re_nebel",
+    "width": 1536,
+    "height": 2048
+  },
+  "p-snapper-whole": {
+    "file": "catalog/p-snapper-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Lutjanus_campechanus_on_ice.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lutjanus_campechanus_on_ice.jpg?width=1600",
+    "title": "Lutjanus campechanus on ice.jpg",
+    "license": "Public domain",
+    "author": "Garitzko",
+    "width": 1920,
+    "height": 1440
+  },
+  "p-snapper-fillet": {
+    "file": "catalog/p-snapper-fillet",
+    "source": "https://commons.wikimedia.org/wiki/File:Red_snapper_(%3F)_fillet_013_-_Tony%27s_Seafood,_Baton_Rouge.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Red_snapper_(%3F)_fillet_013_-_Tony's_Seafood%2C_Baton_Rouge.jpg?width=1600",
+    "title": "Red snapper (?) fillet 013 - Tony's Seafood, Baton Rouge.jpg",
+    "license": "CC BY 2.0",
+    "author": "Louisiana Sea Grant College Program Louisiana State Universi",
+    "width": 3872,
+    "height": 2592
+  },
+  "p-kanpachi-whole": {
+    "file": "catalog/p-kanpachi-whole",
+    "source": "https://commons.wikimedia.org/wiki/File:Seriola_dumerili_Gibraltar.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seriola_dumerili_Gibraltar.jpg",
+    "title": "Seriola dumerili Gibraltar.jpg",
+    "license": "CC0",
+    "author": "nick88",
+    "width": 1543,
+    "height": 765
+  },
+  "p-tuna-seared": {
+    "file": "catalog/p-tuna-seared",
+    "source": "https://commons.wikimedia.org/wiki/File:Seared_Ahi_Tuna_Steak.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seared_Ahi_Tuna_Steak.jpg",
+    "title": "Seared Ahi Tuna Steak.jpg",
+    "license": "CC BY 2.0",
+    "author": "eric molina from San Francisco, United States",
+    "width": 1280,
+    "height": 960
+  }
+}
