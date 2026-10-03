@@ -1479,3 +1479,44 @@ a.catalogue-count:hover { color: var(--paper); }
 .prow { grid-template-columns: 76px minmax(0, 1.4fr) minmax(0, 2fr) 10.5rem; }
 .prow-add { min-width: 9.5rem; justify-content: center; }
 @media (max-width: 980px) { .prow { grid-template-columns: 64px minmax(0, 1fr); } .prow-add { min-width: 0; } }
+
+/* ---------- search box and view toggle in the refine bar ---------- */
+.refine--search input { min-width: 15rem; padding: 0.65rem 0.95rem; background: rgba(var(--warm-off-white-rgb), 0.04); color: var(--paper); border: 1px solid var(--hairline-dark); border-radius: 2px; font: inherit; font-size: 0.88rem; transition: border-color var(--dur-fast) var(--ease-editorial); }
+.refine--search input::placeholder { color: var(--paper-soft); }
+.refine--search input:hover, .refine--search input:focus-visible { border-color: rgba(var(--aqua-rgb), 0.6); outline: none; }
+.refine--search input::-webkit-search-cancel-button { filter: invert(1) opacity(0.6); }
+.view-toggle { margin-left: auto; display: inline-flex; border: 1px solid var(--hairline-dark); border-radius: 2px; overflow: hidden; }
+.view-toggle a { padding: 0.65rem 1rem; font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--paper-soft); transition: background var(--dur-fast) var(--ease-editorial), color var(--dur-fast) var(--ease-editorial); }
+.view-toggle a + a { border-left: 1px solid var(--hairline-dark); }
+.view-toggle a:hover { color: var(--paper); }
+.view-toggle a[aria-current="true"] { background: rgba(var(--aqua-rgb), 0.14); color: var(--paper); box-shadow: inset 0 -2px 0 var(--aqua); }
+/* while typing in the search box the showcase gets out of the way */
+.catch.is-searching .shoal, .catch.is-searching .catch-subhead, .catch.is-searching .depth-gauge { display: none; }
+.prow[hidden], .cgroup[hidden] { display: none; }
+.cgroup-link { margin-left: auto; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: none; color: var(--paper-soft); }
+.cgroup-link:hover { color: var(--paper); }
+@media (max-width: 720px) { .view-toggle { margin-left: 0; } .refine--search input { min-width: 0; width: 100%; } .refine--search { flex: 1 1 100%; } }
+
+/* ---------- category page ---------- */
+.cat-head-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr); gap: var(--space-xl); align-items: end; }
+.cat-dot { display: inline-block; width: 0.42em; height: 0.42em; margin-right: 0.28em; border-radius: 50%; background: var(--cat, var(--aqua)); vertical-align: 0.12em; }
+.cat-head h1 { max-width: none; }
+.cat-photo { margin: 0; overflow: hidden; aspect-ratio: 5 / 4; background: var(--secondary-ocean); border-radius: 46% 54% 61% 39% / 55% 43% 57% 45%; box-shadow: 0 0 0 1px rgba(var(--aqua-rgb), 0.25); }
+.cat-photo img { width: 100%; height: 100%; object-fit: cover; }
+.cat-species { background: var(--near-black); color: var(--paper); padding: var(--space-lg) 0 var(--space-xl); border-top: 1px solid var(--hairline-dark); }
+.spec-grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--space-lg) var(--space-md); margin-top: var(--space-md); }
+.spec-card a { display: block; }
+.spec-photo { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--secondary-ocean); border-radius: 58% 42% 47% 53% / 44% 52% 48% 56%; margin-bottom: var(--space-sm); }
+.spec-card--2 .spec-photo { border-radius: 52% 48% 40% 60% / 36% 58% 42% 64%; }
+.spec-card--3 .spec-photo { border-radius: 38% 62% 52% 48% / 58% 44% 56% 42%; }
+.spec-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease-editorial); }
+.spec-card a:hover .spec-photo img { transform: scale(1.06); }
+.spec-name { display: block; font-size: 1.45rem; letter-spacing: -0.01em; line-height: 1.1; }
+.spec-sci { display: block; margin-top: 0.25rem; font-family: var(--font-accent); color: var(--paper-soft); }
+.spec-count { display: inline-block; margin-top: 0.6rem; font-size: 0.8rem; color: var(--aqua); }
+@media (max-width: 980px) { .cat-head-grid { grid-template-columns: 1fr; gap: var(--space-lg); } .cat-photo { max-width: 26rem; } }
+
+/* no showcase (filtered, compact view or while searching): the water section shrinks to just the refine bar */
+.catch--bare, .catch.is-searching { padding-bottom: var(--space-sm); }
+.catch--bare .catch-weed, .catch.is-searching .catch-weed { display: none; }
+.catch--bare .catch-refine, .catch.is-searching .catch-refine { margin-bottom: var(--space-sm); }

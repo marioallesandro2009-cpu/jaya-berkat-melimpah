@@ -198,6 +198,25 @@
     $$('select', f).forEach(function (s) { s.addEventListener('change', function () { $$('select', f).forEach(function (x) { if (!x.value) x.disabled = true; }); f.submit(); }); });
   });
 
+  /* ---------- Catalogue search: filters the rows while typing (the form also works as a plain GET) ---------- */
+  var searchBox = $('[data-catalog-search]');
+  if (searchBox) {
+    var searchRows = $$('.prow'), searchGroups = $$('[data-catalog-group]'), searchCount = $('[data-catalog-count]'), searchHost = $('.catch');
+    var runSearch = function () {
+      var q = searchBox.value.trim().toLowerCase(), shown = 0;
+      searchRows.forEach(function (row) {
+        var hit = q === '' || (row.getAttribute('data-search') || '').indexOf(q) !== -1;
+        row.hidden = !hit;
+        if (hit) shown++;
+      });
+      searchGroups.forEach(function (g) { g.hidden = $$('.prow:not([hidden])', g).length === 0; });
+      if (searchCount) searchCount.textContent = shown;
+      if (searchHost) searchHost.classList.toggle('is-searching', q !== '');
+    };
+    searchBox.addEventListener('input', runSearch);
+    if (searchBox.value.trim() !== '') runSearch();
+  }
+
   /* ---------- Inquiry list: pick several products, send one inquiry (kept in this browser only) ---------- */
   var INQUIRY_KEY = 'jbm.inquiry';
   var bar = $('[data-inquiry-bar]');

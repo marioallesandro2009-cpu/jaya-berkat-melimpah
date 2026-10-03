@@ -13,6 +13,7 @@ use App\Models\MenuItem;
 use App\Models\PageSection;
 use App\Models\Post;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\SiteSetting;
 use App\Models\Species;
 use App\Models\Stat;
@@ -79,6 +80,17 @@ class SeoController extends Controller
             }
 
             $add($alternates, '0.7', $product->updated_at ? Carbon::parse($product->updated_at) : null);
+        }
+
+        // Category pages.
+        foreach (ProductCategory::query()->active()->has('products')->get() as $category) {
+            $alternates = [];
+
+            foreach (Locales::all() as $locale) {
+                $alternates[$locale] = Seo::baseUrl().$category->detailPath($locale);
+            }
+
+            $add($alternates, '0.7', $category->updated_at ? Carbon::parse($category->updated_at) : null);
         }
 
         // Species pages (the path differs per language, the slugs do not).

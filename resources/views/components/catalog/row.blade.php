@@ -1,7 +1,7 @@
 {{-- One product as a row of the compact catalogue (also used on species pages): small photo, name, species,
      the three facts a buyer compares (cut, storage, grade) and the actions. --}}
 @props(['product', 'texts'])
-<li class="prow" data-inquiry-item data-name="{{ $product['value'] }}" data-code="{{ $product['code'] }}">
+<li class="prow" data-inquiry-item data-name="{{ $product['value'] }}" data-code="{{ $product['code'] }}" data-search="{{ \Illuminate\Support\Str::lower(implode(' ', array_filter([$product['name'], $product['code'], $product['species']['name'] ?? null, $product['species']['scientific'] ?? null, $product['cut'], $product['category']['name'] ?? null]))) }}">
     <a class="prow-thumb" @if ($product['url']) href="{{ $product['url'] }}" @endif tabindex="-1" aria-hidden="true">
         @if ($product['image'])
             <x-ui.picture :image="$product['image']" sizes="110px" alt="" />

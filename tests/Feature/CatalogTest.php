@@ -107,3 +107,27 @@ it('accepts an inquiry list and keeps it in the lead message', function () {
         ->and($lead->message)->toContain('Need a quote for both.')
         ->and($lead->product_title)->toBe('Other / multiple');
 });
+
+it('has category pages, a search box and a compact view', function () {
+    $this->get('/products/tuna')->assertOk()->assertSee('Yellowfin Tuna')->assertSee('Bluefin Tuna')->assertSee('Bigeye Tuna')->assertSee('15 products');
+    $this->get('/id/produk/salmon')->assertOk()->assertSee('Atlantic Salmon');
+    // a product page with the same slug wins over a category page; unknown slugs are 404
+    $this->get('/products/yellowfin-tuna-loin')->assertOk()->assertSee('Specifications');
+    $this->get('/products/not-a-category')->assertNotFound();
+    $this->get('/sitemap.xml')->assertSee('/products/tuna<', false)->assertSee('/id/produk/salmon<', false);
+
+    $names = function (string $html): array {
+        preg_match_all('/class="prow-name">(.*?)<\/h4>/s', $html, $m);
+
+        return array_map(fn (string $name): string => trim(strip_tags($name)), $m[1]);
+    };
+
+    expect($names($this->get('/products?q=otoro')->getContent()))->toBe(['Bluefin Tuna Otoro'])
+        ->and($names($this->get('/products?q=THUNNUS%20thynnus')->getContent()))->toHaveCount(5)
+        ->and($names($this->get('/products?q=yft-saku')->getContent()))->toBe(['Yellowfin Tuna Saku'])
+        ->and($names($this->get('/products?q='.str_repeat('x', 500))->getContent()))->toBe([]);
+
+    $this->get('/products')->assertSee('class="shoal"', false);
+    $this->get('/products?view=compact')->assertDontSee('class="shoal"', false)->assertSee('prow-name', false);
+    $this->get('/products?q=otoro')->assertDontSee('class="shoal"', false);
+});

@@ -36,7 +36,7 @@
     </section>
 
     {{-- ==================== PRODUCTS ==================== --}}
-    <section class="catch" aria-label="{{ $texts['product_all'] }}">
+    <section class="catch {{ $featured ? '' : 'catch--bare' }}" aria-label="{{ $texts['product_all'] }}">
         {{-- Ocean life, purely decorative and kept quiet: contour lines, drifting motes, a few bubbles, fish, seaweed. --}}
         <div class="catch-decor" aria-hidden="true">
             <svg class="catch-contours" viewBox="0 0 1200 1800" preserveAspectRatio="xMidYMin slice" focusable="false">
@@ -88,6 +88,13 @@
                 @if ($currentCategory)
                     <input type="hidden" name="category" value="{{ $currentCategory['slug'] }}">
                 @endif
+                @if ($compact)
+                    <input type="hidden" name="view" value="compact">
+                @endif
+                <label class="refine refine--search">
+                    <span>{{ $texts['search_label'] }}</span>
+                    <input type="search" name="q" value="{{ $q }}" placeholder="{{ $texts['search_placeholder'] }}" maxlength="80" autocomplete="off" data-catalog-search>
+                </label>
                 @foreach (['species' => 'products_species', 'cut' => 'filter_cut', 'storage' => 'filter_storage', 'grade' => 'filter_grade'] as $name => $labelKey)
                     @if (count($options[$name]) > 1 || $filters[$name])
                         <label class="refine">
@@ -103,8 +110,12 @@
                 @endforeach
                 <noscript><button type="submit" class="btn btn--outline">{{ $texts['filter_apply'] }}</button></noscript>
                 @if ($active)
-                    <a class="refine-clear" href="{{ Links::page('products') }}">{{ $texts['filter_clear'] }} <span aria-hidden="true">×</span></a>
+                    <a class="refine-clear" href="{{ Links::page('products') }}{{ $compact ? '?view=compact' : '' }}">{{ $texts['filter_clear'] }} <span aria-hidden="true">×</span></a>
                 @endif
+                <span class="view-toggle" role="group" aria-label="{{ $texts['catalog_full'] }}">
+                    <a href="{{ request()->fullUrlWithQuery(['view' => null]) }}" @if (! $compact) aria-current="true" @endif>{{ $texts['view_showcase'] }}</a>
+                    <a href="{{ request()->fullUrlWithQuery(['view' => 'compact']) }}" @if ($compact) aria-current="true" @endif>{{ $texts['view_compact'] }}</a>
+                </span>
             </form>
 
             @if ($featured)
@@ -172,15 +183,16 @@
         <div class="wrap">
             <div class="catalogue-head reveal">
                 <h2>{{ $active ? $texts['catalog_results'] : $texts['catalog_full'] }}</h2>
-                <p class="catalogue-count">{{ count($products) }} {{ $texts['catalog_count'] }}</p>
+                <p class="catalogue-count"><span data-catalog-count>{{ count($products) }}</span> {{ $texts['catalog_count'] }}</p>
             </div>
 
             @forelse ($groups as $group)
-                <div class="cgroup">
+                <div class="cgroup" data-catalog-group>
                     @if ($group['category'])
                         <h3 class="cgroup-title reveal" style="--cat: {{ $group['category']['color'] }}">
                             <span class="chip-dot" aria-hidden="true"></span>{{ $group['category']['name'] }}
                             <span class="cgroup-count">{{ count($group['products']) }}</span>
+                            <a class="cgroup-link" href="{{ $group['category']['pageUrl'] }}">{{ $texts['cat_view'] }} →</a>
                         </h3>
                         @if ($group['category']['description'])
                             <p class="cgroup-note reveal">{{ $group['category']['description'] }}</p>

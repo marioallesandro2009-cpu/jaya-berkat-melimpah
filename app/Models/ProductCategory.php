@@ -8,6 +8,7 @@ use App\Models\Concerns\RegistersWebpConversions;
 use App\Models\Concerns\Sortable;
 use App\Models\Contracts\HasTranslatableFields;
 use App\Support\Links;
+use App\Support\MediaPresenter;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -101,6 +102,25 @@ class ProductCategory extends Model implements HasMedia, HasTranslatableFields
             'description' => $this->translate('description'),
             'color' => preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->color) ? $this->color : self::DEFAULT_COLOR,
             'url' => Links::page('products').'?category='.$this->slug,
+            'pageUrl' => $this->detailPath(),
         ];
+    }
+
+    /**
+     * Path of the category page: /products/tuna, /id/produk/tuna.
+     */
+    public function detailPath(?string $locale = null): string
+    {
+        return Links::page('products', $locale).'/'.$this->slug;
+    }
+
+    /**
+     * The category's own photo (only the category page needs it, so it is not part of toFrontend()).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function imagePayload(): ?array
+    {
+        return MediaPresenter::image($this->getFirstMedia('image'), 'lg', 'sm', 1600, 1000, (string) $this->translate('name'));
     }
 }

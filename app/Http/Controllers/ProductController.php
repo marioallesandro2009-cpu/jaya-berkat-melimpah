@@ -47,8 +47,12 @@ class ProductController extends Controller
             $filters[$name] = is_string($value) && isset($options[$name][$value]) ? $value : null;
         }
 
-        $products = array_values(array_filter($allProducts, fn (array $product): bool => $this->matches($product, $current['id'] ?? null, $filters)));
-        $active = $current !== null || array_filter($filters) !== [];
+        $query = $request->query('q');
+        $q = is_string($query) ? trim(mb_substr((string) preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $query), 0, 80)) : '';
+        $compact = $request->query('view') === 'compact';
+
+        $products = array_values(array_filter($allProducts, fn (array $product): bool => $this->matches($product, $current['id'] ?? null, $filters, $q)));
+        $active = $current !== null || array_filter($filters) !== [] || $q !== '';
 
         $section = $data['sections']['products'] ?? null;
         $seo = Seo::page($data, 'products', (string) ($section['title'] ?? __('Products')), $section['body'] ?? null, $allProducts[0]['image'] ?? null);
@@ -58,11 +62,13 @@ class ProductController extends Controller
         return view('products.index', [
             ...$data,
             'products' => $products,
-            'featured' => $active ? [] : array_values(array_filter($allProducts, fn (array $product): bool => $product['featured'])),
+            'featured' => $active || $compact ? [] : array_values(array_filter($allProducts, fn (array $product): bool => $product['featured'])),
             'groups' => $this->groups($products, $categories),
             'categories' => $categories,
             'currentCategory' => $current,
             'filters' => $filters,
+            'q' => $q,
+            'compact' => $compact,
             'options' => $options,
             'active' => $active,
             'totalProducts' => $totalProducts,
@@ -123,7 +129,12 @@ class ProductController extends Controller
     {
         $product = Product::query()->active()->withDetailPage()->where('slug', $slug)->with(['media', 'species.category', 'cut'])->first();
 
-        abort_if($product === null, 404);
+        if ($product === null) {
+            $category = ProductCategory::query()->active()->where('slug', $slug)->first();
+            abort_if($category === null, 404);
+
+            return $this->category($category);
+        }
 
         $data = FrontendData::all();
         $paths = [];
@@ -146,6 +157,48 @@ class ProductController extends Controller
             'others' => array_slice($others, 0, 8),
             'seo' => $seo,
             'jsonLd' => StructuredData::product($page, $data['settings'], $seo),
+        ]);
+    }
+
+    /**
+     * A category's own page: /products/{category}. A product page with the same slug wins (see show()).
+     */
+    private function category(ProductCategory $category): View
+    {
+        $data = FrontendData::all();
+        $products = array_values(array_filter($data['products'], fn (array $product): bool => ($product['category']['id'] ?? null) === $category->id));
+        $paths = [];
+
+        foreach (Locales::all() as $locale) {
+            $paths[$locale] = $category->detailPath($locale);
+        }
+
+        Locales::setPagePaths($paths);
+
+        $counts = array_count_values(array_filter(array_map(fn (array $product): ?int => $product['species']['id'] ?? null, $products)));
+        $species = Species::query()->active()->where('category_id', $category->id)->ordered()->with('media')->get()
+            ->map(fn (Species $row): array => [...$row->toFrontend(), 'count' => $counts[$row->id] ?? 0])->all();
+        $page = $category->toFrontend();
+        $image = $category->imagePayload() ?? ($species[0]['image'] ?? null);
+        $seo = Seo::product([
+            'name' => $page['name'],
+            'image' => $image,
+            'seoTitle' => $category->translate('meta_title'),
+            'seoDescription' => $category->translate('meta_description') ?? $page['description'],
+            'intro' => $page['description'],
+        ], $data['settings'], $paths);
+        $others = ProductCategory::query()->active()->ordered()->whereKeyNot($category->id)->get()
+            ->map(fn (ProductCategory $other): array => $other->toFrontend())->all();
+
+        return view('products.category', [
+            ...$data,
+            'category' => $page,
+            'image' => $image,
+            'species' => $species,
+            'products' => $products,
+            'others' => $others,
+            'seo' => $seo,
+            'jsonLd' => StructuredData::page($data, $seo),
         ]);
     }
 
@@ -179,9 +232,12 @@ class ProductController extends Controller
      * @param  array<string, mixed>  $product
      * @param  array<string, string|null>  $filters
      */
-    private function matches(array $product, ?int $categoryId, array $filters): bool
+    private function matches(array $product, ?int $categoryId, array $filters, string $q = ''): bool
     {
-        return ($categoryId === null || ($product['category']['id'] ?? null) === $categoryId)
+        $haystack = mb_strtolower(implode(' ', array_filter([$product['name'], $product['code'], $product['species']['name'] ?? null, $product['species']['scientific'] ?? null, $product['cut'], $product['category']['name'] ?? null])));
+
+        return ($q === '' || str_contains($haystack, mb_strtolower($q)))
+            && ($categoryId === null || ($product['category']['id'] ?? null) === $categoryId)
             && ($filters['species'] === null || ($product['species']['slug'] ?? null) === $filters['species'])
             && ($filters['cut'] === null || $product['cutSlug'] === $filters['cut'])
             && ($filters['storage'] === null || $product['freezing'] === $filters['storage'])
