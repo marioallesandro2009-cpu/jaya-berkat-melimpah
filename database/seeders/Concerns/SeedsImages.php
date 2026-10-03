@@ -10,8 +10,10 @@ trait SeedsImages
     /**
      * Attach database/seeders/images/{name}.(png|jpg|jpeg|webp) to a collection.
      * A placeholder PNG is generated first when the file does not exist.
+     *
+     * @param  array<string, mixed>  $properties  custom properties stored with the media (e.g. the photo credit)
      */
-    protected function attachSeedImage(HasMedia $model, string $collection, string $name, int $width, int $height): void
+    protected function attachSeedImage(HasMedia $model, string $collection, string $name, int $width, int $height, array $properties = []): void
     {
         if ($model->getMedia($collection)->isNotEmpty()) {
             return;
@@ -19,6 +21,7 @@ trait SeedsImages
 
         $model->addMedia($this->seedImagePath($name, $width, $height))
             ->preservingOriginal()
+            ->withCustomProperties($properties)
             ->toMediaCollection($collection);
     }
 
@@ -26,11 +29,13 @@ trait SeedsImages
      * Photos of the service pages (services, fleet, locations). Tests skip them unless
      * they ask for them (config site.seed_service_images = false): they are the
      * slowest part of seeding the site.
+     *
+     * @param  array<string, mixed>  $properties  custom properties stored with the media (e.g. the photo credit)
      */
-    protected function attachServiceImage(HasMedia $model, string $collection, string $name, int $width, int $height): void
+    protected function attachServiceImage(HasMedia $model, string $collection, string $name, int $width, int $height, array $properties = []): void
     {
         if (config('site.seed_service_images', true)) {
-            $this->attachSeedImage($model, $collection, $name, $width, $height);
+            $this->attachSeedImage($model, $collection, $name, $width, $height, $properties);
         }
     }
 

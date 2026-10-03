@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CreditsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProductController;
@@ -34,6 +35,8 @@ foreach (Locales::all() as $locale) {
             Route::get($segment('products').'/{slug}', [ProductController::class, 'show'])
                 ->where('slug', '[a-z0-9-]+')
                 ->name('products.show');
+            // Photo credits: /photo-credits, /id/kredit-foto (authors and licences of the photos used)
+            Route::get($segment('credits'), CreditsController::class)->name('credits');
             // News index and article: /news, /news/{slug}, /id/berita, /id/berita/{slug}
             Route::get($segment('news'), [NewsController::class, 'index'])->name('news.index');
             Route::get($segment('news').'/{slug}', [NewsController::class, 'show'])

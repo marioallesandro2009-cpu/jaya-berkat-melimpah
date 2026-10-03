@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Contracts\HasTranslatableFields;
 use App\Models\Cut;
 use App\Models\ProcessingMethod;
 use App\Models\Product;
@@ -9,9 +10,11 @@ use App\Models\ProductCategory;
 use App\Models\SiteSetting;
 use App\Models\Species;
 use Database\Seeders\Concerns\SeedsImages;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Demo seafood catalogue: category -> species -> cut -> product (data in data/seafood_catalog.php).
@@ -32,11 +35,15 @@ class SeafoodCatalogSeeder extends Seeder
     /** @var array<string, array<string, string>> */
     private array $images;
 
+    /** @var array<string, mixed> */
+    private array $id;
+
     private string $brand;
 
     public function run(): void
     {
         $this->data = require database_path('seeders/data/seafood_catalog.php');
+        $this->id = require database_path('seeders/data/seafood_catalog_id.php');
         $this->images = json_decode((string) file_get_contents(database_path('seeders/data/catalog-images.json')), true, 512, JSON_THROW_ON_ERROR);
         $this->brand = (string) (SiteSetting::query()->value('company_name') ?: 'PT Jaya Berkat Melimpah');
 
@@ -47,6 +54,7 @@ class SeafoodCatalogSeeder extends Seeder
         $cuts = $this->cuts();
         $species = $this->species($categories, $cuts);
         $this->products($species, $cuts, $methods);
+        $this->backfillCredits();
     }
 
     /**
@@ -83,6 +91,13 @@ class SeafoodCatalogSeeder extends Seeder
             ]);
 
             $this->attachSeedPhoto($category, $imageKey);
+            [$nameId, $descriptionId] = $this->id['categories'][$slug];
+            $this->fillIndonesian($category, [
+                'name' => $nameId,
+                'description' => $descriptionId,
+                'meta_title' => "{$nameId} | {$this->brand}",
+                'meta_description' => Str::limit($descriptionId, 155, ''),
+            ]);
             $rows[$slug] = $category;
         }
 
@@ -97,7 +112,7 @@ class SeafoodCatalogSeeder extends Seeder
         $rows = [];
 
         foreach ($this->data['processing_methods'] as $i => [$slug, $name, $type, $temperature, $description]) {
-            $rows[$slug] = ProcessingMethod::query()->where('slug', $slug)->first() ?? ProcessingMethod::query()->create([
+            $method = ProcessingMethod::query()->where('slug', $slug)->first() ?? ProcessingMethod::query()->create([
                 'slug' => $slug,
                 'name' => ['en' => $name],
                 'type' => $type,
@@ -106,6 +121,9 @@ class SeafoodCatalogSeeder extends Seeder
                 'sort_order' => $i + 1,
                 'is_active' => true,
             ]);
+            [$nameId, $descriptionId] = $this->id['processing_methods'][$slug];
+            $this->fillIndonesian($method, ['name' => $nameId, 'description' => $descriptionId]);
+            $rows[$slug] = $method;
         }
 
         return $rows;
@@ -119,7 +137,7 @@ class SeafoodCatalogSeeder extends Seeder
         $rows = [];
 
         foreach ($this->data['cuts'] as $i => [$slug, $name, $region, $description]) {
-            $rows[$slug] = Cut::query()->where('slug', $slug)->first() ?? Cut::query()->create([
+            $cut = Cut::query()->where('slug', $slug)->first() ?? Cut::query()->create([
                 'slug' => $slug,
                 'name' => ['en' => $name],
                 'body_region' => $region,
@@ -127,6 +145,9 @@ class SeafoodCatalogSeeder extends Seeder
                 'sort_order' => $i + 1,
                 'is_active' => true,
             ]);
+            [$nameId, $descriptionId] = $this->id['cuts'][$slug];
+            $this->fillIndonesian($cut, ['name' => $nameId, 'description' => $descriptionId]);
+            $rows[$slug] = $cut;
         }
 
         return $rows;
@@ -179,6 +200,13 @@ class SeafoodCatalogSeeder extends Seeder
 
             $species->cuts()->sync($sync);
             $this->attachSeedPhoto($species, $imageKey);
+            $descriptionId = $this->id['species'][$slug];
+            $this->fillIndonesian($species, [
+                'common_name' => $name,
+                'short_description' => $descriptionId,
+                'meta_title' => "{$name} ({$scientific}) | {$this->brand}",
+                'meta_description' => Str::limit($descriptionId, 155, ''),
+            ]);
             $rows[$slug] = $species;
         }
 
@@ -227,6 +255,21 @@ class SeafoodCatalogSeeder extends Seeder
             $species_ = $species[$speciesSlug];
             $imageFields = $this->imageFields($imageKey);
 
+            // the Indonesian side of the same texts (see seafood_catalog_id.php)
+            [$usageId, $packagingId, $sentenceId] = $this->id['cut_info'][$cutSlug];
+            $shortId = str_replace('{s}', $prefix, $sentenceId);
+            $freezeId = $this->id['freezing'][$freezing];
+            $temperatureId = $this->id['temperature'][$temperature];
+            $processingId = implode(', ', array_map(
+                fn (string $slug): string => $this->id['processing_methods'][$slug][0],
+                array_values(array_filter($methodSlugs, fn (string $slug): bool => $methods[$slug]->type !== 'freshness')),
+            ));
+            $shelfLifeId = $this->id['shelf_life'][$freezing];
+            $gradeId = $this->id['grades'][$grade];
+            $cutNameId = $this->id['cuts'][$cutSlug][0];
+            $speciesLabel = "{$species_->translation('common_name', 'en')} ({$species_->scientific_name})";
+            $labels = $this->id['spec_labels'];
+
             $product = Product::query()->updateOrCreate(['product_code' => $code], [
                 'category_id' => $species_->category_id,
                 'species_id' => $species_->id,
@@ -252,15 +295,15 @@ class SeafoodCatalogSeeder extends Seeder
                 'certification' => null,
                 'image_is_reference' => $reference,
                 'gallery_urls' => $galleryKeys === [] ? null : array_values(array_map(fn (string $key): string => $this->images[$key]['url'], $galleryKeys)),
-                'specs' => array_map(fn (array $row): array => ['label' => ['en' => $row[0]], 'value' => ['en' => $row[1]]], array_values(array_filter([
-                    ['Cut', $cutName],
-                    $processing !== '' ? ['Processing', $processing] : null,
-                    ['Storage', "{$freezeLabel}, {$temperature}"],
-                    ['Typical usage', $usage],
-                    ['Species', "{$species_->translation('common_name', 'en')} ({$species_->scientific_name})"],
-                    ['Packaging', $packaging],
-                    ['Shelf life', $this->data['shelf_life'][$freezing]],
-                    ['Grade', $grade],
+                'specs' => array_map(fn (array $row): array => ['label' => ['en' => $row[0], 'id' => $labels[$row[0]]], 'value' => ['en' => $row[1], 'id' => $row[2]]], array_values(array_filter([
+                    ['Cut', $cutName, $cutNameId],
+                    $processing !== '' ? ['Processing', $processing, $processingId] : null,
+                    ['Storage', "{$freezeLabel}, {$temperature}", "{$freezeId}, {$temperatureId}"],
+                    ['Typical usage', $usage, $usageId],
+                    ['Species', $speciesLabel, $speciesLabel],
+                    ['Packaging', $packaging, $packagingId],
+                    ['Shelf life', $this->data['shelf_life'][$freezing], $shelfLifeId],
+                    ['Grade', $grade, $gradeId],
                 ]))),
                 'seo_title' => ['en' => "{$name} | {$this->brand}"],
                 'seo_description' => ['en' => Str::limit("{$short} Supplied {$freezeLabel}.", 155, '')],
@@ -274,10 +317,19 @@ class SeafoodCatalogSeeder extends Seeder
 
             $product->processingMethods()->sync(array_map(fn (string $slug): int => $methods[$slug]->id, $methodSlugs));
             $this->attachSeedPhoto($product, $imageKey);
+            $this->fillIndonesian($product, [
+                'name' => $name,
+                'description' => $shortId,
+                'intro' => $shortId,
+                'content' => "<p>{$shortId}</p><p>{$this->id['texts']['typical_uses']}: {$usageId}.</p><p>{$this->id['texts']['supplied']} {$freezeId} ({$temperatureId})".($processingId !== '' ? ", {$processingId}" : '').". {$this->id['texts']['agreed']}</p>",
+                'image_alt' => $name.($reference ? ' '.$this->id['texts']['reference_photo'] : ''),
+                'seo_title' => "{$name} | {$this->brand}",
+                'seo_description' => Str::limit("{$shortId} {$this->id['texts']['supplied']} {$freezeId}.", 155, ''),
+            ]);
 
             if ($galleryKeys !== [] && $product->getMedia('gallery')->isEmpty() && config('site.seed_service_images', true)) {
                 foreach ($galleryKeys as $key) {
-                    $product->addMedia($this->seedImagePath($this->images[$key]['file'], 1600, 1000))->preservingOriginal()->toMediaCollection('gallery');
+                    $product->addMedia($this->seedImagePath($this->images[$key]['file'], 1600, 1000))->preservingOriginal()->withCustomProperties($this->creditProperties($key))->toMediaCollection('gallery');
                 }
             }
         }
@@ -300,6 +352,70 @@ class SeafoodCatalogSeeder extends Seeder
 
     private function attachSeedPhoto(HasMedia $model, string $key): void
     {
-        $this->attachServiceImage($model, 'image', $this->images[$key]['file'], 1600, 1000);
+        $this->attachServiceImage($model, 'image', $this->images[$key]['file'], 1600, 1000, $this->creditProperties($key));
+    }
+
+    /**
+     * What the public "photo credits" page lists (see App\Http\Controllers\CreditsController): stored with the
+     * media itself, so the credit disappears when the photo is replaced or deleted in the admin.
+     *
+     * @return array{credit: array<string, string>}
+     */
+    private function creditProperties(string $key): array
+    {
+        $image = $this->images[$key];
+
+        return ['credit' => ['title' => $image['title'], 'author' => $image['author'], 'license' => $image['license'], 'source' => $image['source']]];
+    }
+
+    /**
+     * Photos seeded before credits were stored with the media (matched by file name; a photo the admin has
+     * replaced has another file name and gets no credit).
+     */
+    private function backfillCredits(): void
+    {
+        $byFile = [];
+
+        foreach ($this->images as $key => $image) {
+            $byFile[basename($image['file']).'.jpg'] = $key;
+        }
+
+        Media::query()->whereIn('model_type', [Product::class, Species::class, ProductCategory::class])->get()
+            ->each(function (Media $media) use ($byFile): void {
+                $key = $byFile[$media->file_name] ?? null;
+
+                if ($key !== null && $media->getCustomProperty('credit') === null) {
+                    $media->setCustomProperty('credit', $this->creditProperties($key)['credit'])->save();
+                }
+            });
+    }
+
+    /**
+     * Fills the Indonesian version of the given fields where it is still empty and marks only those texts as
+     * checked (the catalogue was translated by hand). Anything already written in the admin is left alone.
+     *
+     * @param  array<string, string|null>  $texts  field => Indonesian text
+     */
+    private function fillIndonesian(Model&HasTranslatableFields $record, array $texts): void
+    {
+        $status = (array) $record->getAttribute('translation_status');
+        $changed = false;
+
+        foreach ($texts as $field => $text) {
+            if ($text === null || $record->translation($field, 'id') !== null) {
+                continue;
+            }
+
+            $values = (array) $record->getAttribute($field);
+            $values['id'] = $text;
+            $record->setAttribute($field, $values);
+            $status['id'][$field] = HasTranslatableFields::STATE_REVIEWED;
+            $changed = true;
+        }
+
+        if ($changed) {
+            $record->setAttribute('translation_status', $status);
+            $record->save();
+        }
     }
 }

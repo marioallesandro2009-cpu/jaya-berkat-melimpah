@@ -69,7 +69,7 @@ nama pimpinan, dan sertifikasi (HACCP, ISO 22000, Halal). Kontak di Pengaturan S
 telepon, WhatsApp, alamat) dan `logo` juga dummy. Penanda hilang setelah baris disimpan dari admin.
 Jangan menayangkan sertifikasi yang tidak dimiliki perusahaan.
 
-Katalog seafood (kategori, spesies, potongan, 31 produk) juga data contoh: spesies di sana **bukan** daftar produk yang dijual, itu diatur per produk dan per potongan (kolom *Dijual sebagai produk*). Masa simpan, kemasan, suhu, dan asal adalah nilai umum untuk ilustrasi, dan tidak ada sertifikasi yang diisi. Fotonya dari Wikimedia Commons dengan lisensi masing-masing (lihat `docs/image-credits.md`; CC BY dan CC BY-SA wajib mencantumkan penulis): ganti dengan foto produk sendiri sebelum rilis.
+Katalog seafood (kategori, spesies, potongan, 31 produk) juga data contoh: spesies di sana **bukan** daftar produk yang dijual, itu diatur per produk dan per potongan (kolom *Dijual sebagai produk*). Masa simpan, kemasan, suhu, dan asal adalah nilai umum untuk ilustrasi, dan tidak ada sertifikasi yang diisi. Fotonya dari Wikimedia Commons dengan lisensi masing-masing. Penulis dan lisensinya tampil di halaman publik **/photo-credits** (`/id/kredit-foto`, tautan "Kredit foto" di footer) dan hilang otomatis saat Anda mengganti foto di admin (lihat juga `docs/image-credits.md`). Yang paling aman tetap mengganti dengan foto produk sendiri sebelum rilis.
 
 ## Pemeriksaan
 

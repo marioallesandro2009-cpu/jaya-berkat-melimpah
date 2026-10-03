@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreditsController;
 use App\Models\ContactMessage;
 use App\Models\Cut;
 use App\Models\ProcessingMethod;
@@ -8,7 +9,9 @@ use App\Models\ProductCategory;
 use App\Models\Species;
 use App\Models\User;
 use Database\Seeders\SeafoodCatalogSeeder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 beforeEach(fn () => seedSite());
 
@@ -130,4 +133,46 @@ it('has category pages, a search box and a compact view', function () {
     $this->get('/products')->assertSee('class="shoal"', false);
     $this->get('/products?view=compact')->assertDontSee('class="shoal"', false)->assertSee('prow-name', false);
     $this->get('/products?q=otoro')->assertDontSee('class="shoal"', false);
+});
+
+it('has the whole catalogue in Indonesian, checked, so /id shows it', function () {
+    foreach ([Product::class, Species::class, ProductCategory::class, Cut::class, ProcessingMethod::class] as $model) {
+        foreach ($model::query()->get() as $record) {
+            expect($record->missingTranslations('id'))->toBe([])->and($record->draftTranslations('id'))->toBe([]);
+        }
+    }
+
+    $this->get('/id/produk/yellowfin-tuna-loin')->assertOk()
+        ->assertSee('Loin Yellowfin Tuna yang dirapikan')->assertSee('Potongan')->assertSee('Penyimpanan')->assertSee('Divakum satuan, master carton');
+    $this->get('/id/produk/tuna')->assertOk()->assertSee('Tuna madidihang');
+    $this->get('/id/produk')->assertOk()->assertSee('Ikan Sashimi Lainnya');
+});
+
+it('lists the credit of every free-licence photo on a public page and links it from the footer', function () {
+    $this->get('/photo-credits')->assertOk()->assertSee('Photo credits')
+        ->assertSee('Corte de atún-10.jpg')->assertSee('Tamorlan')->assertSee('CC BY 3.0')
+        ->assertSee('https://creativecommons.org/licenses/by/3.0/', false)
+        ->assertSee('Photographs were cropped and resized');
+    $this->get('/id/kredit-foto')->assertOk()->assertSee('Kredit foto')->assertSee('Penulis');
+    $this->get('/')->assertSee('/photo-credits', false);
+
+    expect(CreditsController::licenseUrl('CC BY-SA 4.0'))->toBe('https://creativecommons.org/licenses/by-sa/4.0/')
+        ->and(CreditsController::licenseUrl('CC BY-SA 3.0 it'))->toBe('https://creativecommons.org/licenses/by-sa/3.0/it/')
+        ->and(CreditsController::licenseUrl('CC0'))->toBe('https://creativecommons.org/publicdomain/zero/1.0/')
+        ->and(CreditsController::licenseUrl('Public domain'))->toBeNull();
+});
+
+it('drops the credits when the photos are deleted in the admin', function () {
+    expect(count(CreditsController::credits()))->toBeGreaterThan(30);
+
+    foreach (Media::query()->get() as $media) {
+        $media->delete();
+    }
+
+    Cache::forget('jbm.photo-credits.exists');
+
+    expect(CreditsController::credits())->toBe([])
+        ->and(CreditsController::exists())->toBeFalse();
+    $this->get('/')->assertDontSee('/photo-credits', false);
+    $this->get('/photo-credits')->assertOk()->assertSee('No photographs with a credit');
 });

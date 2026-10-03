@@ -15,6 +15,21 @@ beforeEach(function () {
     config(['services.translation.driver' => null, 'services.translation.key' => null, 'services.translation.url' => null]);
 });
 
+/** The seeded catalogue is fully translated; these tests need a product that still lacks its Indonesian texts. */
+function withoutIndonesian(Product $product): Product
+{
+    foreach (Product::TRANSLATABLE as $field) {
+        $values = (array) $product->getAttribute($field);
+        unset($values['id']);
+        $product->setAttribute($field, $values);
+    }
+
+    $product->setAttribute('translation_status', null);
+    $product->save();
+
+    return $product;
+}
+
 function useTranslator(string $driver): void
 {
     config(['services.translation.driver' => $driver, 'services.translation.key' => 'test-key']);
@@ -61,7 +76,7 @@ it('drafts every missing Indonesian text of the selected records, never over exi
     useTranslator('anthropic');
     Http::fake(['api.anthropic.com/*' => fn ($request) => Http::response(['content' => [['type' => 'text', 'text' => 'ID: '.$request['messages'][0]['content']]]])]);
 
-    $loin = Product::query()->where('product_code', 'YFT-LOIN-001')->firstOrFail();
+    $loin = withoutIndonesian(Product::query()->where('product_code', 'YFT-LOIN-001')->firstOrFail());
     $loin->update(['intro' => ['en' => $loin->translation('intro', 'en'), 'id' => 'Sudah ditulis manual.']]);
 
     $result = AutoTranslate::run(Product::query()->whereKey($loin->id)->get(), 'id');
@@ -86,6 +101,8 @@ it('drafts every missing Indonesian text of the selected records, never over exi
 it('stops cleanly when the service fails and says how many records are left', function () {
     useTranslator('anthropic');
     Http::fake(['api.anthropic.com/*' => Http::response([], 500)]);
+
+    Product::query()->limit(3)->get()->each(fn (Product $product) => withoutIndonesian($product));
 
     $result = AutoTranslate::run(Product::query()->limit(3)->get(), 'id');
 

@@ -63,7 +63,12 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; {{ now()->year }} {{ $settings['legalName'] }}. {{ $texts['footer_copyright'] }}</span>
-            <span>Indonesia</span>
+            <span class="footer-meta">
+                @if (\App\Http\Controllers\CreditsController::exists())
+                    <a href="{{ \App\Support\Links::page('credits') }}">{{ $texts['credits_title'] }}</a>
+                @endif
+                <span>Indonesia</span>
+            </span>
         </div>
     </div>
 </footer>

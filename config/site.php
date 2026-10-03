@@ -7,8 +7,8 @@ return [
     'favicon_ico_path' => env('FAVICON_ICO_PATH'),
 
     'locales' => [
-        'en' => ['prefix' => '', 'og' => 'en_US', 'native' => 'English', 'segments' => ['company' => 'company', 'news' => 'news', 'products' => 'products', 'contact' => 'contact']],
-        'id' => ['prefix' => 'id', 'og' => 'id_ID', 'native' => 'Bahasa Indonesia', 'segments' => ['company' => 'perusahaan', 'news' => 'berita', 'products' => 'produk', 'contact' => 'kontak']],
+        'en' => ['prefix' => '', 'og' => 'en_US', 'native' => 'English', 'segments' => ['company' => 'company', 'news' => 'news', 'products' => 'products', 'contact' => 'contact', 'credits' => 'photo-credits']],
+        'id' => ['prefix' => 'id', 'og' => 'id_ID', 'native' => 'Bahasa Indonesia', 'segments' => ['company' => 'perusahaan', 'news' => 'berita', 'products' => 'produk', 'contact' => 'kontak', 'credits' => 'kredit-foto']],
     ],
 
     'locale_switch_order' => ['id', 'en'],

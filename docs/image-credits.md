@@ -27,6 +27,12 @@ replace them) before launch.
 
 ## Seafood catalogue photos (species and products)
 
+**Where visitors see these credits:** the public page **/photo-credits** (`/id/kredit-foto`), linked from the footer ("Photo credits").
+It lists the author, licence (with a link to the licence text) and the Commons page of every photograph that is on the site
+right now, and says that the photographs were cropped and resized. The credit is stored with each photo (media custom property
+`credit`), so it disappears by itself when you replace or delete a photo in the admin, and the footer link disappears when no photo
+with a credit is left. This file is only the repository record; the public page is what meets the attribution rule of the licences.
+
 Files in `database/seeders/images/catalog/`, referenced by `database/seeders/data/catalog-images.json` and `seafood_catalog.php`.
 Source: Wikimedia Commons. Each photo has its own licence: **CC BY and CC BY-SA require attribution** (author and licence, as listed
 below), CC0 and public domain do not. Photos were resized and cropped to 1600 x 1000 px.
