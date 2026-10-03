@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Faqs;
 
 use App\Filament\Resources\Faqs\Pages\ManageFaqs;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Translatable;
 use App\Models\Faq;
@@ -78,7 +79,8 @@ class FaqResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([DeleteBulkAction::make()]),
+                BulkActionGroup::make([AutoTranslate::bulkAction(),
+                    DeleteBulkAction::make()]),
             ]);
     }
 

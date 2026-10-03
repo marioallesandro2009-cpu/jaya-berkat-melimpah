@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
  *
  * Forms show one field per language side by side (EN | ID) so the versions can be
  * compared. A field named "<field>.<locale>" also gets:
- * - a "Buat draf dari .." button (only when a translation service is configured);
+ * - a "Buat draf dari .." button (it explains how to switch the service on while none is configured);
  * - under a translation (ID): "Draf - perlu dicek" | "Sudah dicek". Only checked translations
  *   are shown on the site; the others show the English text.
  */
@@ -203,8 +203,15 @@ final class Translatable
         return Action::make('draftTranslation')
             ->label('Buat draf dari '.strtoupper($from))
             ->icon(Heroicon::OutlinedLanguage)
-            ->visible(fn (): bool => Translator::enabled())
             ->action(function (Get $get, Set $set) use ($base, $from, $to): void {
+                if (! Translator::enabled()) {
+                    Notification::make()->warning()->title('Terjemahan otomatis belum aktif')
+                        ->body('Isi TRANSLATION_DRIVER (deepl, google, atau anthropic) dan TRANSLATION_API_KEY di file .env, lalu muat ulang. Sementara itu terjemahan tetap bisa diketik manual.')
+                        ->persistent()->send();
+
+                    return;
+                }
+
                 $text = trim((string) $get("{$base}.{$from}"));
 
                 if ($text === '') {

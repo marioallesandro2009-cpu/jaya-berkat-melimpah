@@ -52,6 +52,16 @@ Seeder aman dijalankan ulang: isi yang sudah ada tidak ditimpa.
 Setiap teks punya kolom EN dan ID. Kolom ID yang kosong atau berstatus "Draf" menampilkan teks EN
 di `/id`; tandai "Sudah dicek" agar versi ID tampil.
 
+## Terjemahan otomatis (EN ke ID)
+
+Sudah ada, tetapi **mati sampai Anda mengisi kuncinya**. Di `.env` isi `TRANSLATION_DRIVER` (`deepl`, `google`, atau `anthropic` untuk Claude) dan `TRANSLATION_API_KEY`, lalu muat ulang admin. Setelah itu:
+
+- Di tiap kolom bahasa ada tombol **Buat draf dari EN** (juga untuk teks berformat/rich text; hasilnya bisa dibaca dulu sebelum disimpan).
+- Di daftar Produk, Spesies, Kategori, Potongan, Metode Pengolahan, dan FAQ, pilih beberapa baris lalu **Buat draf terjemahan (ID)**: semua teks EN yang versi ID-nya kosong diterjemahkan sekaligus. Teks yang sudah ada tidak diubah, nama produk dan spesies tetap Inggris, teks berformat dilewati. Satu putaran berhenti sekitar 20 detik agar aman di hosting bersama; ulangi bila ada yang tersisa.
+- Hasilnya selalu **draf**: tidak tampil di situs sampai Anda menandai "Sudah dicek".
+- Istilah khusus (mis. Super Frozen, Saku) bisa dikunci di Pengaturan Situs, tab Terjemahan (glosarium).
+- Yang dikirim ke layanan hanya teks yang sedang diterjemahkan; kuncinya hanya ada di `.env`.
+
 ## Data contoh yang HARUS diganti sebelum rilis
 
 Baris dengan penanda **Contoh** di admin adalah data DUMMY dari seeder: angka skala, sejarah,

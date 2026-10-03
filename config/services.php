@@ -29,14 +29,16 @@ return [
     ],
 
     /*
-    | Drafts of translations in the admin ("Buat draf terjemahan"). Driver: deepl
-    | or google; empty = the button is hidden. TRANSLATION_API_URL is optional
+    | Drafts of translations in the admin ("Buat draf terjemahan"). Driver: deepl,
+    | google or anthropic (Claude); empty = the buttons explain how to switch it on. TRANSLATION_API_URL is optional
     | (e.g. a DeepL Pro endpoint or a proxy).
     */
     'translation' => [
         'driver' => env('TRANSLATION_DRIVER'),
         'key' => env('TRANSLATION_API_KEY'),
         'url' => env('TRANSLATION_API_URL'),
+        // anthropic only: the Claude model (default claude-haiku-4-5-20251001, fast and inexpensive)
+        'model' => env('TRANSLATION_MODEL'),
     ],
 
     'slack' => [

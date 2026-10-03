@@ -253,8 +253,8 @@ class ManageSiteSettings extends Page
                         ->icon(Heroicon::OutlinedLanguage)
                         ->schema([
                             Text::make(Translator::enabled()
-                                ? 'Tombol "Buat draf" aktif ('.config('services.translation.driver').'). Draf tidak tampil di situs sampai ditandai "Sudah dicek".'
-                                : 'Tombol "Buat draf" tidak tampil karena layanan terjemahan belum dikonfigurasi (TRANSLATION_DRIVER dan TRANSLATION_API_KEY di .env). Terjemahan tetap bisa diisi manual.')
+                                ? 'Terjemahan otomatis aktif ('.config('services.translation.driver').'): tombol "Buat draf dari EN" di tiap kolom, dan aksi "Buat draf terjemahan (ID)" untuk banyak data sekaligus di daftar Produk, Spesies, Kategori, Potongan, Metode, dan FAQ. Draf tidak tampil di situs sampai ditandai "Sudah dicek".'
+                                : 'Terjemahan otomatis BELUM aktif. Isi TRANSLATION_DRIVER (deepl, google, atau anthropic) dan TRANSLATION_API_KEY di file .env, lalu muat ulang; tombol "Buat draf dari EN" di tiap kolom akan langsung bekerja. Sementara itu terjemahan tetap bisa diketik manual.')
                                 ->color('gray'),
                             Repeater::make('translation_glossary')
                                 ->label('Glosarium')

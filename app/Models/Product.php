@@ -72,6 +72,9 @@ class Product extends Model implements HasMedia, HasTranslatableFields
 
     public const TRANSLATABLE = ['name', 'description', 'image_alt', 'intro', 'content', 'seo_title', 'seo_description'];
 
+    /** Texts the bulk "draft translation" leaves alone (product names stay English). */
+    public const AUTO_TRANSLATE_SKIP = ['name'];
+
     public const DRAFT = 'draft';
 
     public const PUBLISHED = 'published';

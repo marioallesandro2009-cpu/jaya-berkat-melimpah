@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProductCategories;
 
 use App\Filament\Resources\ProductCategories\Pages\ManageProductCategories;
 use App\Filament\Resources\Products\ProductResource;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Translatable;
 use App\Models\ProductCategory;
@@ -155,6 +156,7 @@ class ProductCategoryResource extends Resource
                         ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))->deselectRecordsAfterCompletion(),
                     BulkAction::make('hide')->label('Sembunyikan')->icon(Heroicon::OutlinedEyeSlash)
                         ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))->deselectRecordsAfterCompletion(),
+                    AutoTranslate::bulkAction(),
                     DeleteBulkAction::make()->modalDescription('Produk di kategori yang dihapus tidak ikut terhapus, hanya menjadi tanpa kategori.'),
                 ]),
             ]);

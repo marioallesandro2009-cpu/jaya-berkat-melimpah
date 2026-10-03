@@ -55,6 +55,9 @@ class Species extends Model implements HasMedia, HasTranslatableFields
 
     public const TRANSLATABLE = ['common_name', 'short_description', 'meta_title', 'meta_description'];
 
+    /** Texts the bulk "draft translation" leaves alone (species names stay English). */
+    public const AUTO_TRANSLATE_SKIP = ['common_name'];
+
     protected $table = 'species';
 
     protected function casts(): array

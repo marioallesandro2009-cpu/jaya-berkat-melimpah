@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Cuts;
 
 use App\Filament\Resources\Cuts\Pages\ManageCuts;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Translatable;
 use App\Models\Cut;
@@ -84,7 +85,8 @@ class CutResource extends Resource
                 EditAction::make(),
                 DeleteAction::make()->modalDescription('Produk yang memakai potongan ini tidak ikut terhapus, hanya menjadi tanpa potongan.'),
             ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->toolbarActions([BulkActionGroup::make([AutoTranslate::bulkAction(),
+                DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

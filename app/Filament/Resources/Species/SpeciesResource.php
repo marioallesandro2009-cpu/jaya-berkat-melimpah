@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Species;
 
 use App\Filament\Resources\Species\Pages\ManageSpecies;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Sample;
 use App\Filament\Support\Translatable;
@@ -148,7 +149,8 @@ class SpeciesResource extends Resource
                 EditAction::make()->after(fn (Model $record) => $record->getAttribute('is_sample') ? $record->forceFill(['is_sample' => false])->saveQuietly() : null),
                 DeleteAction::make()->modalDescription('Produk yang memakai spesies ini tidak ikut terhapus, hanya menjadi tanpa spesies.'),
             ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->toolbarActions([BulkActionGroup::make([AutoTranslate::bulkAction(),
+                DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

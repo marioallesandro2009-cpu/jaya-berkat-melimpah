@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Http;
 use Throwable;
 
 /**
- * Drafts a translation with the service set in .env (TRANSLATION_DRIVER and
- * TRANSLATION_API_KEY). The result is only a draft: the admin checks it and
+ * Drafts a translation with the service set in .env (TRANSLATION_DRIVER = deepl, google or
+ * anthropic, and TRANSLATION_API_KEY). The result is only a draft: the admin checks it and
  * marks it "Sudah dicek" before it appears on the site.
  *
  * Glossary terms (Pengaturan Situs › Terjemahan) are wrapped in tags the
@@ -17,7 +17,10 @@ use Throwable;
  */
 final class Translator
 {
-    public const DRIVERS = ['deepl', 'google'];
+    public const DRIVERS = ['deepl', 'google', 'anthropic'];
+
+    /** Language names for the Claude prompt. */
+    private const LANGUAGES = ['en' => 'English', 'id' => 'Indonesian'];
 
     public static function enabled(): bool
     {
@@ -38,9 +41,11 @@ final class Translator
         $marked = self::protectTerms($text, $from, $to, self::glossary(), $driver);
 
         try {
-            $translated = $driver === 'deepl'
-                ? self::deepl($marked, $from, $to)
-                : self::google($marked, $from, $to);
+            $translated = match ($driver) {
+                'deepl' => self::deepl($marked, $from, $to),
+                'anthropic' => self::anthropic($marked, $from, $to),
+                default => self::google($marked, $from, $to),
+            };
         } catch (TranslationFailed $exception) {
             throw $exception;
         } catch (Throwable $exception) {
@@ -128,6 +133,40 @@ final class Translator
         }
 
         return (string) $response->json('translations.0.text');
+    }
+
+    /**
+     * Claude (Anthropic Messages API). The text is XML-escaped and glossary terms are wrapped in
+     * <span translate="no">, exactly as for Google, and the instructions keep both untouched.
+     */
+    private static function anthropic(string $text, string $from, string $to): string
+    {
+        $url = config('services.translation.url') ?: 'https://api.anthropic.com';
+        $model = config('services.translation.model') ?: 'claude-haiku-4-5-20251001';
+        $source = self::LANGUAGES[$from] ?? strtoupper($from);
+        $target = self::LANGUAGES[$to] ?? strtoupper($to);
+
+        $response = Http::timeout(40)
+            ->withHeaders(['x-api-key' => (string) config('services.translation.key'), 'anthropic-version' => '2023-06-01'])
+            ->post(rtrim((string) $url, '/').'/v1/messages', [
+                'model' => $model,
+                'max_tokens' => 2048,
+                'temperature' => 0,
+                'system' => "You translate website copy of a seafood processor and exporter from {$source} to {$target}. The input is XML-escaped text: keep every XML entity and every <span translate=\"no\">...</span> element exactly as written (the text inside the span stays untranslated), add no markup, and keep product names, codes, numbers and units unchanged. Reply with the translation only, nothing else.",
+                'messages' => [['role' => 'user', 'content' => $text]],
+            ]);
+
+        if ($response->failed()) {
+            throw new TranslationFailed('Claude menolak permintaan (HTTP '.$response->status().').');
+        }
+
+        $translated = trim((string) $response->json('content.0.text'));
+
+        if ($translated === '') {
+            throw new TranslationFailed('Claude tidak mengembalikan terjemahan.');
+        }
+
+        return $translated;
     }
 
     private static function google(string $text, string $from, string $to): string

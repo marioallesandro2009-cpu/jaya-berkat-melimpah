@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProcessingMethods;
 
 use App\Filament\Resources\ProcessingMethods\Pages\ManageProcessingMethods;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Translatable;
 use App\Models\ProcessingMethod;
@@ -89,7 +90,8 @@ class ProcessingMethodResource extends Resource
                 EditAction::make(),
                 DeleteAction::make()->modalDescription('Produk yang memakai metode ini tidak ikut terhapus, hanya kehilangan label metode tersebut.'),
             ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->toolbarActions([BulkActionGroup::make([AutoTranslate::bulkAction(),
+                DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductCategories\ProductCategoryResource;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Filament\Support\AutoTranslate;
 use App\Filament\Support\HasTranslatableRecordTitle;
 use App\Filament\Support\Sample;
 use App\Filament\Support\Translatable;
@@ -262,6 +263,7 @@ class ProductResource extends Resource
                     ])
                     ->action(fn (Collection $records, array $data) => $records->each->update(['category_id' => $data['category_id'] ?? null]))
                     ->deselectRecordsAfterCompletion(),
+                AutoTranslate::bulkAction(),
                 DeleteBulkAction::make(),
             ])]);
     }
