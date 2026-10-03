@@ -182,25 +182,109 @@ body.fi-body, .fi-body { font-family: var(--font-family); }
 .fi-simple-header-heading { font-family: var(--serif); font-weight: 400; font-size: 1.7rem; letter-spacing: -0.01em; }
 .fi-simple-header-heading::after { content: ''; display: block; width: 64px; height: 10px; margin: 0.6rem auto 0; background: var(--wave) center / contain no-repeat; }
 
-/* login decoration (markup injected by the BODY_END hook: .ocean-decor) */
+/* login decoration (markup injected by the BODY_END hook: .ocean-decor, see views/filament/ocean-decor.blade.php) */
 .ocean-decor { display: none; }
-body:has(.fi-simple-layout) .ocean-decor { display: block; position: fixed; inset: auto 0 0 0; height: 46vh; pointer-events: none; z-index: 1; overflow: hidden; }
-.ocean-decor .w { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background-repeat: repeat-x; background-position: 0 100%; background-size: 1200px 100%; }
-.ocean-decor .w1 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 150 C150 90 300 210 450 150 S750 90 900 150 S1050 210 1200 150 V300 H0Z' fill='%237CC4E4' fill-opacity='0.07'/%3E%3C/svg%3E"); animation: swell 38s linear infinite; }
-.ocean-decor .w2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 190 C200 140 400 240 600 190 S1000 140 1200 190 V300 H0Z' fill='%237CC4E4' fill-opacity='0.09'/%3E%3C/svg%3E"); animation: swell 54s linear infinite reverse; }
-.ocean-decor .w3 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 230 C150 200 300 260 450 230 S750 200 900 230 S1050 260 1200 230 V300 H0Z' fill='%23071A21' fill-opacity='0.5'/%3E%3C/svg%3E"); animation: swell 70s linear infinite; }
-.ocean-decor i { position: absolute; bottom: -20px; border: 1.5px solid rgba(124, 196, 228, 0.3); border-radius: 50%; animation: rise 18s ease-in infinite; }
-.ocean-decor i:nth-of-type(1) { left: 8%; width: 9px; height: 9px; animation-delay: -3s; }
-.ocean-decor i:nth-of-type(2) { left: 21%; width: 15px; height: 15px; animation-delay: -10s; animation-duration: 23s; }
-.ocean-decor i:nth-of-type(3) { left: 37%; width: 7px; height: 7px; animation-delay: -6s; }
-.ocean-decor i:nth-of-type(4) { left: 63%; width: 12px; height: 12px; animation-delay: -14s; animation-duration: 21s; }
-.ocean-decor i:nth-of-type(5) { left: 79%; width: 8px; height: 8px; animation-delay: -1s; }
-.ocean-decor i:nth-of-type(6) { left: 91%; width: 14px; height: 14px; animation-delay: -8s; animation-duration: 25s; }
-@keyframes swell { to { background-position: 1200px 100%; } }
-@keyframes rise { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 1; } 100% { transform: translateY(-62vh) translateX(14px); opacity: 0; } }
+body:has(.fi-simple-layout) .ocean-decor { display: block; position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+
+/* light from the surface: soft beams that sway and breathe */
+.o-rays { position: absolute; inset: -10% 0 auto 0; height: 80vh; opacity: 0; animation: o-fade 3s ease 0.4s forwards; }
+.o-rays span { position: absolute; top: -10%; width: 15vw; height: 110%; transform-origin: 50% 0; background: linear-gradient(180deg, rgba(160, 215, 238, 0.2), rgba(160, 215, 238, 0.06) 45%, transparent 85%); filter: blur(10px); }
+.o-rays span:nth-child(1) { left: 4%; transform: rotate(16deg); animation: o-sway 11s ease-in-out infinite alternate; }
+.o-rays span:nth-child(2) { left: 22%; width: 9vw; transform: rotate(10deg); animation: o-sway 15s ease-in-out -4s infinite alternate; }
+.o-rays span:nth-child(3) { left: 44%; width: 18vw; transform: rotate(14deg); animation: o-sway 13s ease-in-out -7s infinite alternate; opacity: 0.7; }
+.o-rays span:nth-child(4) { left: 66%; width: 8vw; transform: rotate(8deg); animation: o-sway 17s ease-in-out -2s infinite alternate; }
+.o-rays span:nth-child(5) { left: 82%; width: 13vw; transform: rotate(12deg); animation: o-sway 12s ease-in-out -9s infinite alternate; opacity: 0.8; }
+@keyframes o-sway { from { transform: rotate(var(--r, 12deg)) translateX(-1.5vw); opacity: 0.45; } to { transform: rotate(calc(var(--r, 12deg) + 5deg)) translateX(1.5vw); opacity: 1; } }
+.o-rays span:nth-child(1) { --r: 16deg; } .o-rays span:nth-child(2) { --r: 10deg; } .o-rays span:nth-child(3) { --r: 14deg; } .o-rays span:nth-child(4) { --r: 8deg; } .o-rays span:nth-child(5) { --r: 12deg; }
+@keyframes o-fade { to { opacity: 1; } }
+
+/* parallax groups: the pointer moves them through the individual "translate" property, so it never fights the animations */
+.o-par { position: absolute; inset: 0; translate: calc(var(--px, 0) * var(--k, 10) * -1px) calc(var(--py, 0) * var(--k, 10) * -0.6px); }
+.o-par--far { --k: 10; }
+.o-par--mid { --k: 22; }
+.o-l1 { --k: 16; } .o-l2 { --k: 28; } .o-l3 { --k: 42; }
+
+/* fish swimming across the whole screen, at different depths and speeds */
+.o-fish { position: absolute; left: -220px; opacity: 0; color: #7CC4E4; will-change: transform; }
+.o-fish svg { display: block; width: 100%; height: auto; }
+.o-fish--a { top: 16%; width: 150px; animation: o-swim 62s linear -8s infinite, o-fade-to 2s ease 1.2s forwards; --o: 0.34; }
+.o-fish--b { top: 34%; width: 96px; animation: o-swim-back 84s linear -40s infinite, o-fade-to 2s ease 1.8s forwards; --o: 0.24; }
+.o-fish--c { top: 52%; width: 70px; animation: o-swim 100s linear -70s infinite, o-fade-to 2s ease 2.4s forwards; --o: 0.18; }
+@keyframes o-fade-to { to { opacity: var(--o, 0.3); } }
+@keyframes o-swim { 0% { transform: translate3d(0, 0, 0); } 25% { transform: translate3d(32vw, -14px, 0); } 50% { transform: translate3d(65vw, 10px, 0); } 75% { transform: translate3d(98vw, -10px, 0); } 100% { transform: translate3d(calc(100vw + 260px), 6px, 0); } }
+@keyframes o-swim-back { 0% { transform: translate3d(calc(100vw + 460px), 0, 0) scaleX(-1); } 50% { transform: translate3d(calc(50vw + 230px), 14px, 0) scaleX(-1); } 100% { transform: translate3d(0, -6px, 0) scaleX(-1); } }
+.o-fish .fish-tail { transform-origin: 28px 46px; animation: o-tail 1.3s ease-in-out infinite; }
+.o-fish .fish-pectoral { transform-origin: 118px 54px; animation: o-fin 2.4s ease-in-out infinite; }
+.o-fish .fish-pelvic { transform-origin: 80px 64px; animation: o-fin 2.8s ease-in-out infinite reverse; }
+.o-fish .fish-dorsal { transform-origin: 80px 24px; animation: o-fin 3.4s ease-in-out infinite; }
+.o-fish .fish-gill { animation: o-gill 3.6s ease-in-out infinite; }
+@keyframes o-tail { 0%, 100% { transform: skewY(-9deg) scaleX(0.96); } 50% { transform: skewY(9deg) scaleX(1.04); } }
+@keyframes o-fin { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(8deg); } }
+@keyframes o-gill { 0%, 100% { stroke-opacity: 0.6; } 50% { stroke-opacity: 0.2; } }
+
+/* bubbles: rise, wobble and fade; each has its own lane, size and speed */
+.o-bubble { position: absolute; bottom: -24px; border: 1.5px solid rgba(160, 215, 238, 0.4); border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.28), transparent 55%); animation: o-rise var(--d, 20s) ease-in var(--w, 0s) infinite; }
+.o-bubble--1 { left: 6%; width: 9px; height: 9px; --d: 19s; --w: -3s; }
+.o-bubble--2 { left: 15%; width: 16px; height: 16px; --d: 26s; --w: -11s; }
+.o-bubble--3 { left: 27%; width: 7px; height: 7px; --d: 17s; --w: -6s; }
+.o-bubble--4 { left: 41%; width: 12px; height: 12px; --d: 23s; --w: -15s; }
+.o-bubble--5 { left: 57%; width: 8px; height: 8px; --d: 18s; --w: -1s; }
+.o-bubble--6 { left: 68%; width: 18px; height: 18px; --d: 28s; --w: -9s; }
+.o-bubble--7 { left: 78%; width: 10px; height: 10px; --d: 21s; --w: -17s; }
+.o-bubble--8 { left: 88%; width: 14px; height: 14px; --d: 25s; --w: -5s; }
+.o-bubble--9 { left: 94%; width: 7px; height: 7px; --d: 16s; --w: -12s; }
+@keyframes o-rise { 0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; } 10% { opacity: 1; } 30% { transform: translate3d(14px, -28vh, 0) scale(1); } 55% { transform: translate3d(-12px, -56vh, 0); } 80% { transform: translate3d(10px, -86vh, 0); opacity: 0.8; } 100% { transform: translate3d(-4px, -108vh, 0) scale(1.1); opacity: 0; } }
+
+/* the sea: three layers of swell. Each rises into place on load, then bobs and drifts forever */
+.o-layer { position: absolute; left: 0; right: 0; bottom: 0; translate: calc(var(--px, 0) * var(--k, 16) * -1px) calc(var(--py, 0) * var(--k, 16) * -0.4px); }
+.o-l1 { height: 52vh; animation: o-rise-in 2.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
+.o-l2 { height: 40vh; animation: o-rise-in 2.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s both; }
+.o-l3 { height: 28vh; animation: o-rise-in 2.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both; }
+@keyframes o-rise-in { from { transform: translateY(60%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.o-swell { position: absolute; inset: 0; animation: o-bob 9s ease-in-out infinite alternate; }
+.o-l2 .o-swell { animation-duration: 7s; animation-delay: -3s; }
+.o-l3 .o-swell { animation-duration: 6s; animation-delay: -1s; }
+@keyframes o-bob { from { transform: translateY(-10px); } to { transform: translateY(10px); } }
+.o-drift { position: absolute; left: 0; top: 0; bottom: 0; width: 200%; animation: o-drift 52s linear infinite; will-change: transform; }
+.o-l2 .o-drift { animation-duration: 38s; animation-direction: reverse; }
+.o-l3 .o-drift { animation-duration: 28s; }
+@keyframes o-drift { to { transform: translateX(-50%); } }
+.o-drift svg { display: block; width: 100%; height: 100%; }
+.o-l1 path { fill: rgba(124, 196, 228, 0.1); }
+.o-l2 path { fill: rgba(30, 102, 128, 0.42); }
+.o-l3 path { fill: rgba(7, 26, 33, 0.72); }
+
+/* diving: shown while the login form is being sent */
+.o-dive { position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at 50% 55%, transparent 25%, rgba(5, 18, 24, 0.7) 100%), linear-gradient(180deg, rgba(5, 18, 24, 0) 20%, rgba(5, 18, 24, 0.45)); transition: opacity 0.9s ease; }
+body.is-diving .o-dive { opacity: 1; }
+body.is-diving .o-l1, body.is-diving .o-l2, body.is-diving .o-l3 { transition: transform 1.2s ease; transform: translateY(-6vh); }
+
+/* login card: it surfaces, then each part follows */
+.fi-simple-main { animation: card-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s both; transition: transform 0.7s ease, box-shadow 0.7s ease, opacity 0.7s ease; }
+.fi-simple-header > *, .fi-simple-main .fi-sc-form > *, .fi-simple-main .fi-logo { animation: card-part 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.fi-simple-main .fi-logo { animation-delay: 0.55s; }
+.fi-simple-header > :nth-child(1) { animation-delay: 0.65s; }
+.fi-simple-header > :nth-child(2) { animation-delay: 0.75s; }
+.fi-simple-main .fi-sc-form > :nth-child(1) { animation-delay: 0.85s; }
+.fi-simple-main .fi-sc-form > :nth-child(2) { animation-delay: 0.95s; }
+.fi-simple-main .fi-sc-form > :nth-child(3) { animation-delay: 1.05s; }
+.fi-simple-main .fi-sc-form > :nth-child(4) { animation-delay: 1.15s; }
+@keyframes card-in { from { opacity: 0; transform: translateY(34px) scale(0.97); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes card-part { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+body.is-diving .fi-simple-main { transform: translateY(-8px) scale(0.985); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8), 0 0 0 10px rgba(124, 196, 228, 0.12); }
+
+/* fields glow like light on water; the button has a sheen */
+.fi-simple-main .fi-input-wrp { transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease; }
+.fi-simple-main .fi-input-wrp:focus-within { transform: translateY(-1px); box-shadow: 0 0 0 3px rgba(124, 196, 228, 0.45), 0 10px 24px -14px rgba(30, 102, 128, 0.7); }
+.fi-simple-main button[type="submit"] { position: relative; overflow: hidden; }
+.fi-simple-main button[type="submit"]::after { content: ''; position: absolute; top: 0; left: -70%; width: 45%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: skewX(-20deg); transition: left 0.8s ease; pointer-events: none; }
+.fi-simple-main button[type="submit"]:hover::after { left: 130%; }
 
 @media (prefers-reduced-motion: reduce) {
-  .fi-sidebar::after, .ocean-decor .w, .ocean-decor i, .fi-btn { animation: none !important; transition: none !important; }
+  .fi-sidebar::after, .fi-btn, .ocean-decor *, .fi-simple-main, .fi-simple-main * { animation: none !important; transition: none !important; }
+  .o-rays, .o-fish { opacity: 0.35; }
+  .o-fish--a { left: 62%; top: 20%; } .o-fish--b, .o-fish--c { display: none; }
+  .o-bubble { opacity: 0.5; bottom: 20%; }
 }
 @media (max-width: 1023px) {
   .fi-header-heading { font-size: 1.7rem; }
