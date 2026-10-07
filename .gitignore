@@ -69,3 +69,6 @@ Homestead.yaml
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Hosting tooling
+/.vercel
