@@ -73,3 +73,15 @@ it('never seeds the sample blog posts in production', function () {
 
     expect(Post::count())->toBe(0);
 });
+
+it('has no literal PHP-style opening tag in any view (breaks Blade where short_open_tag is on)', function () {
+    $offenders = [];
+
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(resource_path('views'))) as $file) {
+        if ($file->isFile() && str_ends_with($file->getFilename(), '.blade.php') && preg_match('/<\?(?!php\b|=)/', (string) file_get_contents($file->getPathname()))) {
+            $offenders[] = $file->getPathname();
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
