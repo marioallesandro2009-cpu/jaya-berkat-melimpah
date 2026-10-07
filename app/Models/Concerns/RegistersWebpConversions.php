@@ -24,9 +24,15 @@ trait RegistersWebpConversions
         }
 
         // Conversion options first: the image manipulations return the driver type.
-        $this->addMediaConversion($name)
+        $conversion = $this->addMediaConversion($name)
             ->performOnCollections(...(array) $collections)
-            ->nonQueued()
+            ->nonQueued();
+
+        if (! ImageConversions::canOptimize()) {
+            $conversion->nonOptimized();
+        }
+
+        $conversion
             ->format('webp')
             ->fit(Fit::Max, $width, $width * 4)
             ->quality($quality);

@@ -66,7 +66,9 @@ git pull --ff-only origin "$BRANCH"
 
 step "Install dependency PHP (tanpa dev)"
 # shellcheck disable=SC2086
-$COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# --no-scripts: some hosts disable proc_open (Rumahweb does) and Composer's own post-install scripts then fail; the
+# steps those scripts would run (package:discover, filament:upgrade) are done below with artisan directly.
+$COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
 step "Siapkan folder writable"
 mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions \
@@ -79,6 +81,10 @@ if [ ! -f storage/app/public/.htaccess ]; then
     echo "!! storage/app/public/.htaccess hilang. Jalankan: git checkout -- storage/app/public/.htaccess" >&2
     exit 1
 fi
+
+step "Langkah pasca-install Composer (package:discover, filament:upgrade)"
+$ARTISAN package:discover --ansi
+$ARTISAN filament:upgrade
 
 step "Migrasi database"
 $ARTISAN migrate --force

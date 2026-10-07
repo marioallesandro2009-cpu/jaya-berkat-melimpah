@@ -345,9 +345,15 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
         // Favicon sizes (see MediaPresenter::favicon); an ICO or SVG upload is used as it is.
         if (ImageConversions::enabled() && in_array($media?->mime_type, ['image/png', 'image/webp'], true)) {
             foreach (MediaPresenter::FAVICON_SIZES as $size) {
-                $this->addMediaConversion("favicon_{$size}")
+                $conversion = $this->addMediaConversion("favicon_{$size}")
                     ->performOnCollections('favicon')
-                    ->nonQueued()
+                    ->nonQueued();
+
+                if (! ImageConversions::canOptimize()) {
+                    $conversion->nonOptimized();
+                }
+
+                $conversion
                     ->format('png')
                     ->fit(Fit::Contain, $size, $size);
             }

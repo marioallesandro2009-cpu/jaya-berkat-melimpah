@@ -29,6 +29,17 @@ final class ImageConversions
         return extension_loaded('gd') || ! extension_loaded('imagick') ? 'gd' : 'imagick';
     }
 
+    /**
+     * Whether converted images may go through the image optimizers (jpegoptim, cwebp...). The optimizer chain runs
+     * external programs through proc_open; shared hosts that disable it (Rumahweb does) would fail with "The Process
+     * class relies on proc_open" on every upload, so the conversions then skip the optimizers (the images are still
+     * resized and converted by GD/Imagick, only the extra lossless squeeze is left out).
+     */
+    public static function canOptimize(): bool
+    {
+        return function_exists('proc_open');
+    }
+
     public static function enabled(): bool
     {
         return match (self::mode()) {
