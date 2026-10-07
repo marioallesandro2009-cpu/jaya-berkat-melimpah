@@ -54,7 +54,7 @@
       el.style.transitionDelay = (i * 80) + 'ms';
     });
   });
-  var revealEls = $$('.reveal, .img-reveal, .route');
+  var revealEls = $$('.reveal, .img-reveal, .route, .wave');
   if (reduced || !('IntersectionObserver' in window)) {
     revealEls.forEach(function (el) { el.classList.add('is-visible'); });
   } else {

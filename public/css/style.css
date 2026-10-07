@@ -485,18 +485,35 @@ p.body-text { color: var(--ink-soft); max-width: var(--measure); }
 .band-copy h2 { margin: var(--space-sm) 0 var(--space-md); }
 .band-copy p + p { margin-top: var(--space-sm); }
 
-/* Signature transition: one slow wave edge from the photograph into paper */
+/* Signature transition: three layers of swell from the photograph into paper */
 .wave {
   position: absolute;
   left: 0; right: 0; bottom: -1px;
-  height: clamp(60px, 9vw, 130px);
+  height: clamp(110px, 14vw, 210px);
   z-index: 3;
   overflow: hidden;
   pointer-events: none;
 }
-.wave svg { position: absolute; left: 0; bottom: 0; width: 200%; height: 100%; animation: waveDrift 20s linear infinite; }
-.wave path { fill: var(--paper); }
+/* a thin mist above the water, so the cream does not start against dark photo */
+.wave::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(var(--warm-off-white-rgb), 0) 0%, rgba(var(--warm-off-white-rgb), 0.07) 55%, rgba(var(--warm-off-white-rgb), 0.16) 100%); }
+.wave-l { position: absolute; left: 0; right: 0; bottom: -24px; height: calc(100% + 24px); animation: waveBob 7s ease-in-out infinite alternate; }
+.wave-l svg { position: absolute; left: 0; bottom: 0; width: 200%; height: 100%; animation: waveDrift 44s linear infinite; will-change: transform; }
+.wave-fill { fill: var(--paper); }
+.wave-l1 .wave-fill { fill: rgba(var(--aqua-rgb), 0.2); }
+.wave-l2 .wave-fill { fill: rgba(214, 238, 244, 0.5); }
+.wave-l2 { animation-duration: 5.5s; animation-delay: -2s; }
+.wave-l3 { animation-duration: 4.5s; animation-delay: -1s; }
+.wave-l1 svg { animation-duration: 64s; }
+.wave-l2 svg { animation-duration: 38s; animation-direction: reverse; }
+.wave-l3 svg { animation-duration: 24s; }
+.wave-foam { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 2.4; vector-effect: non-scaling-stroke; }
 @keyframes waveDrift { to { transform: translateX(-50%); } }
+@keyframes waveBob { from { transform: translateY(-5px); } to { transform: translateY(6px); } }
+/* roll in once: the layers rise into place one after the other when the edge comes into view */
+.js .wave-l { opacity: 0; translate: 0 70%; transition: translate 1.9s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 1.2s ease; }
+.js .wave-l2 { transition-delay: 0.18s; }
+.js .wave-l3 { transition-delay: 0.36s; }
+.js .wave.is-visible .wave-l { opacity: 1; translate: 0 0; }
 
 /* ==========================================================================
    Quality
@@ -802,7 +819,6 @@ main, .footer { animation: pageIn 500ms var(--ease-editorial) backwards; }
   .statement { padding-top: var(--space-lg); }
   .stats { margin-top: var(--space-xl); }
   .cert-item { flex-direction: column; gap: var(--space-2xs); }
-  .wave svg { animation-duration: 28s; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1571,3 +1587,9 @@ a.catalogue-count:hover { color: var(--paper); }
     rgba(var(--deep-ocean-rgb), 0) 100%);
 }
 .statement { padding-bottom: calc(var(--space-xl) + 2rem); }
+
+@media (max-width: 720px) { .wave { height: clamp(90px, 22vw, 130px); } }
+@media (prefers-reduced-motion: reduce) {
+  .wave-l, .wave-l svg { animation: none; transition: none; }
+  .js .wave-l { opacity: 1; translate: 0 0; }
+}
