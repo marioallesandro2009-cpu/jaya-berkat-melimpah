@@ -1557,3 +1557,17 @@ a.catalogue-count:hover { color: var(--paper); }
   .nav-links { padding-top: 5.5rem; gap: 0.35rem; }
   .nav-links a:not(.btn) { font-size: 1.5rem; }
 }
+
+/* soft edge: the dark section above melts into the photograph instead of ending on a hard line */
+.band::before {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 0; z-index: 1; height: min(46%, 22rem); pointer-events: none;
+  background: linear-gradient(180deg,
+    var(--deep-ocean) 0%,
+    rgba(var(--deep-ocean-rgb), 0.92) 14%,
+    rgba(var(--deep-ocean-rgb), 0.72) 34%,
+    rgba(var(--deep-ocean-rgb), 0.42) 56%,
+    rgba(var(--deep-ocean-rgb), 0.16) 78%,
+    rgba(var(--deep-ocean-rgb), 0) 100%);
+}
+.statement { padding-bottom: calc(var(--space-xl) + 2rem); }
