@@ -59,7 +59,14 @@
     <x-sections.contact :section="$sections['contact'] ?? null" :products="$products" :settings="$settings" />
 
     @if ($hero && $hero3d)
-        <script src="{{ asset('js/'.$oceanFile) }}?v={{ filemtime($oceanJs) }}" @if ($oceanNonce) nonce="{{ $oceanNonce }}" @endif defer></script>
+        {{-- The 3D bundle (about 1 MB of JavaScript) is fetched only after the page has loaded and the browser is idle, so
+             parsing it never competes with the first paint or the hero photograph (the largest paint). --}}
+        <script @if ($oceanNonce) nonce="{{ $oceanNonce }}" @endif>(function () {
+            var src = '{{ asset('js/'.$oceanFile) }}?v={{ filemtime($oceanJs) }}', nonce = document.currentScript && document.currentScript.nonce;
+            function load() { var s = document.createElement('script'); s.src = src; if (nonce) s.nonce = nonce; document.head.appendChild(s); }
+            function idle() { 'requestIdleCallback' in window ? requestIdleCallback(load, { timeout: 1500 }) : setTimeout(load, 200); }
+            document.readyState === 'complete' ? idle() : addEventListener('load', idle, { once: true });
+        })();</script>
     @endif
 
 </x-layouts::app>

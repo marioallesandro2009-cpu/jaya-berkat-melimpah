@@ -1713,29 +1713,20 @@ a.catalogue-count:hover { color: var(--paper); }
 /* the logo's ripples may grow past the column: clip them at the section edge, never widen the page */
 .statement { overflow-x: clip; }
 
-/* ==========================================================================
-   Soft section edges (see "Soft section edges" in public/js/main.js)
-   .edge is an empty, zero-height first child. Its pseudo-element paints an eased (smoothstep) gradient from the colour
-   of the section above to transparent over this section's own padding, so two colours never meet at a line.
-   isolation (not position) gives the negative z-index a stacking context without moving the section's containing block.
-   ========================================================================== */
-.has-edge { isolation: isolate; }
-.edge { display: block; position: relative; height: 0; z-index: -1; pointer-events: none; }
-.edge::before {
-  content: ''; position: absolute; left: 0; right: 0;
-  top: calc(var(--edge-pt, 0px) * -1);
-  height: var(--edge-h, 140px);
+
+/* Sustainability photo: it rises out of the dark Journey section above instead of starting at a line (same idea as .band::before) */
+.sustain::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; z-index: 1; height: min(52%, 26rem); pointer-events: none;
   background: linear-gradient(180deg,
-    rgb(var(--edge-rgb)) 0%,
-    rgba(var(--edge-rgb), 0.972) 10%,
-    rgba(var(--edge-rgb), 0.896) 20%,
-    rgba(var(--edge-rgb), 0.784) 30%,
-    rgba(var(--edge-rgb), 0.648) 40%,
-    rgba(var(--edge-rgb), 0.5) 50%,
-    rgba(var(--edge-rgb), 0.352) 60%,
-    rgba(var(--edge-rgb), 0.216) 70%,
-    rgba(var(--edge-rgb), 0.104) 80%,
-    rgba(var(--edge-rgb), 0.028) 90%,
-    rgba(var(--edge-rgb), 0) 100%);
+    var(--deep-ocean) 0%,
+    rgba(var(--deep-ocean-rgb), 0.97) 8%,
+    rgba(var(--deep-ocean-rgb), 0.9) 18%,
+    rgba(var(--deep-ocean-rgb), 0.77) 30%,
+    rgba(var(--deep-ocean-rgb), 0.6) 42%,
+    rgba(var(--deep-ocean-rgb), 0.42) 54%,
+    rgba(var(--deep-ocean-rgb), 0.26) 66%,
+    rgba(var(--deep-ocean-rgb), 0.13) 78%,
+    rgba(var(--deep-ocean-rgb), 0.04) 90%,
+    rgba(var(--deep-ocean-rgb), 0) 100%);
 }
-.has-edge { border-top: 0; }   /* a dark section's own hairline would cut across its fade (transparent is not enough: its background shows under it) */
+.sustain .wrap { position: relative; z-index: 2; }
