@@ -38,37 +38,19 @@ modelBuffer?.catch(() => {});   // handled in boot(); keeps an early failure fro
 // Where the sun stands (degrees; azimuth 270 is straight ahead of the camera). The camera looks a little up on
 // wide screens and down on phones, so the sun is lower in the sky on phones to stay in frame.
 const SUN_LANDSCAPE = { el: 21, az: 292 };
-const SUN_PORTRAIT = { el: 9, az: 281 };
+const SUN_PORTRAIT = { el: 5, az: 268 };
 
-// The sun's glare, drawn as page elements over the canvas (compositor-only, no extra shader work): a soft
-// glow, two slowly counter-rotating sets of rays, a pulsing core and lens-flare ghosts along the line to the
-// middle of the screen, plus a few gulls drifting across the sky. update() places it on the projected sun.
+// The sun's glow, drawn as two page elements over the canvas (a soft halo and the bright core): still, so the sky is
+// calm. Only its place changes: update() puts it on the projected sun, which drifts a little with the camera.
 function createSunFx(el) {
     const div = (cls, parent) => { const d = document.createElement('div'); d.className = cls; parent.appendChild(d); return d; };
     const root = div('sun-fx', el);
     const at = div('sun-at', root);
-    div('sun-glow', at); div('sun-rays', at); div('sun-rays sun-rays--b', at); div('sun-core', at);
-    const ghosts = [[0.28, 54, 0.16], [0.55, 90, 0.1], [0.9, 38, 0.14]].map(([f, size, a]) => {
-        const g = div('sun-ghost', root);
-        g.style.width = g.style.height = `${size}px`;
-        g.style.marginLeft = g.style.marginTop = `${-size / 2}px`;
-        g.style.setProperty('--a', a);
-        return { g, f };
-    });
-    for (let i = 0; i < 3; i++) {                         // gulls: a wing-beat loop each, crossing at their own pace
-        const bird = div('gull', root);
-        bird.style.setProperty('--y', `${14 + i * 9 + (i % 2) * 5}%`);
-        bird.style.setProperty('--d', `${70 + i * 23}s`);
-        bird.style.setProperty('--delay', `${-i * 26}s`);
-        bird.style.setProperty('--s', `${0.8 + i * 0.22}`);
-        bird.innerHTML = '<svg viewBox="0 0 40 16" aria-hidden="true"><path d="M1 12 Q10 1 20 10 Q30 1 39 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    }
+    div('sun-glow', at); div('sun-core', at);
     return {
-        update(x, y, w, h, shown) {
+        update(x, y, shown) {
             root.style.visibility = shown ? 'visible' : 'hidden';
-            if (!shown) return;
-            at.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-            for (const { g, f } of ghosts) g.style.transform = `translate3d(${(x + (w / 2 - x) * f * 1.6).toFixed(1)}px, ${(y + (h / 2 - y) * f * 1.6).toFixed(1)}px, 0)`;
+            if (shown) at.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
         },
     };
 }
@@ -206,12 +188,12 @@ async function boot(el) {
         camera.fov = portrait ? 66 : 48;
         camera.updateProjectionMatrix();
         camY = portrait ? 3.6 : 3.2;
-        lookY = portrait ? -7.5 : 6.6;
+        lookY = portrait ? -11 : 6.6;
         camZ = portrait ? 18 : 16;
         Object.assign(sunBase, portrait ? SUN_PORTRAIT : SUN_LANDSCAPE);
         if (portrait) {
-            Object.assign(bp, { x: 1.2, z: -13, yaw: 3.45 });
-            boatSize = 1.05;
+            Object.assign(bp, { x: 1.0, z: -16, yaw: 3.45 });   // near the horizon, large: it fills the width above the headline
+            boatSize = 1.9;
         } else {
             // keep the boat on the right third whatever the window width: scale and x follow the visible half-width
             bp.z = -4; bp.yaw = 3.5;
@@ -277,7 +259,7 @@ async function boot(el) {
         rim.position.copy(boat.position).addScaledVector(sunDir, 60);
         rim.target.position.copy(boat.position);
         sunPoint.copy(sunDir).multiplyScalar(2000).add(camera.position).project(camera);
-        sunFx.update((sunPoint.x * 0.5 + 0.5) * el.clientWidth, (0.5 - sunPoint.y * 0.5) * el.clientHeight, el.clientWidth, el.clientHeight, sunPoint.z < 1 && Math.abs(sunPoint.x) < 1.6 && Math.abs(sunPoint.y) < 1.6);
+        sunFx.update((sunPoint.x * 0.5 + 0.5) * el.clientWidth, (0.5 - sunPoint.y * 0.5) * el.clientHeight, sunPoint.z < 1 && Math.abs(sunPoint.x) < 1.6 && Math.abs(sunPoint.y) < 1.6);
         renderer.render(scene, camera);
         adapt(rawDt);
     }

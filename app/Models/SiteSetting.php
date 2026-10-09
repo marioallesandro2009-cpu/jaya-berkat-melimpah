@@ -25,6 +25,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property array<string, string|null>|null $company_description
  * @property array<string, string|null>|null $footer_tagline
  * @property string|null $whatsapp_number
+ * @property string|null $whatsapp_message
  * @property string|null $email
  * @property string|null $phone
  * @property string|null $address
@@ -47,6 +48,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'company_description',
     'footer_tagline',
     'whatsapp_number',
+    'whatsapp_message',
     'email',
     'phone',
     'address',
@@ -132,6 +134,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
         'form_submit' => 'Send inquiry',
         'form_sending' => 'Sending...',
         'form_whatsapp' => 'or chat on WhatsApp',
+        'form_more' => 'More details (optional)',
         'contact_success' => 'Thank you! Your inquiry has been received and our team will get back to you soon.',
         'contact_error' => 'Your inquiry could not be sent. Please try again or contact us on WhatsApp.',
         'contact_email_subject' => 'New inquiry from :name',
@@ -239,6 +242,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
             'form_submit' => 'Tombol kirim',
             'form_sending' => 'Teks saat mengirim',
             'form_whatsapp' => 'Tautan WhatsApp di bawah form',
+            'form_more' => 'Judul bagian isian tambahan (dilipat di ponsel)',
         ],
         'Berita' => [
             'news_read_more' => 'Tautan "Baca selengkapnya"',
@@ -439,6 +443,8 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
             'favicon' => MediaPresenter::favicon($this->getFirstMedia('favicon')),
             'whatsappUrl' => self::whatsappUrl($this->whatsapp_number),
             'whatsappNumber' => $this->whatsapp_number,
+            // wa.me link with the greeting already typed in (the floating button); the admin can change the text
+            'whatsappChatUrl' => self::whatsappUrl($this->whatsapp_number, filled($this->whatsapp_message) ? $this->whatsapp_message : __('Hello, I would like to ask about your seafood products.')),
             'email' => $this->email,
             'phone' => $this->phone,
             'address' => $this->address,
@@ -531,7 +537,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
     /**
      * wa.me link from a local ("0812...") or international ("+62 812...") number.
      */
-    public static function whatsappUrl(?string $number): ?string
+    public static function whatsappUrl(?string $number, ?string $text = null): ?string
     {
         $digits = preg_replace('/\D+/', '', (string) $number) ?: '';
 
@@ -539,6 +545,10 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
             $digits = '62'.substr($digits, 1);
         }
 
-        return $digits !== '' ? 'https://wa.me/'.$digits : null;
+        if ($digits === '') {
+            return null;
+        }
+
+        return 'https://wa.me/'.$digits.(filled($text) ? '?text='.rawurlencode($text) : '');
     }
 }

@@ -44,9 +44,9 @@
   --space-sm: 1.25rem;
   --space-md: 2rem;
   --space-lg: 3.5rem;
-  --space-xl: 6rem;
-  --space-2xl: 9rem;
-  --space-3xl: 12rem;
+  --space-xl: clamp(3rem, 4.8vw, 4.8rem);
+  --space-2xl: clamp(4.5rem, 7.2vw, 7.2rem);
+  --space-3xl: clamp(6rem, 9.6vw, 9.6rem);
 
   /* Layout */
   --container-max: 1400px;
@@ -1626,62 +1626,19 @@ a.catalogue-count:hover { color: var(--paper); }
 }
 
 /* ==========================================================================
-   Hero 3D: the sun's glare and the gulls (built by resources/js/ocean3d.js, over the canvas)
-   Only transform/opacity animate, so it all stays on the compositor.
+   Hero 3D: the sun's glow (built by resources/js/ocean3d.js, over the canvas). Still: only its place changes.
    ========================================================================== */
 .sun-fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .sun-at { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
-.sun-glow, .sun-rays, .sun-core { position: absolute; border-radius: 50%; }
+.sun-glow, .sun-core { position: absolute; border-radius: 50%; }
 .sun-glow {
-  --d: min(64vw, 820px);
+  --d: min(56vw, 720px);
   width: var(--d); height: var(--d); left: calc(var(--d) / -2); top: calc(var(--d) / -2);
-  background: radial-gradient(closest-side, rgba(255, 249, 232, 0.95) 0, rgba(255, 240, 200, 0.42) 5%, rgba(255, 230, 180, 0.14) 20%, rgba(255, 230, 180, 0.04) 52%, rgba(255, 230, 180, 0) 100%);
-  animation: sunBreathe 7s ease-in-out infinite alternate;
-}
-.sun-rays {
-  --d: min(60vw, 760px);
-  width: var(--d); height: var(--d); left: calc(var(--d) / -2); top: calc(var(--d) / -2);
-  background: repeating-conic-gradient(from 0deg, rgba(255, 245, 218, 0.12) 0deg 2.5deg, rgba(255, 245, 218, 0) 2.5deg 10deg);
-  -webkit-mask-image: radial-gradient(closest-side, #000 0, rgba(0, 0, 0, 0.5) 40%, transparent 94%);
-  mask-image: radial-gradient(closest-side, #000 0, rgba(0, 0, 0, 0.5) 40%, transparent 94%);
-  animation: sunSpin 140s linear infinite;
-}
-.sun-rays--b {
-  scale: 0.72;
-  background: repeating-conic-gradient(from 4deg, rgba(255, 240, 205, 0.09) 0deg 1.6deg, rgba(255, 240, 205, 0) 1.6deg 7.5deg);
-  animation-duration: 90s; animation-direction: reverse;
+  background: radial-gradient(closest-side, rgba(255, 249, 232, 0.9) 0, rgba(255, 240, 200, 0.36) 6%, rgba(255, 230, 180, 0.12) 22%, rgba(255, 230, 180, 0.03) 54%, rgba(255, 230, 180, 0) 100%);
 }
 .sun-core {
-  width: 58px; height: 58px; left: -29px; top: -29px;
-  background: radial-gradient(closest-side, #fff 0, rgba(255, 252, 240, 0.95) 45%, rgba(255, 244, 214, 0) 100%);
-  animation: sunPulse 4.5s ease-in-out infinite;
-}
-.sun-ghost {
-  position: absolute; left: 0; top: 0; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 244, 214, calc(var(--a) * 1.6)) 0, rgba(255, 244, 214, var(--a)) 55%, rgba(255, 244, 214, 0) 100%);
-  will-change: transform;
-}
-@keyframes sunBreathe { from { opacity: 0.78; scale: 0.97; } to { opacity: 1; scale: 1.05; } }
-@keyframes sunSpin { to { rotate: 360deg; } }
-@keyframes sunPulse { from { scale: 0.94; opacity: 0.92; } to { scale: 1.1; opacity: 1; } }
-
-.gull {
-  position: absolute; left: 0; top: var(--y); width: 34px; height: 14px;
-  color: rgba(255, 255, 255, 0.85);
-  filter: drop-shadow(0 1px 1.5px rgba(10, 40, 80, 0.35));
-  animation: gullCross var(--d) linear infinite; animation-delay: var(--delay);
-  will-change: transform;
-}
-.gull svg { display: block; width: 100%; height: 100%; transform-origin: 50% 80%; animation: gullFlap 1.1s ease-in-out infinite alternate; }
-@keyframes gullCross {
-  from { transform: translate3d(-8vw, 0, 0) scale(var(--s)); }
-  50%  { transform: translate3d(54vw, -22px, 0) scale(var(--s)); }
-  to   { transform: translate3d(108vw, 6px, 0) scale(var(--s)); }
-}
-@keyframes gullFlap { from { transform: scaleY(1); } to { transform: scaleY(0.45); } }
-@media (max-width: 720px) {
-  .sun-rays--b { display: none; }
-  .gull:nth-of-type(n + 5) { display: none; }
+  width: 54px; height: 54px; left: -27px; top: -27px;
+  background: radial-gradient(closest-side, #fff 0, rgba(255, 252, 240, 0.95) 48%, rgba(255, 244, 214, 0) 100%);
 }
 @media (prefers-reduced-motion: reduce) { .sun-fx { display: none; } }
 
@@ -1693,22 +1650,15 @@ a.catalogue-count:hover { color: var(--paper); }
 .brand-mark::before { content: ''; position: absolute; left: 50%; top: 50%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--aqua-rgb), 0.2), rgba(var(--aqua-rgb), 0.07) 55%, rgba(var(--aqua-rgb), 0) 100%); }
 .brand-mark img, .brand-mark .brand-mark-fish { position: relative; display: block; width: 100%; height: auto; object-fit: contain; animation: markFloat 9s ease-in-out infinite alternate; will-change: transform; }
 .brand-mark .brand-mark-fish { color: var(--aqua); }
-.brand-mark-ring { position: absolute; left: 50%; top: 50%; width: 118%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 1px solid rgba(var(--aqua-rgb), 0.34); opacity: 0; animation: markRipple 7s ease-out infinite; will-change: transform, opacity; }
-.brand-mark-ring--b { animation-delay: -3.5s; }
 @keyframes markFloat { from { transform: translate3d(0, -6px, 0) rotate(-1.2deg); } to { transform: translate3d(0, 8px, 0) rotate(1.2deg); } }
-@keyframes markRipple { 0% { opacity: 0; transform: scale(0.55); } 12% { opacity: 0.5; } 100% { opacity: 0; transform: scale(1.45); } }
 
-/* statement (dark): first thing in the right column, above the paragraph, filling the corner the grid leaves empty */
-.brand-mark--statement { width: clamp(120px, 14vw, 190px); margin: 0 0 var(--space-md); }
 /* origin band (photograph): centred in the right half */
 .brand-mark--band { position: absolute; right: 8%; top: 50%; translate: 0 -50%; width: clamp(170px, 21vw, 310px); }
 @media (max-width: 900px) {
-  .brand-mark--statement { width: clamp(96px, 24vw, 140px); }
   .brand-mark--band { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .brand-mark img, .brand-mark .brand-mark-fish, .brand-mark-ring { animation: none; }
-  .brand-mark-ring { display: none; }
+  .brand-mark img, .brand-mark .brand-mark-fish { animation: none; }
 }
 /* the logo's ripples may grow past the column: clip them at the section edge, never widen the page */
 .statement { overflow-x: clip; }
@@ -1730,3 +1680,66 @@ a.catalogue-count:hover { color: var(--paper); }
     rgba(var(--deep-ocean-rgb), 0) 100%);
 }
 .sustain .wrap { position: relative; z-index: 2; }
+
+/* ==========================================================================
+   Design pass: statement figures, readable type on small screens, touch targets, quieter reveals,
+   floating WhatsApp button, folded optional form fields
+   ========================================================================== */
+.stats--aside { grid-template-columns: 1fr 1fr; gap: var(--space-md) var(--space-md); margin: 0 0 var(--space-lg); }
+.stats--aside .stat .numeral { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+.statement-copy { display: flex; flex-direction: column; justify-content: flex-end; }
+
+/* 7. type: the display size steps down on narrow screens so a headline wraps in three or four lines, not five */
+@media (max-width: 900px) {
+  .display { font-size: clamp(2.1rem, 8.6vw, 3.4rem); letter-spacing: -0.028em; }
+  .hero-title { font-size: clamp(2.1rem, 8.4vw, 3.3rem); max-width: 13ch; }
+  .page-header h1 { font-size: clamp(2.1rem, 8.4vw, 3.4rem); }
+}
+.display, .hero-title, .page-header h1, h2 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+/* 8. touch targets, feedback and focus */
+@media (pointer: coarse) {
+  .btn, .link-arrow, .nav-links a, .nav-toggle, .lang-switch a, .footer-col a, .field input, .field select { min-height: 44px; }
+  .link-arrow, .footer-col a, .lang-switch a { display: inline-flex; align-items: center; }
+}
+.btn:active, .wa-float:active, .inquiry-toggle:active { transform: translateY(1px) scale(0.985); }
+a, button, summary { -webkit-tap-highlight-color: transparent; }
+summary:focus-visible, .wa-float:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
+
+/* 9. reveals: headings move a little, blocks a little more, staggered children follow one after another */
+.js h2.reveal, .js .reveal > h2:first-child { transform: translateY(14px); }
+.js .reveal:not(h2) { transform: translateY(24px); }
+.js .reveal.is-visible { transform: none; }
+
+/* 10. floating WhatsApp button (resources/views/components/layout/whatsapp-float.blade.php) */
+.wa-float {
+  position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 96;
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  height: 3.4rem; min-width: 3.4rem; padding: 0 0.95rem; justify-content: center;
+  color: #fff; background: #1faa59; border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(7, 26, 33, 0.28), 0 1px 3px rgba(7, 26, 33, 0.3);
+  text-decoration: none; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.01em;
+  transition: transform 200ms var(--ease-editorial), box-shadow 200ms ease, background 200ms ease;
+}
+.wa-float:hover { background: #17934c; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(7, 26, 33, 0.34), 0 1px 3px rgba(7, 26, 33, 0.3); }
+.wa-float svg { flex: none; }
+.wa-float-label { max-width: 0; overflow: hidden; white-space: nowrap; opacity: 0; transition: max-width 260ms var(--ease-editorial), opacity 200ms ease; }
+.wa-float:hover .wa-float-label, .wa-float:focus-visible .wa-float-label { max-width: 8rem; opacity: 1; }
+@media (max-width: 720px) { .wa-float { right: 1rem; bottom: 1rem; height: 3.2rem; min-width: 3.2rem; } }
+/* the inquiry list button stays reachable above it */
+.has-wa .inquiry-bar { bottom: 5.4rem; }
+
+/* 11. optional form fields: folded on phones (main.js), a plain heading on larger screens */
+.field-more { margin-top: var(--space-xs); }
+.field-more > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-top: 1px solid var(--hairline-dark); border-bottom: 1px solid var(--hairline-dark); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--paper-soft); }
+.field-more > summary::-webkit-details-marker { display: none; }
+.field-more > summary::after { content: '+'; font-size: 1.2rem; line-height: 1; transition: transform 200ms var(--ease-editorial); }
+.field-more[open] > summary::after { transform: rotate(45deg); }
+.field-more > :not(summary) { margin-top: var(--space-sm); }
+@media (min-width: 721px) { .field-more > summary { pointer-events: none; border-bottom: 0; } .field-more > summary::after { display: none; } }
+
+/* 3: legible type over a bright, moving sky and sea: a soft shadow behind the hero copy */
+.hero.has-3d .eyebrow, .hero.has-3d .hero-title, .hero.has-3d .hero-sub { text-shadow: 0 1px 2px rgba(7, 26, 33, 0.35), 0 2px 22px rgba(7, 26, 33, 0.5); }
+.has-wa .hero-scroll { right: 5.6rem; }
+@media (max-width: 720px) { .has-wa .hero-scroll { display: none; } }

@@ -154,6 +154,11 @@ class ManageSiteSettings extends Page
                                     ->maxLength(32)
                                     ->placeholder('+62 812 3456 7890')
                                     ->helperText('Dipakai untuk semua tombol WhatsApp (tombol "Tanya ketersediaan" di armada, CTA layanan, footer, menu mobile). Kosongkan: tombol armada/CTA diarahkan ke form kontak.'),
+                                TextInput::make('whatsapp_message')
+                                    ->label('Pesan awal tombol WhatsApp')
+                                    ->maxLength(300)
+                                    ->placeholder('Halo, saya ingin bertanya tentang produk seafood Anda.')
+                                    ->helperText('Teks yang sudah terisi saat pengunjung menekan tombol WhatsApp melayang. Kosongkan untuk salam bawaan (mengikuti bahasa halaman). Tombolnya hanya tampil jika Nomor WhatsApp diisi.'),
                                 TextInput::make('email')
                                     ->label('Email')
                                     ->email()

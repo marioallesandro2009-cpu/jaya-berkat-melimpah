@@ -306,6 +306,9 @@
   /* ---------- Inquiry form: saved on the server (works without JS too) ---------- */
   var form = $('#inquiry-form');
   if (form) {
+    // optional fields are folded on phones, unless one already has a value or an error (e.g. after a failed send)
+    var more = $('.field-more', form);
+    if (more && isMobile() && !$('[aria-invalid]', more) && !$$('input, textarea', more).some(function (f) { return f.value; })) more.open = false;
     var status = $('#form-status');
     var submit = $('button[type="submit"]', form);
 

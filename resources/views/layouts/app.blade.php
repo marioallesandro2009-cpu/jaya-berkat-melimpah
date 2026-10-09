@@ -89,7 +89,7 @@
             <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
         @endif
     </head>
-    <body>
+    <body @class(['has-wa' => (bool) ($settings['whatsappChatUrl'] ?? null)])>
         <a class="skip-link" href="#main">{{ $settings['texts']['skip_link'] }}</a>
 
         <x-layout.navbar :settings="$settings" />
@@ -109,6 +109,8 @@
             </div>
             <button type="button" class="inquiry-toggle" data-inquiry-toggle aria-expanded="false" aria-controls="inquiry-panel"><span class="inquiry-count" data-inquiry-count>0</span> {{ $settings['texts']['inquiry_list'] }}</button>
         </div>
+
+        <x-layout.whatsapp-float :settings="$settings" />
 
         <script src="{{ $asset('js/main.js') }}" @if ($nonce) nonce="{{ $nonce }}" @endif defer></script>
     </body>

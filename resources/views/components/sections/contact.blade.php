@@ -59,11 +59,6 @@
             </div>
             <div class="field-row">
                 <div class="field">
-                    <label for="f-phone">{{ $texts['form_phone'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
-                    <input id="f-phone" name="phone" type="tel" autocomplete="tel" value="{{ old('phone') }}" @if ($field('phone')) aria-invalid="true" aria-describedby="e-phone" @endif>
-                    <p class="field-error" id="e-phone">{{ $field('phone') }}</p>
-                </div>
-                <div class="field">
                     <label for="f-product">{{ $texts['form_product'] }}</label>
                     <select id="f-product" name="product" required @if ($field('product')) aria-invalid="true" aria-describedby="e-product" @endif>
                         <option value="">{{ $texts['form_product_select'] }}</option>
@@ -81,14 +76,25 @@
                 <ul class="inquiry-picked-list"></ul>
                 <input type="hidden" name="items" id="f-items" value="">
             </div>
-            <div class="field">
-                <label for="f-volume">{{ $texts['form_volume'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
-                <input id="f-volume" name="volume" type="text" placeholder="{{ $texts['form_volume_placeholder'] }}" value="{{ old('volume') }}">
-            </div>
-            <div class="field">
-                <label for="f-message">{{ $texts['form_message'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
-                <textarea id="f-message" name="message" rows="4">{{ old('message') }}</textarea>
-            </div>
+            {{-- Optional fields: folded on phones by main.js (all open without JavaScript, and whenever one has a value or an error). --}}
+            <details class="field-more" open>
+                <summary>{{ $texts['form_more'] }}</summary>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="f-phone">{{ $texts['form_phone'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
+                        <input id="f-phone" name="phone" type="tel" autocomplete="tel" value="{{ old('phone') }}" @if ($field('phone')) aria-invalid="true" aria-describedby="e-phone" @endif>
+                        <p class="field-error" id="e-phone">{{ $field('phone') }}</p>
+                    </div>
+                    <div class="field">
+                        <label for="f-volume">{{ $texts['form_volume'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
+                        <input id="f-volume" name="volume" type="text" placeholder="{{ $texts['form_volume_placeholder'] }}" value="{{ old('volume') }}">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="f-message">{{ $texts['form_message'] }} <span class="opt">({{ $texts['form_optional'] }})</span></label>
+                    <textarea id="f-message" name="message" rows="4">{{ old('message') }}</textarea>
+                </div>
+            </details>
 
             @if (Turnstile::enabled())
                 <div class="cf-turnstile" data-sitekey="{{ Turnstile::siteKey() }}"></div>
