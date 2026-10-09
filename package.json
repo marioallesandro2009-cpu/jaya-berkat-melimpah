@@ -4,10 +4,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node scripts/minify-assets.mjs"
+        "build": "node scripts/minify-assets.mjs",
+        "test:e2e": "node tests/e2e/smoke.mjs"
     },
     "devDependencies": {
-        "esbuild": "^0.25.0"
+        "esbuild": "^0.25.0",
+        "playwright-core": "^1.64.0"
     },
     "dependencies": {
         "three": "^0.186.1"

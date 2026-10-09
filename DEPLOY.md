@@ -16,13 +16,13 @@ Alur: **laptop → GitHub → `git pull` di server** lewat Terminal cPanel.
 
 - Tidak ada langkah build asset: `public/css`, `public/js`, `public/fonts` dilayani apa adanya (URL-nya membawa `?v=<waktu ubah file>` sehingga browser otomatis mengambil versi baru). Server tidak perlu Node/npm.
 - Session, cache, dan antrean memakai `database` / `sync`: tidak butuh Redis atau queue worker.
-- Ada satu tugas terjadwal (`leads:prune`, retensi data pribadi pada Pesan Masuk), jadi butuh **satu entri cron** (A13).
+- Ada satu tugas terjadwal (`leads:prune`, retensi data pribadi pada Pesan Masuk), jadi butuh **satu entri cron** (A12).
 - Pengaturan keamanan (HTTPS paksa, HSTS, CSP, proxy Cloudflare, Turnstile, path admin) semuanya lewat `.env`, dengan default aman untuk deploy pertama tanpa SSL. Daftar pengaturan manual di luar kode: `SECURITY_CHECKLIST_DEPLOY.md`; temuan dan status perbaikan: `SECURITY_AUDIT.md`.
 - Dua template env: `.env.example` untuk **lokal** (sqlite, debug) dan `.env.production.example` untuk **server** (MySQL, production).
 
 > ### ⚠️ Penting: `deploy.sh` belum pernah dijalankan sungguhan
 >
-> Script `deploy.sh` baru diperiksa sintaksnya (`bash -n`), **belum pernah dijalankan di server** (atau di lingkungan cPanel mana pun). Karena itu, **deploy pertama JANGAN langsung `bash deploy.sh`.** Jalankan tiap perintah pada bagian A7 dan A12 **satu per satu, manual**, sambil membaca outputnya. Setelah terbukti setiap langkah berhasil, baru pakai `bash deploy.sh` penuh untuk update-update berikutnya (bagian B). Jika `deploy.sh` ternyata gagal di suatu langkah, perbaiki scriptnya dulu lalu commit, jangan dipaksa.
+> `deploy.sh` sudah dijalankan di server produksi (Rumahweb) dan terbukti. Untuk **akun hosting baru**, tetap jalankan perintah di bagian A6 dan A11 **satu per satu, manual**, sambil membaca outputnya; kalau semuanya berhasil, pakai `bash deploy.sh` penuh untuk update berikutnya (bagian B). Hosting tanpa `proc_open` didukung: skrip menjalankan Composer dengan `--no-scripts` lalu `package:discover` dan `filament:upgrade` secara terpisah.
 
 ---
 
@@ -62,50 +62,20 @@ rm composer-setup.php
 
 `deploy.sh` otomatis memakai `~/composer.phar` bila ada.
 
-### A3. Buat SSH key dan pasang sebagai Deploy Key GitHub
+### A3. Clone repo
 
-```bash
-ssh-keygen -t ed25519 -C "deploy-jbm@CPANELUSER" -f ~/.ssh/jbm_deploy -N ""
-cat ~/.ssh/jbm_deploy.pub
-```
-
-Salin seluruh isi public key (satu baris `ssh-ed25519 AAAA...`).
-
-Di GitHub: repo → **Settings → Deploy keys → Add deploy key** → beri judul (mis. `cPanel hosting`), tempel key, **jangan** centang "Allow write access" (read-only) → Add key.
-
-Buat config SSH supaya key ini dipakai untuk GitHub:
-
-```bash
-cat >> ~/.ssh/config <<'EOF'
-Host github.com
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/jbm_deploy
-    IdentitiesOnly yes
-EOF
-chmod 700 ~/.ssh && chmod 600 ~/.ssh/config ~/.ssh/jbm_deploy
-```
-
-Tes koneksi (jawab `yes` saat ditanya fingerprint):
-
-```bash
-ssh -T git@github.com
-```
-
-Berhasil jika muncul: `Hi <user>/<repo>! You've successfully authenticated, but GitHub does not provide shell access.`
-
-> Satu deploy key hanya bisa dipakai di satu repo. Jika nanti ada repo lain di server, buat key dan `Host` alias terpisah.
-
-### A4. Clone repo
+Repo ini **publik**, jadi server cukup meng-clone lewat HTTPS: tidak perlu SSH key atau Deploy Key, dan `git pull` berikutnya juga tanpa login.
 
 ```bash
 cd ~
-git clone git@github.com:<AKUN-GITHUB>/<NAMA-REPO>.git jbm
+git clone https://github.com/<AKUN-GITHUB>/<NAMA-REPO>.git jbm
 cd jbm
 git branch --show-current   # harus: main
 ```
 
-### A5. Buat database di cPanel
+> Jika repo suatu saat dijadikan **privat**, `git pull` di server akan meminta login. Saat itu pasang Deploy Key read-only: `ssh-keygen -t ed25519 -f ~/.ssh/jbm_deploy -N ""`, tempel isi `~/.ssh/jbm_deploy.pub` di GitHub (repo → Settings → Deploy keys, **tanpa** write access), isi `~/.ssh/config` dengan `Host github.com` + `IdentityFile ~/.ssh/jbm_deploy` + `IdentitiesOnly yes`, lalu `git remote set-url origin git@github.com:<AKUN-GITHUB>/<NAMA-REPO>.git` dan tes dengan `ssh -T git@github.com`.
+
+### A4. Buat database di cPanel
 
 cPanel → **MySQL Databases**:
 
@@ -115,7 +85,7 @@ cPanel → **MySQL Databases**:
 
 Prefix `CPANELUSER_` **wajib** ada di `DB_DATABASE` dan `DB_USERNAME`.
 
-### A6. Isi `.env`
+### A5. Isi `.env`
 
 ```bash
 cd ~/jbm
@@ -129,19 +99,19 @@ Yang harus diisi/dicek:
 
 | Variabel | Isi |
 |---|---|
-| `APP_URL` | **deploy pertama: `http://jbmelimpah.com`** (alamat gambar unggahan dibangun dari nilai ini, jadi `https://` sebelum SSL aktif membuat gambar rusak); diubah ke `https://jbmelimpah.com` pada A10. Tanpa `/` di akhir; menentukan domain kanonik www/non-www |
+| `APP_URL` | **deploy pertama: `http://jbmelimpah.com`** (alamat gambar unggahan dibangun dari nilai ini, jadi `https://` sebelum SSL aktif membuat gambar rusak); diubah ke `https://jbmelimpah.com` pada A9. Tanpa `/` di akhir; menentukan domain kanonik www/non-www |
 | `APP_ENV` / `APP_DEBUG` | `production` / `false` |
-| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | dari langkah A5; `DB_HOST=localhost` |
-| `FORCE_HTTPS`, `HSTS_MAX_AGE` | **biarkan `false` / `300` dulu**; dinyalakan setelah SSL aktif (A10) |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | dari langkah A4; `DB_HOST=localhost` |
+| `FORCE_HTTPS`, `HSTS_MAX_AGE` | **biarkan `false` / `300` dulu**; dinyalakan setelah SSL aktif (A9) |
 | `CSP_MODE` | `report-only` (default): hanya mencatat pelanggaran di konsol browser; ganti ke `enforce` setelah diperiksa |
 | `TRUSTED_PROXIES` | kosong sekarang; `cloudflare` setelah Cloudflare aktif (bagian E) |
 | `ADMIN_PATH` | alamat panel admin (default `admin`); bila diubah, semua catatan yang menyebut `/admin` ikut berubah |
 | `TURNSTILE_*` | kosong/`false` (opsional, lihat bagian E) |
-| `LEADS_ANONYMIZE_AFTER_DAYS`, `LEADS_DELETE_AFTER_MONTHS` | retensi Pesan Masuk (60 hari / 12 bulan); butuh cron (A13) |
+| `LEADS_ANONYMIZE_AFTER_DAYS`, `LEADS_DELETE_AFTER_MONTHS` | retensi Pesan Masuk (60 hari / 12 bulan); butuh cron (A12) |
 | `APP_TIMEZONE` | biarkan `UTC`; jangan diubah setelah ada data |
-| `ADMIN_*` | **tidak ada di template produksi.** Admin pertama dibuat dengan `php artisan admin:create` (A7) |
+| `ADMIN_*` | **tidak ada di template produksi.** Admin pertama dibuat dengan `php artisan admin:create` (A6) |
 | `WHATSAPP_NUMBER` | nomor awal (opsional, bisa diubah di CMS) |
-| `MAIL_*` | **wajib** agar email leads terkirim: SMTP akun email cPanel (lihat A11) |
+| `MAIL_*` | **wajib** agar email leads terkirim: SMTP akun email cPanel (lihat A10) |
 
 Simpan di nano: `Ctrl+O`, Enter, `Ctrl+X`. Lalu buat kunci aplikasi:
 
@@ -155,7 +125,7 @@ Amankan file `.env`:
 chmod 600 .env
 ```
 
-### A7. Install dependency, migrasi, seeder, storage link
+### A6. Install dependency, migrasi, seeder, storage link
 
 ```bash
 cd ~/jbm
@@ -173,7 +143,7 @@ $PHP artisan admin:create          # admin pertama: tanya email, nama, lalu pass
 - **Jalankan `db:seed` hanya sekali**, di setup awal. Menjalankannya lagi setelah konten diedit lewat CMS bisa menimpa/menduplikasi data awal.
 - Perintah `filament:assets` menyalin CSS/JS panel admin ke `public/` (folder itu di-ignore git, jadi dibuat di server).
 
-### A8. Ganti document root dengan symlink
+### A7. Ganti document root dengan symlink
 
 Pastikan folder domain masih kosong/tidak berisi data penting, lalu:
 
@@ -185,7 +155,7 @@ ls -ld ~/public_html/jbmelimpah.com     # harus tampil: -> /home/CPANELUSER/jbm/
 
 Jika cPanel menolak (folder document root domain harus ada), buat ulang lewat cPanel → **Domains** dan ulangi langkah ini.
 
-### A9. Permission storage dan bootstrap/cache
+### A8. Permission storage dan bootstrap/cache
 
 ```bash
 cd ~/jbm
@@ -195,7 +165,7 @@ chmod -R ug+rwX storage bootstrap/cache
 
 Direktori `~/jbm` dan `~` sendiri sebaiknya `755` (bukan `777`), agar Apache bisa menelusuri symlink: `chmod 755 ~ ~/jbm ~/jbm/public`.
 
-### A10. AutoSSL, lalu nyalakan HTTPS paksa
+### A9. AutoSSL, lalu nyalakan HTTPS paksa
 
 1. cPanel → **SSL/TLS Status** → centang `jbmelimpah.com` dan `www.jbmelimpah.com` → **Run AutoSSL**. Tunggu beberapa menit sampai sertifikat aktif, lalu pastikan `https://jbmelimpah.com` terbuka tanpa peringatan.
 2. **Baru setelah itu**, di `~/jbm/.env`:
@@ -211,7 +181,7 @@ Direktori `~/jbm` dan `~` sendiri sebaiknya `755` (bukan `777`), agar Apache bis
 4. Naikkan `HSTS_MAX_AGE` bertahap setelah beberapa hari tanpa masalah: 300, 86400 (1 hari), 2592000 (30 hari), 31536000 (1 tahun). Tanpa `preload`. Browser mengingat nilai terakhir sepanjang durasinya, jadi jangan melompat terlalu cepat.
 5. `CSP_MODE=report-only` mencatat pelanggaran kebijakan konten di konsol browser (F12) tanpa memblokir apa pun. Jelajahi beranda, halaman perusahaan, halaman produk, berita, dan form Kontak; bila konsol bersih, ganti ke `CSP_MODE=enforce` dan `config:cache`.
 
-### A11. Email leads dari form Kontak: akun email, SMTP, SPF/DKIM, From vs Reply-To
+### A10. Email leads dari form Kontak: akun email, SMTP, SPF/DKIM, From vs Reply-To
 
 **Status saat ini:** form Kontak di beranda (`#contact`) **sungguh mengirim email**. Setiap pesan disimpan dulu ke database (admin: **Pesan Masuk**), lalu diemail ke daftar penerima di **Pengaturan Situs → tab Kontak** setelah respons dikirim ke pengunjung. Jika SMTP gagal, pengunjung tetap melihat sukses (pesan sudah tersimpan) dan pesan itu ditandai **"Email gagal terkirim"** di admin. Tanpa langkah di bawah ini, email akan gagal dan pesan hanya terbaca di admin.
 
@@ -273,7 +243,7 @@ Subjek mengikuti bahasa pengunjung (diatur di tab Kontak; `:name` diganti nama p
 - Form dilindungi CSRF, honeypot tersembunyi, dan rate limit per IP. Di belakang Cloudflare kelak, IP pengunjung baru terbaca benar setelah proxy tepercaya dikonfigurasi; sampai itu, batas per IP akan menghitung IP Cloudflare.
 - Pesan menyimpan IP dan user-agent pengunjung (data pribadi; hanya tampil di detail pesan di admin). Lihat catatan retensi di `docs/kesiapan-produksi.md`.
 
-### A12. Cache produksi dan tes (manual, satu per satu)
+### A11. Cache produksi dan tes (manual, satu per satu)
 
 **Deploy pertama: jangan `bash deploy.sh`** (script belum pernah diuji, lihat peringatan di atas). Jalankan perintah berikut satu per satu, baca outputnya, dan berhenti bila ada error:
 
@@ -287,13 +257,13 @@ $PHP artisan route:cache
 $PHP artisan view:cache
 ```
 
-(Langkah `composer install`, `migrate`, symlink `public/storage`, dan `filament:assets` sudah dijalankan manual di A7.)
+(Langkah `composer install`, `migrate`, symlink `public/storage`, dan `filament:assets` sudah dijalankan manual di A6.)
 
 Buka `https://jbmelimpah.com`, lalu `https://jbmelimpah.com/admin` dan login dengan akun dari `admin:create`. Cek juga `https://jbmelimpah.com/up` (health check, harus 200).
 
 Setelah situs terbukti jalan, ujilah `deploy.sh` sekali pada perubahan kecil (mis. edit satu teks, push, lalu `bash deploy.sh` sambil mengawasi outputnya). Baru sejak itu ia dianggap teruji untuk update rutin.
 
-### A13. Cron scheduler
+### A12. Cron scheduler
 
 Proyek ini punya satu tugas terjadwal: `leads:prune` (harian 03:15) yang menghapus IP dan user-agent lead setelah 60 hari dan seluruh pesan setelah 12 bulan. Agar berjalan, tambahkan **satu** entri di cPanel → **Cron Jobs** (setiap menit; Laravel sendiri yang memilih tugas mana yang jatuh tempo):
 
@@ -321,7 +291,7 @@ Setelah mengubah `public/css/style.css` atau `public/js/main.js`, jalankan `npm 
 
 **Di server (Terminal cPanel):**
 
-> Hanya setelah `deploy.sh` teruji (lihat peringatan di awal dokumen dan A12). Pada deploy pertama, jalankan perintah A7 dan A12 secara manual.
+> Hanya setelah `deploy.sh` teruji (lihat peringatan di awal dokumen dan A11). Pada deploy pertama, jalankan perintah A6 dan A11 secara manual.
 
 ```bash
 cd ~/jbm && bash deploy.sh
@@ -406,9 +376,9 @@ Catatan:
 - Periksa prefix `CPANELUSER_` di `DB_DATABASE` dan `DB_USERNAME`, user sudah ditambahkan ke database dengan ALL PRIVILEGES, dan `DB_HOST=localhost`.
 
 **`git pull` gagal: `Permission denied (publickey)`**
-- Ulangi `ssh -T git@github.com`; pastikan deploy key terpasang di repo yang benar dan isi `~/.ssh/config` sesuai bagian A3.
+- Repo publik di-clone lewat HTTPS dan tidak meminta login. Bila muncul, cek `git remote -v`: URL harus `https://github.com/...`. Jika repo sudah dijadikan privat, ikuti catatan Deploy Key di bagian A3.
 
-**Gagal `ssh-keygen` / `composer` kehabisan memori**
+**`composer` kehabisan memori**
 - Jalankan `php -d memory_limit=-1 ~/composer.phar install --no-dev --optimize-autoloader`. Bila akun membatasi proses, ulangi di jam sepi.
 
 ---
@@ -468,7 +438,7 @@ php artisan up
 php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
-Bila database kosong/baru, buat dulu database dan user di cPanel (bagian A5), lalu jalankan perintah `mysql` di atas.
+Bila database kosong/baru, buat dulu database dan user di cPanel (bagian A4), lalu jalankan perintah `mysql` di atas.
 
 **Upload CMS:**
 
@@ -478,7 +448,7 @@ chmod -R ug+rwX ~/jbm/storage
 ls -l ~/jbm/public/storage        # jika hilang: ln -s ~/jbm/storage/app/public ~/jbm/public/storage
 ```
 
-**Server hilang total** (akun baru): ikuti bagian A dari awal (PHP, SSH key, clone, `.env` dari backup, database), **lewati `db:seed`**, impor dump database (D3), ekstrak arsip upload, lalu `bash deploy.sh`.
+**Server hilang total** (akun baru): ikuti bagian A dari awal (PHP, clone, `.env` dari backup, database), **lewati `db:seed`**, impor dump database (D3), ekstrak arsip upload, lalu `bash deploy.sh`.
 
 **Uji pemulihan** minimal sekali sebelum go-live dan setiap beberapa bulan: impor dump ke database uji dan pastikan `/admin` bisa login serta gambar tampil. Backup yang belum pernah diuji dianggap belum ada.
 
@@ -492,6 +462,6 @@ Belum dipakai. Saat dipasang, urutannya:
 2. SSL/TLS: mode **Full (strict)** (bukan Flexible).
 3. Di `.env`: `TRUSTED_PROXIES=cloudflare`, lalu `php artisan config:cache`. Tanpa ini IP semua pengunjung tampak sebagai IP Cloudflare, sehingga batas 5 kiriman form Kontak per 15 menit dan kunci login menjadi satu ember untuk seluruh situs. Perbarui daftar IP Cloudflare berkala: `php artisan security:cloudflare-ips` (daftar bawaan dipakai bila gagal).
 4. Aturan cache: **jangan cache HTML** (Cache Level Standard, tanpa "Cache Everything"). Aset di `/css/`, `/js/`, `/fonts/` dan `/storage/` boleh.
-5. Naikkan `HSTS_MAX_AGE` setelah semuanya stabil (A10 langkah 4).
+5. Naikkan `HSTS_MAX_AGE` setelah semuanya stabil (A9 langkah 4).
 6. Opsional: Turnstile. Buat widget di dash.cloudflare.com, menu Turnstile, isi `TURNSTILE_SITE_KEY` dan `TURNSTILE_SECRET_KEY`, set `TURNSTILE_ENABLED=true`, `config:cache`. Aktif di form Kontak dan login admin. Bila Cloudflare tidak terjangkau, form tetap diterima (honeypot dan batas kiriman tetap berlaku) dan kejadian dicatat di log keamanan.
 7. Sebaiknya origin tidak dapat diakses langsung lewat IP server (firewall hanya IP Cloudflare), karena `TRUSTED_PROXIES` mempercayai header `X-Forwarded-For` dari proxy tepercaya.

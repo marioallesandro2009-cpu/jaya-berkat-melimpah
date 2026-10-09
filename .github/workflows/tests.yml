@@ -46,3 +46,43 @@ jobs:
 
       - name: Dependency vulnerabilities
         run: composer audit
+
+      # --- front end: the built assets must match their sources, and the real site must work in a browser ---
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install front-end dependencies
+        run: npm ci
+
+      - name: Built assets are up to date (npm run build changes nothing)
+        run: |
+          npm run build
+          if ! git diff --exit-code --stat -- public/css public/js; then
+            echo "::error::public/css/*.min.css or public/js/*.min.js are stale. Run 'npm run build' on the laptop and commit the result."
+            exit 1
+          fi
+
+      - name: Install Chromium for the browser test
+        run: npx playwright-core install --with-deps chromium
+
+      - name: Start the site (sqlite, seeded sample data)
+        run: |
+          sed -i 's#^APP_URL=.*#APP_URL=http://127.0.0.1:8000#' .env
+          touch database/database.sqlite
+          php artisan migrate --seed --force
+          php artisan storage:link
+          nohup php artisan serve --host=127.0.0.1 --port=8000 > serve.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8000/ && exit 0; sleep 1; done
+          cat serve.log
+          exit 1
+
+      - name: Browser smoke test (pages, 3D hero, fallbacks)
+        run: npm run test:e2e
+
+      - name: Server log on failure
+        if: failure()
+        run: tail -n 60 serve.log || true
