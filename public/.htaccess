@@ -45,6 +45,7 @@
 </IfModule>
 
 <IfModule mod_mime.c>
+    AddType model/gltf-binary .glb
     AddType font/woff2 .woff2
     AddType image/webp .webp
 </IfModule>
@@ -60,8 +61,8 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-    # css/js are requested with ?v=<file mtime>, so a changed file gets a new URL: cache them for good.
-    <If "%{REQUEST_URI} =~ m#^/(css|js|fonts)/#">
+    # css/js/models are requested with ?v=<file mtime>, so a changed file gets a new URL: cache them for good.
+    <If "%{REQUEST_URI} =~ m#^/(css|js|fonts|models)/#">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </If>
     <If "%{REQUEST_URI} =~ m#^/storage/#">

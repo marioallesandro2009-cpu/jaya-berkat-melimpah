@@ -9,6 +9,7 @@
             </div>
         @endif
         <div class="wrap">
+            <x-ui.brand-mark :settings="$settings" id="bm-origin" class="brand-mark--band reveal" />
             <div class="band-copy reveal">
                 @if ($block['eyebrow'])
                     <p class="eyebrow">{{ $block['eyebrow'] }}</p>

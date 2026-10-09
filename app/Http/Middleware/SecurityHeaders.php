@@ -74,9 +74,9 @@ class SecurityHeaders
             "default-src 'self'",
             "script-src 'self' 'nonce-{$nonce}'{$cloudflare}",
             "style-src 'self' 'unsafe-inline'",
-            "img-src 'self' data:",
+            "img-src 'self' data: blob:",   // blob: = the hero's glTF textures, decoded by the browser itself
             "font-src 'self'",
-            "connect-src 'self'{$cloudflare}",
+            "connect-src 'self' blob:{$cloudflare}",
             $turnstile ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'",
             "object-src 'none'",
             "base-uri 'self'",

@@ -16,6 +16,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -124,6 +125,14 @@ class ManageSiteSettings extends Page
                                 Translatable::fields(fn (string $locale): TextInput => TextInput::make("footer_tagline.{$locale}")
                                     ->label(Translatable::label('Kalimat di footer', $locale))
                                     ->maxLength(160)),
+                                Select::make('hero_mode')
+                                    ->label('Tampilan hero beranda')
+                                    ->options(SiteSetting::HERO_MODES)
+                                    ->default('3d')
+                                    ->required()
+                                    ->native(false)
+                                    ->selectablePlaceholder(false)
+                                    ->helperText('Animasi 3D: laut, kapal, dan matahari bergerak (dimuat setelah halaman tampil; di perangkat yang menolaknya otomatis memakai gambar). Gambar: foto atau slide dari menu Slide Hero.'),
                                 TextInput::make('hero_slide_duration')
                                     ->label('Pergantian slide hero')
                                     ->numeric()

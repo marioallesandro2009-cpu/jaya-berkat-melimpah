@@ -47,6 +47,54 @@
     window.addEventListener('resize', function () { if (window.innerWidth > 1100) setMenu(false); });
   }
 
+  /* ---------- Soft section edges ----------
+     A section whose colour differs a lot from the one above it (dark <-> light, header -> content, content -> footer)
+     fades in from that colour instead of cutting: an empty, zero-height .edge element at its top draws an eased
+     gradient over its own padding (public/css/style.css, "Soft section edges"). Skipped where the section above
+     draws its own edge (a .wave) or the section is a photograph. One pass at load plus one on resize; no layout
+     reads in the scroll loop. */
+  (function () {
+    var channels = function (c) { var m = c.match(/[\d.]+/g); return m ? { r: +m[0], g: +m[1], b: +m[2], a: m[3] === undefined ? 1 : +m[3] } : null; };
+    var apart = function (x, y) { return Math.abs(x.r - y.r) + Math.abs(x.g - y.g) + Math.abs(x.b - y.b); };
+    var footer = $('footer');
+    // a transparent wrapper (the news article) is looked through: its own children are the sections
+    var seq = [];
+    $$('main > *').forEach(function (n) {
+      var c = channels(getComputedStyle(n).backgroundColor);
+      if (n.tagName === 'ARTICLE' && c && c.a < 0.05) $$(':scope > *', n).forEach(function (k) { seq.push(k); }); else seq.push(n);
+    });
+    if (footer) seq.push(footer);
+    seq = seq.filter(function (n) { return n.tagName !== 'SCRIPT' && n.offsetHeight > 0; });
+    var edges = [];
+    for (var i = 1; i < seq.length; i++) {
+      var cur = seq[i], prev = seq[i - 1];
+      if (cur.hasAttribute('data-no-edge') || prev.querySelector(':scope > .wave')) continue;
+      var a = channels(getComputedStyle(cur).backgroundColor), b = channels(getComputedStyle(prev).backgroundColor);
+      if (!a || !b || a.a < 0.95 || b.a < 0.95 || apart(a, b) < 18) continue;
+      var edge = document.createElement('span');
+      edge.className = 'edge';
+      edge.setAttribute('aria-hidden', 'true');
+      edge.style.setProperty('--edge-rgb', b.r + ', ' + b.g + ', ' + b.b);
+      cur.insertBefore(edge, cur.firstChild);
+      cur.classList.add('has-edge');
+      edges.push({ edge: edge, el: cur });
+    }
+    function size() {
+      edges.forEach(function (e) {
+        var pt = parseFloat(getComputedStyle(e.el).paddingTop) || 0;
+        e.edge.style.setProperty('--edge-pt', pt + 'px');
+        e.edge.style.setProperty('--edge-h', Math.min(pt + 48, 230) + 'px');
+      });
+    }
+    size();
+    var queued = false;
+    window.addEventListener('resize', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; size(); });
+    }, { passive: true });
+  })();
+
   /* ---------- Scroll reveal (once) ---------- */
   $$('[data-stagger]').forEach(function (group) {
     $$(':scope > *', group).slice(0, 6).forEach(function (el, i) {

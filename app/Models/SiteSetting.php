@@ -39,6 +39,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property list<array{en?: string|null, id?: string|null}>|null $translation_glossary
  * @property array<string, string|null>|null $colors
  * @property int $hero_slide_duration
+ * @property string $hero_mode
  */
 #[Fillable([
     'company_name',
@@ -60,10 +61,17 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'translation_glossary',
     'colors',
     'hero_slide_duration',
+    'hero_mode',
 ])]
 class SiteSetting extends Model implements HasMedia, HasTranslatableFields
 {
     use FlushesFrontendCache, HasTranslations, InteractsWithMedia, RegistersWebpConversions;
+
+    /** Home hero: the animated 3D sea (default) or the photograph / slide show. */
+    public const HERO_MODES = [
+        '3d' => 'Animasi 3D (laut, kapal, matahari)',
+        'photo' => 'Gambar (foto atau slide hero)',
+    ];
 
     public const TRANSLATABLE = [
         'company_description',
@@ -426,6 +434,7 @@ class SiteSetting extends Model implements HasMedia, HasTranslatableFields
             'colors' => $this->brandColors(),
             'cssVariables' => $this->cssVariables(),
             'heroSlideDuration' => max(3, (int) $this->hero_slide_duration),
+            'heroMode' => array_key_exists((string) $this->hero_mode, self::HERO_MODES) ? $this->hero_mode : '3d',
             'logo' => $logo ? ['url' => $logo->getUrl(), 'width' => (int) $logo->getCustomProperty('width'), 'height' => (int) $logo->getCustomProperty('height')] : null,
             'favicon' => MediaPresenter::favicon($this->getFirstMedia('favicon')),
             'whatsappUrl' => self::whatsappUrl($this->whatsapp_number),

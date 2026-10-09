@@ -81,3 +81,31 @@ or the finished dish, not the exact cut: those products are flagged `image_is_re
 | `p-snapper-fillet` | Red snapper (?) fillet 013 - Tony's Seafood, Baton Rouge.jpg | Louisiana Sea Grant College Program Louisiana State Universi | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Red_snapper_(%3F)_fillet_013_-_Tony%27s_Seafood,_Baton_Rouge.jpg |
 | `p-kanpachi-whole` | Seriola dumerili Gibraltar.jpg | nick88 | CC0 | https://commons.wikimedia.org/wiki/File:Seriola_dumerili_Gibraltar.jpg |
 | `p-tuna-seared` | Seared Ahi Tuna Steak.jpg | eric molina from San Francisco, United States | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Seared_Ahi_Tuna_Steak.jpg |
+
+## 3D hero: boat model and water
+
+**Boat: `public/models/fishing-boat.glb` (desktop) and `fishing-boat-sm.glb` (phones).**
+"Fishing boat" from the Innerscene free 3D parts library, **public domain (CC0)**: free to use, modify and redistribute for any purpose, including commercially, no credit
+required (credited here anyway). Original unbranded model, 8.713 x 3.481 x 4.135 m, GLB, 7.8 MB.
+Source: https://www.innerscene.com/tools/library/3d-parts/fishing-boat-3c5a6bfd (licence statement read on that page on 2026-10-09).
+The unoptimised source file (`fishing-boat.glb`, 8.2 MB) is kept out of git in the project root.
+
+The two files were optimised from the 8.2 MB original with [gltf-transform](https://gltf-transform.dev/):
+
+- desktop: `optimize --compress quantize --texture-compress webp --texture-size 1024 --simplify true --simplify-ratio 0.5 --simplify-error 0.002` (1.6 MB, 68k triangles, 11 draw calls)
+- phones: the same with `--texture-size 512 --simplify-ratio 0.25 --simplify-error 0.004` (0.9 MB, 35k triangles)
+
+**Water and sky.** [baditaflorin/threejs-water-free](https://github.com/baditaflorin/threejs-water-free) (MIT, Copyright (c) 2026 Florin Badita), copied unmodified into
+`resources/js/vendor/threejs-water-free/` with its licence. The hero uses its "clear" preset at "low" quality (64x64 FFT computed on the CPU, no refraction, no animated
+clouds) on three.js's `WebGPURenderer`: WebGPU where the browser has it, the library's WebGL2 backend otherwise. The boat floats on the library's own wave field.
+
+**Two builds of the 3D hero** (`npm run build` makes both; commit both):
+
+| bundle | what | minified | gzip | brotli |
+|---|---|---|---|---|
+| `public/js/ocean3d.min.js` (default) | the library's sea and sky + the boat | 1129 KB | 302 KB | 241 KB |
+| `public/js/ocean3d-lite.min.js` | a hand-written WebGL sea (Gerstner waves) + the boat; source in `resources/js/lite/` | 615 KB | 158 KB | 130 KB |
+
+Locally, `/?ocean=lite` loads the lite one. To make lite the default, change `$oceanFile` in `resources/views/home.blade.php`.
+
+Poly Haven's "Ship Pinnace" (CC0) was tried and dropped: it is a 17th-century warship, not a fishing vessel.

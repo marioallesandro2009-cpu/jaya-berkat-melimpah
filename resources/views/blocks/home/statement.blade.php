@@ -9,6 +9,7 @@
             <div class="statement-grid">
                 <h2 class="display reveal">{{ $block['title'] }}</h2>
                 <div class="statement-copy reveal">
+                    <x-ui.brand-mark :settings="$settings" id="bm-statement" class="brand-mark--statement" />
                     @if ($block['body'])
                         <p class="body-text">{{ $block['body'] }}</p>
                     @endif

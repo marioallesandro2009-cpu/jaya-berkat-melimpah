@@ -72,3 +72,7 @@ Homestead.yaml
 
 # Hosting tooling
 /.vercel
+
+# 3D boat: unoptimised source model, licence still to be confirmed (see docs/image-credits.md)
+/fishing-boat.glb
+/polyhaven-ship-pinnace.glb
