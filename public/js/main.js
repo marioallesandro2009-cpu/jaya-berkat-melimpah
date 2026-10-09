@@ -77,13 +77,16 @@
       edge.style.setProperty('--edge-rgb', b.r + ', ' + b.g + ', ' + b.b);
       cur.insertBefore(edge, cur.firstChild);
       cur.classList.add('has-edge');
-      edges.push({ edge: edge, el: cur });
+      edges.push({ edge: edge, el: cur, hard: apart(a, b) > 450 });
     }
     function size() {
       edges.forEach(function (e) {
+        // light <-> dark is the harshest cut: it gets extra room (120px more padding) so the fade is long and gentle
+        e.el.style.paddingTop = '';
         var pt = parseFloat(getComputedStyle(e.el).paddingTop) || 0;
+        if (e.hard) { pt += 120; e.el.style.paddingTop = pt + 'px'; }
         e.edge.style.setProperty('--edge-pt', pt + 'px');
-        e.edge.style.setProperty('--edge-h', Math.min(pt + 48, 230) + 'px');
+        e.edge.style.setProperty('--edge-h', Math.min(pt + (e.hard ? 90 : 48), 420) + 'px');
       });
     }
     size();
